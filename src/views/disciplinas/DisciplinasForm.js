@@ -5,11 +5,20 @@ import {
   Text, 
   View,
   Button,
-  TextInput
+  TextInput,
+  Pressable
 } from 'react-native';
 
 export default function App({ navigation, route }) {
   const [nome, setNome] = useState("")
+  const [estado, setEstado] = useState("")
+
+  const radioButtonsEstados = [
+    { id: 0, value: 'Estudando' },
+    { id: 1, value: 'Parado' },
+    { id: 2, value: 'Finalizado' },
+    { id: 3, value: 'Futuro' },
+  ]
 
   return (
     <View style={styles.container}>
@@ -22,13 +31,50 @@ export default function App({ navigation, route }) {
         value={nome}
       />
 
+      <View>
+        <Text>Estado</Text>
+        {radioButtonsEstados.map((item) => {
+          return (
+            <Pressable 
+              onPress={() => setEstado(item.value)}
+              key={item.id}
+              style={
+                [ 
+                  styles.radioButtons,
+                  item.value === estado ? 
+                  styles.selected : 
+                  styles.unselected,
+                ]
+            }>
+              <Text 
+                style={
+                  [ 
+                    styles.radioLabels,
+                    item.value === estado ? 
+                    styles.selectedLabel : 
+                    styles.unselectedLabel
+                  ]
+                }
+              >
+                {item.value}
+              </Text>
+            </Pressable>
+          )
+        })}
+
+        <Text> User option: {estado}</Text>
+      </View>
+
       <Button 
         title="Adicionar disciplina"
         onPress={() => {
           // pass and merge params back to home screen
           navigation.navigate({
             name: 'Disciplinas',
-            params: { nome: nome },
+            params: { 
+              nome: nome,
+              estado: estado
+             },
             merge: true,
           });
         }}
@@ -42,5 +88,27 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 20,
     marginTop: 70
+  },
+  radioButtons: {
+    padding: 8,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  radioLabels: {
+    textAlign: 'center',
+    fontWeight: 600,
+    fontSize: 16
+  },
+  selected: {
+    backgroundColor: 'blue'
+  },
+  unselected: {
+    backgroundColor: '#ddd'
+  },
+  selectedLabel: {
+    color: 'white'
+  },
+  unselectedLabel: {
+    color: '#303030'
   },
 });

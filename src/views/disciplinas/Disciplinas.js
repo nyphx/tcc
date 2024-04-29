@@ -57,15 +57,13 @@ export default function App({ navigation, route }) {
     return home;
   }, [navigation]);
 
-  console.log(disciplinas)
-
   // adiciona uma nova diciplina
   useEffect(() => {
     const adicionarDisciplina = async () => {
       if (route.params?.nome) {
         await addDoc(collection(db, "disciplinas"), {
           nome: route.params?.nome,
-          estado: "nenhum",
+          estado: route.params?.estado,
         });
         
         navigation.navigate('Disciplinas')

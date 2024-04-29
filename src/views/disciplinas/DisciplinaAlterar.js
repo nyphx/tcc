@@ -5,7 +5,8 @@ import {
   Text, 
   View,
   Button,
-  TextInput
+  TextInput,
+  Pressable
 } from 'react-native';
 
 import { 
@@ -19,6 +20,14 @@ import {
 export default function App({ navigation, route }) {
   const { id } = route.params
   const [nome, setNome] = useState('')
+  const [estado, setEstado] = useState("")
+
+  const radioButtonsEstados = [
+    { id: 0, value: 'Estudando' },
+    { id: 1, value: 'Parado' },
+    { id: 2, value: 'Finalizado' },
+    { id: 3, value: 'Futuro' },
+  ]
  
   // obtem disciplina do banco de dados
   useEffect(() => {
@@ -27,6 +36,7 @@ export default function App({ navigation, route }) {
       const docSnap = await getDoc(docRef);
       
       setNome(docSnap.data().nome)
+      setEstado(docSnap.data().estado)
     }
 
     getDisciplina(); 
@@ -48,7 +58,8 @@ export default function App({ navigation, route }) {
       const docRef = doc(db, "disciplinas", id);
 
       await updateDoc(docRef, {
-        "nome": nome
+        "nome": nome,
+        "estado": estado
       });
     }
 
@@ -66,6 +77,40 @@ export default function App({ navigation, route }) {
         onChangeText={(text) => setNome(text)}
         value={nome}
       />
+
+      <View>
+        <Text>Estado</Text>
+        {radioButtonsEstados.map((item) => {
+          return (
+            <Pressable 
+              onPress={() => setEstado(item.value)}
+              key={item.id}
+              style={
+                [ 
+                  styles.radioButtons,
+                  item.value === estado ? 
+                  styles.selected : 
+                  styles.unselected,
+                ]
+            }>
+              <Text 
+                style={
+                  [ 
+                    styles.radioLabels,
+                    item.value === estado ? 
+                    styles.selectedLabel : 
+                    styles.unselectedLabel
+                  ]
+                }
+              >
+                {item.value}
+              </Text>
+            </Pressable>
+          )
+        })}
+
+        <Text> User option: {estado}</Text>
+      </View>
 
       <Button 
         title="Alterar disciplina"
@@ -85,5 +130,27 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 20,
     marginTop: 70
+  },
+  radioButtons: {
+    padding: 8,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  radioLabels: {
+    textAlign: 'center',
+    fontWeight: 600,
+    fontSize: 16
+  },
+  selected: {
+    backgroundColor: 'blue'
+  },
+  unselected: {
+    backgroundColor: '#ddd'
+  },
+  selectedLabel: {
+    color: 'white'
+  },
+  unselectedLabel: {
+    color: '#303030'
   },
 });
