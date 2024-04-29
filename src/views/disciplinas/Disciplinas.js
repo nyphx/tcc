@@ -20,6 +20,24 @@ import {
 
 import Typography from '../../styles/typography';
 
+const Disciplina = ({ navigation, disciplina }) => {
+  return (
+    <View>
+      <Pressable
+        onPress={() => navigation.navigate(
+            'DisciplinaDetalhes', 
+            { id: disciplina.id }
+          )
+        }
+      >
+        <Text style={{ fontSize: 18, marginBottom: 10 }}>
+          {disciplina.nome}
+        </Text>
+      </Pressable>
+    </View>
+  )
+}
+
 export default function App({ navigation, route }) {
   // mostra disciplinas 
   const [disciplinas, setDisciplinas] = useState([])
@@ -39,6 +57,8 @@ export default function App({ navigation, route }) {
     return home;
   }, [navigation]);
 
+  console.log(disciplinas)
+
   // adiciona uma nova diciplina
   useEffect(() => {
     const adicionarDisciplina = async () => {
@@ -48,7 +68,7 @@ export default function App({ navigation, route }) {
           estado: "nenhum",
         });
         
-        navigation.navigate('Disciplinas', { nome: undefined })
+        navigation.navigate('Disciplinas')
       }
     }
 
@@ -78,19 +98,11 @@ export default function App({ navigation, route }) {
 
           {
             disciplinas.map((disciplina) => (
-              <View key={disciplina.id}>
-                <Pressable
-                  onPress={() => navigation.navigate(
-                      'DisciplinaDetalhes', 
-                      { id: disciplina.id }
-                    )
-                  }
-                >
-                  <Text style={{ fontSize: 18, marginBottom: 10 }}>
-                    {disciplina.nome}
-                  </Text>
-                </Pressable>
-              </View>
+              <Disciplina 
+                key={disciplina.id}
+                navigation={navigation}
+                disciplina={disciplina}
+              />
             ))
           }
         </View>

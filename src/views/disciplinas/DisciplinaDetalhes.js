@@ -5,6 +5,7 @@ import {
   Text, 
   View,
   Button,
+  Pressable
 } from 'react-native';
 
 import { 
@@ -17,21 +18,44 @@ import {
   query
 } from "../../firebase/firebaseConfig";
 
+const Assunto = ({ navigation, assunto, disciplinaId }) => {
+  return (
+    <Pressable 
+      style={styles.assuntosItem}
+      onPress={() => navigation.navigate(
+        'AssuntoAlterar', 
+        { 
+          assuntoId: assunto.id,
+          disciplinaId: disciplinaId,
+        }
+      )}
+    >
+      <Text>{assunto.nome}</Text>
+    </Pressable>
+  )
+}
+
 export default function App({ navigation, route }) {
   console.log('reload')
 
   const { id } = route.params
   const [detalhes, setDetalhes] = useState({})
-  const [assuntos, setAssuntos] = useState({})
- 
-  // obtem disciplina do banco de dados
+  const [assuntos, setAssuntos] = useState([])
+
   useEffect(() => {
     const home = navigation.addListener('focus', () => {
       const getDisciplina = async () => {
-        const docRef = doc(db, "disciplinas", id);
-        const docSnap = await getDoc(docRef);
+        // obtem disciplina do banco de dados
+        const disciplinaRef = doc(db, "disciplinas", id);
+        const disciplinaSnap = await getDoc(disciplinaRef);
         
-        setDetalhes(docSnap.data())
+        setDetalhes(disciplinaSnap.data())
+        
+        // obtem os assuntos da disciplina do banco de dados
+        const assuntosRef = collection(disciplinaRef, "assunto");
+        const assuntosSnap = await getDocs(assuntosRef)
+        
+        setAssuntos(assuntosSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
       }
   
       getDisciplina(); 
@@ -39,25 +63,6 @@ export default function App({ navigation, route }) {
 
     return home;
   }, [navigation]);
-
-  // obtem assuntos do banco de dados
-  useEffect(() => {
-    const home = navigation.addListener('focus', () => {
-      const docRef = collection(db, "disciplinas");
-      const q = query(collection(docRef, "assuntos"));
-      
-      const getAssuntos = async () => {
-        const querySnapshot = await getDocs(q);
-        setAssuntos(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-      }
-      
-      getAssuntos(); 
-    });
-
-    return home;
-  }, [navigation]);
-
-  console.log(assuntos)
 
   // adiciona uma novo assunto
   useEffect(() => {
@@ -92,6 +97,17 @@ export default function App({ navigation, route }) {
         title="Adicionar assunto"
         onPress={() => navigation.navigate('AssuntoForm', { id: id })}
       />
+
+      { 
+        assuntos.map(item => 
+          <Assunto 
+            key={item.id} 
+            navigation={navigation}
+            disciplinaId={id}
+            assunto={item}
+          />
+        )
+      }
     </View>
   );
 }
@@ -102,4 +118,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 70
   },
+  assuntosItem: {
+    backgroundColor: 'white',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    marginTop: 10,
+  }
 });

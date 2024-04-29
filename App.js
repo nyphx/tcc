@@ -7,6 +7,7 @@ import DisciplinasForm from './src/views/disciplinas/DisciplinasForm.js'
 import DisciplinaDetalhes from './src/views/disciplinas/DisciplinaDetalhes.js'
 import DisciplinaAlterar from './src/views/disciplinas/DisciplinaAlterar.js'
 import AssuntoForm from './src/views/disciplinas/AssuntoForm.js'
+import AssuntoAlterar from './src/views/disciplinas/AssuntoAlterar.js'
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -37,6 +38,11 @@ const NavDisciplinas = () => {
       <Stack.Screen 
         name="AssuntoForm" 
         component={AssuntoForm}
+      />
+      
+      <Stack.Screen 
+        name="AssuntoAlterar" 
+        component={AssuntoAlterar}
       />
     </Stack.Navigator>
   )
