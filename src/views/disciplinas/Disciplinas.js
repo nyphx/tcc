@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react'
+import { 
+  useEffect, 
+  useState 
+} from 'react'
 
 import { 
   StyleSheet, 
   Text, 
   View,
   ScrollView,
-  Button,
   Pressable,
-  RefreshControl
 } from 'react-native';
 
 import { 
@@ -18,7 +19,12 @@ import {
   addDoc
 } from "../../firebase/firebaseConfig";
 
-import Typography from '../../styles/typography';
+import { 
+  Typography, 
+  Buttons, 
+  Count,
+  General
+} from '../../styles/index.js';
 
 const Disciplina = ({ navigation, disciplina }) => {
   return (
@@ -79,18 +85,30 @@ export default function App({ navigation, route }) {
     <ScrollView>
       <View style={styles.container}>
         <View>
-          <Text style={[Typography.titulo, { marginBottom: 10 }]}>
-            Disciplinas
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: "center", marginBottom: 14 }}>
+            <View style={styles.countContainer}>
+              <Text style={styles.countText}>
+                {disciplinas.length}
+              </Text>
+            </View>
+            
+            <Text style={styles.titulo}>
+              Disciplinas
+            </Text>
+          </View>
 
-          <Button 
-            title="Adicionar disciplina"
+          <Pressable 
+            style={styles.buttonPrimary}
             onPress={() => navigation.navigate('DisciplinasForm')}
-          />
+          >
+            <Text style={styles.buttonText}>
+              Adicionar disciplina
+            </Text>
+          </Pressable>
         </View>
 
         <View>
-          <Text style={[Typography.subtitulo, { marginBottom: 10 }]}>
+          <Text style={[styles.subtitulo, { marginBottom: 10 }]}>
             Disciplinas adicionadas
           </Text>
 
@@ -110,10 +128,11 @@ export default function App({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginHorizontal: 20,
-    marginTop: 70,
-    gap: 20
-  }
+  container: { ...General.container },
+  countContainer: { ...Count.container},
+  countText: { ...Count.text},
+  titulo: { ...Typography.titulo },
+  subtitulo: { ...Typography.subtitulo },
+  buttonPrimary: { ...Buttons.primary },
+  buttonText: { ...Buttons.text }
 });
