@@ -18,6 +18,13 @@ import {
   query
 } from "../../firebase/firebaseConfig";
 
+import { 
+  Typography, 
+  Buttons, 
+  Count,
+  General
+} from '../../styles/index.js';
+
 const Assunto = ({ navigation, assunto, disciplinaId }) => {
   return (
     <Pressable 
@@ -86,17 +93,39 @@ export default function App({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      <Button 
-        title="Alterar"
+      <Pressable 
+        style={[styles.buttonPrimary, { alignSelf: "flex-end" } ]}
         onPress={() => navigation.navigate('DisciplinaAlterar', { id: id })}
-      />
-      <Text>{detalhes.nome}</Text>
-      <Text>{detalhes.estado}</Text>
+      >
+        <Text style={styles.buttonText}>
+          Alterar
+        </Text>
+      </Pressable>
 
-      <Button 
-        title="Adicionar assunto"
-        onPress={() => navigation.navigate('AssuntoForm', { id: id })}
-      />
+      <View style={styles.infoContainer}>
+        <Text style={styles.titulo}>
+          {detalhes.nome}
+        </Text>
+
+        <Text style={styles.estado}>
+          {detalhes.estado}
+        </Text>
+      </View>
+
+      <View style={styles.assuntosTitulo}>
+        <Text style={styles.subtitulo}>
+          Assuntos
+        </Text>
+
+        <Pressable 
+          style={styles.buttonPrimary}
+          onPress={() => navigation.navigate('AssuntoForm', { id: id })}
+          >
+          <Text style={styles.buttonText}>
+            Adicionar
+          </Text>
+        </Pressable>
+      </View>
 
       { 
         assuntos.map(item => 
@@ -123,5 +152,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     marginTop: 10,
-  }
+  },
+  assuntosTitulo: {
+    flexDirection: 'row', 
+    justifyContent: "space-between", 
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  infoContainer: {
+    gap: 10,
+    marginTop: 8,
+    marginBottom: 26,
+  },
+  estado: {
+    textAlign: 'center',
+    backgroundColor: '#ccc',
+    padding: 10,
+    borderRadius: 6,
+    fontSize: 16,
+    fontWeight: "500"
+  },
+  countContainer: { ...Count.container},
+  countText: { ...Count.text},
+  titulo: { ...Typography.titulo },
+  subtitulo: { ...Typography.subtitulo },
+  buttonPrimary: { ...Buttons.primary },
+  buttonText: { ...Buttons.text }
 });

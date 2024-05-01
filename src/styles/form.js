@@ -1,5 +1,5 @@
 export const itemContainerForm = {
-  marginVertical: 16,
+  marginTop: 16,
 }
 
 export const label = {

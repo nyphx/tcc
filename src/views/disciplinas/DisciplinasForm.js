@@ -47,7 +47,7 @@ export default function App({ navigation, route }) {
           />
         </View>
 
-        <View>
+        <View style={styles.itemContainerForm}>
           <Text style={styles.label}>
             Estado
           </Text>

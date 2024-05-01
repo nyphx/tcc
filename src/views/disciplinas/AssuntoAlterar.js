@@ -11,12 +11,18 @@ import {
 
 import { 
   db, 
-  getDocs,
   getDoc,
   doc,
   deleteDoc,
   updateDoc 
 } from "../../firebase/firebaseConfig"
+
+import { 
+  Typography, 
+  Buttons,
+  General,
+  Form
+} from '../../styles/index.js';
 
 export default function App({ navigation, route }) {
   const { assuntoId, disciplinaId } = route.params
@@ -92,53 +98,67 @@ export default function App({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      <Text>Alterar disciplina</Text>
-
-      <Text>Nome da disciplina</Text>
-      <TextInput
-        onChangeText={(text) => setNome(text)}
-        value={nome}
-      />
-
       <View>
-        <Text>Dificuldade</Text>
-        {radioButtonsDificuldades.map((item) => {
-          return (
-            <Pressable 
-              onPress={() => setDificuldade(item.value)}
-              key={item.id}
-              style={
-                [ 
-                  styles.radioButtons,
-                  item.value === dificuldade ? 
-                  styles.selected : 
-                  styles.unselected,
-                ]
-            }>
-              <Text 
+        <Text style={styles.titulo}>
+          Alterar disciplina
+        </Text>
+
+        <View style={styles.itemContainerForm}>
+          <Text style={styles.label}>
+            Nome da disciplina
+          </Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={(text) => setNome(text)}
+            value={nome}
+          />
+        </View>
+          
+        <View style={styles.itemContainerForm}>
+          <Text style={styles.label}>
+            Dificuldade
+          </Text>
+
+          {radioButtonsDificuldades.map((item) => {
+            return (
+              <Pressable 
+                onPress={() => setDificuldade(item.value)}
+                key={item.id}
                 style={
                   [ 
-                    styles.radioLabels,
+                    styles.radioButtons,
                     item.value === dificuldade ? 
-                    styles.selectedLabel : 
-                    styles.unselectedLabel
+                    styles.selected : 
+                    styles.unselected,
                   ]
                 }
               >
-                {item.value}
-              </Text>
-            </Pressable>
-          )
-        })}
+                <Text 
+                  style={
+                    [ 
+                      styles.radioLabels,
+                      item.value === dificuldade ? 
+                      styles.selectedLabel : 
+                      styles.unselectedLabel
+                    ]
+                  }
+                  >
+                  {item.value}
+                </Text>
+              </Pressable>
+            )
+          })}
 
-        <Text> User option: {dificuldade}</Text>
-      </View>
+          <Text> User option: {dificuldade}</Text>
+        </View>
 
-      <View>
-        <Text>Estado</Text>
-        {radioButtonsEstados.map((item) => {
-          return (
-            <Pressable 
+        <View style={styles.itemContainerForm}>
+          <Text style={styles.label}>
+            Estado
+          </Text>
+          {radioButtonsEstados.map((item) => {
+            return (
+              <Pressable 
               onPress={() => setEstado(item.value)}
               key={item.id}
               style={
@@ -148,65 +168,64 @@ export default function App({ navigation, route }) {
                   styles.selected : 
                   styles.unselected,
                 ]
-            }>
-              <Text 
-                style={
-                  [ 
-                    styles.radioLabels,
-                    item.value === estado ? 
-                    styles.selectedLabel : 
-                    styles.unselectedLabel
-                  ]
-                }
-              >
-                {item.value}
-              </Text>
-            </Pressable>
-          )
-        })}
+              }>
+                <Text 
+                  style={
+                    [ 
+                      styles.radioLabels,
+                      item.value === estado ? 
+                      styles.selectedLabel : 
+                      styles.unselectedLabel
+                    ]
+                  }
+                  >
+                  {item.value}
+                </Text>
+              </Pressable>
+            )
+          })}
 
-        <Text> User option: {estado}</Text>
+          <Text> User option: {estado}</Text>
+        </View>
       </View>
+      
+      <View style={{ gap: 10 }}>
+        <Pressable 
+          style={styles.buttonPrimary}
+          onPress={() => updateAssunto()}
+        >
+          <Text style={styles.buttonText}>
+            Alterar assunto
+          </Text>
+        </Pressable>
 
-      <Button 
-        title="Alterar assunto"
-        onPress={() => updateAssunto()}
-      />
-
-      <Button 
-        title="Excluir assunto"
-        onPress={() => deleteAssunto()}
-      />
+        <Pressable 
+          style={styles.buttonDelete}
+          onPress={() => deleteAssunto()}
+        >
+          <Text style={styles.buttonDeleteText}>
+            Excluir assunto
+          </Text>  
+        </Pressable>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginHorizontal: 20,
-    marginTop: 70
-  },
-  radioButtons: {
-    padding: 8,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  radioLabels: {
-    textAlign: 'center',
-    fontWeight: 600,
-    fontSize: 16
-  },
-  selected: {
-    backgroundColor: 'blue'
-  },
-  unselected: {
-    backgroundColor: '#ddd'
-  },
-  selectedLabel: {
-    color: 'white'
-  },
-  unselectedLabel: {
-    color: '#303030'
-  },
+  container: { ...General.containerForm },
+  titulo: { ...Typography.tituloForm },
+  buttonPrimary: { ...Buttons.primary },
+  buttonText: { ...Buttons.text },
+  buttonDelete: { ...Buttons.secondary },
+  buttonDeleteText: { ...Buttons.secondaryText },
+  label: { ...Form.label },
+  input: { ...Form.input },
+  itemContainerForm: { ...Form.itemContainerForm },
+  radioButtons: { ...Form.radioButtons },
+  radioLabels: { ...Form.radioLabels },
+  selected: { ...Form.radioSelected },
+  unselected: { ...Form.radioUnselected },
+  selectedLabel: { ...Form.radioSelectedLabel },
+  unselectedLabel: { ...Form.radioUnselectedLabel },
 });
