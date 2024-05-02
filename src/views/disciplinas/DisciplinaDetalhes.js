@@ -4,7 +4,6 @@ import {
   StyleSheet, 
   Text, 
   View,
-  Button,
   Pressable
 } from 'react-native';
 
@@ -15,15 +14,17 @@ import {
   addDoc,
   doc,
   getDocs,
-  query
 } from "../../firebase/firebaseConfig";
 
 import { 
   Typography, 
   Buttons, 
   Count,
-  General
+  General,
+  Card
 } from '../../styles/index.js';
+
+import { AntDesign } from '@expo/vector-icons';
 
 const Assunto = ({ navigation, assunto, disciplinaId }) => {
   return (
@@ -37,7 +38,9 @@ const Assunto = ({ navigation, assunto, disciplinaId }) => {
         }
       )}
     >
-      <Text>{assunto.nome}</Text>
+      <Text style={styles.assuntosItemText}>
+        {assunto.nome}
+      </Text>
     </Pressable>
   )
 }
@@ -93,14 +96,22 @@ export default function App({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      <Pressable 
-        style={[styles.buttonPrimary, { alignSelf: "flex-end" } ]}
-        onPress={() => navigation.navigate('DisciplinaAlterar', { id: id })}
-      >
-        <Text style={styles.buttonText}>
-          Alterar
-        </Text>
-      </Pressable>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Pressable
+          onPress={() => navigation.goBack()}
+        >
+          <AntDesign name="arrowleft" size={32} color="black" />
+        </Pressable>
+
+        <Pressable 
+          style={[styles.buttonPrimary, { alignSelf: "flex-end" } ]}
+          onPress={() => navigation.navigate('DisciplinaAlterar', { id: id })}
+        >
+          <Text style={styles.buttonText}>
+            Alterar
+          </Text>
+        </Pressable>
+      </View>
 
       <View style={styles.infoContainer}>
         <Text style={styles.titulo}>
@@ -112,47 +123,41 @@ export default function App({ navigation, route }) {
         </Text>
       </View>
 
-      <View style={styles.assuntosTitulo}>
-        <Text style={styles.subtitulo}>
-          Assuntos
-        </Text>
-
-        <Pressable 
-          style={styles.buttonPrimary}
-          onPress={() => navigation.navigate('AssuntoForm', { id: id })}
-          >
-          <Text style={styles.buttonText}>
-            Adicionar
+      <View>
+        <View style={styles.assuntosTitulo}>
+          <Text style={styles.subtitulo}>
+            Assuntos
           </Text>
-        </Pressable>
-      </View>
 
-      { 
-        assuntos.map(item => 
-          <Assunto 
+          <Pressable 
+            style={styles.buttonPrimary}
+            onPress={() => navigation.navigate('AssuntoForm', { id: id })}
+            >
+            <Text style={styles.buttonText}>
+              Adicionar
+            </Text>
+          </Pressable>
+        </View>
+        
+        { 
+          assuntos.map(item => 
+            <Assunto 
             key={item.id} 
             navigation={navigation}
             disciplinaId={id}
             assunto={item}
-          />
-        )
-      }
+            />
+          )
+        }
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginHorizontal: 20,
-    marginTop: 70
-  },
-  assuntosItem: {
-    backgroundColor: 'white',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    marginTop: 10,
-  },
+  container: { ...General.container },
+  assuntosItem: { ...Card.container },
+  assuntosItemText: { ...Card.text },
   assuntosTitulo: {
     flexDirection: 'row', 
     justifyContent: "space-between", 
@@ -161,8 +166,8 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     gap: 10,
-    marginTop: 8,
-    marginBottom: 26,
+    marginBottom: 10,
+    marginTop: -6,
   },
   estado: {
     textAlign: 'center',
@@ -177,5 +182,5 @@ const styles = StyleSheet.create({
   titulo: { ...Typography.titulo },
   subtitulo: { ...Typography.subtitulo },
   buttonPrimary: { ...Buttons.primary },
-  buttonText: { ...Buttons.text }
+  buttonText: { ...Buttons.text },
 });

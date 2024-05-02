@@ -1,10 +1,10 @@
 export const titulo = {
-  fontSize: 24,
+  fontSize: 26,
   fontWeight: "700"
 }
 
 export const subtitulo = {
-  fontSize: 20,
+  fontSize: 22,
   fontWeight: "700"
 }
 

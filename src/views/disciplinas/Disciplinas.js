@@ -15,6 +15,7 @@ import {
   db, 
   collection, 
   query,
+  where,
   getDocs,
   addDoc
 } from "../../firebase/firebaseConfig";
@@ -23,12 +24,13 @@ import {
   Typography, 
   Buttons, 
   Count,
-  General
+  General,
+  Card
 } from '../../styles/index.js';
 
 const Disciplina = ({ navigation, disciplina }) => {
   return (
-    <View>
+    <View style={styles.cardContainer}>
       <Pressable
         onPress={() => navigation.navigate(
             'DisciplinaDetalhes', 
@@ -36,7 +38,7 @@ const Disciplina = ({ navigation, disciplina }) => {
           )
         }
       >
-        <Text style={{ fontSize: 18, marginBottom: 10 }}>
+        <Text style={styles.cardText}>
           {disciplina.nome}
         </Text>
       </Pressable>
@@ -46,15 +48,38 @@ const Disciplina = ({ navigation, disciplina }) => {
 
 export default function App({ navigation, route }) {
   // mostra disciplinas 
-  const [disciplinas, setDisciplinas] = useState([])
 
+  const [estudando, setEstudando] = useState([])
+  const [finalizado, setFinalizado] = useState([])
+  const [parado, setParado] = useState([])
+  const [futuro, setFuturo] = useState([])
+
+  const quantidadeEstudando = estudando.length
+  const quantidadeFinalizado = finalizado.length
+  const quantidadeParado = parado.length
+  const quantidadeFuturo = futuro.length
+
+  const quantidadeDisciplinas = quantidadeEstudando + quantidadeFinalizado + quantidadeParado + quantidadeFuturo
+  
   useEffect(() => {
     const home = navigation.addListener('focus', () => {
-      const q = query(collection(db, "disciplinas"));
+      const disciplinasRef = collection(db, "disciplinas")
+
+      const estudandoQuery = query(disciplinasRef, where("estado", "==", "Estudando"));
+      const paradoQuery = query(disciplinasRef, where("estado", "==", "Parado"));
+      const finalizadoQuery = query(disciplinasRef, where("estado", "==", "Finalizado"));
+      const futuroQuery = query(disciplinasRef, where("estado", "==", "Futuro"));
       
       const getDisciplinas = async () => {
-        const querySnapshot = await getDocs(q);
-        setDisciplinas(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        const estudandosSnapshot = await getDocs(estudandoQuery);
+        const paradoSnapshot = await getDocs(paradoQuery);
+        const finalizadoSnapshot = await getDocs(finalizadoQuery);
+        const futuroSnapshot = await getDocs(futuroQuery);
+
+        setEstudando(estudandosSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        setParado(paradoSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        setFinalizado(finalizadoSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        setFuturo(futuroSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
       }
       
       getDisciplinas(); 
@@ -85,10 +110,10 @@ export default function App({ navigation, route }) {
     <ScrollView>
       <View style={styles.container}>
         <View>
-          <View style={{ flexDirection: 'row', alignItems: "center", marginBottom: 14 }}>
+          <View style={styles.tituloFlex}>
             <View style={styles.countContainer}>
               <Text style={styles.countText}>
-                {disciplinas.length}
+                {quantidadeDisciplinas}
               </Text>
             </View>
             
@@ -98,7 +123,7 @@ export default function App({ navigation, route }) {
           </View>
 
           <Pressable 
-            style={styles.buttonPrimary}
+            style={[styles.buttonPrimary, { marginTop: 6 }]}
             onPress={() => navigation.navigate('DisciplinasForm')}
           >
             <Text style={styles.buttonText}>
@@ -108,18 +133,114 @@ export default function App({ navigation, route }) {
         </View>
 
         <View>
-          <Text style={[styles.subtitulo, { marginBottom: 10 }]}>
-            Disciplinas adicionadas
-          </Text>
+          <View style={styles.tituloFlex}>
+            <View style={styles.countContainer}>
+              <Text style={styles.countText}>
+                {quantidadeEstudando}
+              </Text>
+            </View>
+            
+            <Text style={styles.subtitulo}>
+              Estudando
+            </Text>
+          </View>
 
           {
-            disciplinas.map((disciplina) => (
+            estudando.length !== 0 ?
+            estudando.map((disciplina) => (
               <Disciplina 
                 key={disciplina.id}
                 navigation={navigation}
                 disciplina={disciplina}
               />
-            ))
+            )) :
+            <Text style={styles.estadoText}>
+              Não há disciplinas sendo estudadas.
+            </Text>
+          }
+        </View>
+
+        <View>
+          <View style={styles.tituloFlex}>
+            <View style={styles.countContainer}>
+              <Text style={styles.countText}>
+                {quantidadeParado}
+              </Text>
+            </View>
+            
+            <Text style={styles.subtitulo}>
+              Parado
+            </Text>
+          </View>
+
+          {
+            parado.length !== 0 ?
+            parado.map((disciplina) => (
+              <Disciplina 
+                key={disciplina.id}
+                navigation={navigation}
+                disciplina={disciplina}
+              />
+            )) :
+            <Text style={styles.estadoText}>
+              Não há disciplinas paradas.
+            </Text>
+          }
+        </View>
+
+        <View>
+          <View style={styles.tituloFlex}>
+            <View style={styles.countContainer}>
+              <Text style={styles.countText}>
+                {quantidadeFuturo}
+              </Text>
+            </View>
+            
+            <Text style={styles.subtitulo}>
+              Futuro
+            </Text>
+          </View>
+
+          {
+            futuro.length !== 0 ?
+            futuro.map((disciplina) => (
+              <Disciplina 
+                key={disciplina.id}
+                navigation={navigation}
+                disciplina={disciplina}
+              />
+            )) :
+            <Text style={styles.estadoText}>
+              Não há disciplinas futuras.
+            </Text>
+          }
+        </View>
+
+        <View>
+          <View style={styles.tituloFlex}>
+            <View style={styles.countContainer}>
+              <Text style={styles.countText}>
+                {quantidadeFinalizado}
+              </Text>
+            </View>
+            
+            <Text style={styles.subtitulo}>
+              Finalizado
+            </Text>
+          </View>
+
+          {
+            finalizado.length !== 0 ?
+            finalizado.map((disciplina) => (
+              <Disciplina 
+                key={disciplina.id}
+                navigation={navigation}
+                disciplina={disciplina}
+              />
+            )) :
+            <Text style={styles.estadoText}>
+              Não há disciplinas finalizadas.
+            </Text>
           }
         </View>
       </View>
@@ -128,11 +249,23 @@ export default function App({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
+  estadoText: {
+    fontSize: 18,
+    color: "#909090",
+  },
+  tituloFlex: {
+    flexDirection: 'row', 
+    alignItems: "center", 
+    marginBottom: 10,
+    marginTop: 8,
+  },
   container: { ...General.container },
   countContainer: { ...Count.container},
   countText: { ...Count.text},
   titulo: { ...Typography.titulo },
   subtitulo: { ...Typography.subtitulo },
   buttonPrimary: { ...Buttons.primary },
-  buttonText: { ...Buttons.text }
+  buttonText: { ...Buttons.text },
+  cardContainer: { ...Card.container },
+  cardText: { ...Card.text },
 });
