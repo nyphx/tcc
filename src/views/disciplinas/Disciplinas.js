@@ -71,12 +71,12 @@ export default function App({ navigation, route }) {
       const futuroQuery = query(disciplinasRef, where("estado", "==", "Futuro"));
       
       const getDisciplinas = async () => {
-        const estudandosSnapshot = await getDocs(estudandoQuery);
+        const estudandoSnapshot = await getDocs(estudandoQuery);
         const paradoSnapshot = await getDocs(paradoQuery);
         const finalizadoSnapshot = await getDocs(finalizadoQuery);
         const futuroSnapshot = await getDocs(futuroQuery);
 
-        setEstudando(estudandosSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        setEstudando(estudandoSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
         setParado(paradoSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
         setFinalizado(finalizadoSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
         setFuturo(futuroSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
@@ -111,8 +111,8 @@ export default function App({ navigation, route }) {
       <View style={styles.container}>
         <View>
           <View style={styles.tituloFlex}>
-            <View style={styles.countContainer}>
-              <Text style={styles.countText}>
+            <View style={[styles.countContainer, { backgroundColor: "rgb(191 219 254)" }]}>
+              <Text style={[styles.countText, { color: "rgb(29 78 216)" }]}>
                 {quantidadeDisciplinas}
               </Text>
             </View>
@@ -134,8 +134,8 @@ export default function App({ navigation, route }) {
 
         <View>
           <View style={styles.tituloFlex}>
-            <View style={styles.countContainer}>
-              <Text style={styles.countText}>
+            <View style={[styles.countContainer, { backgroundColor: "#B5E08A" }]}>
+              <Text style={[styles.countText, { color: "rgb(2 44 34)" }]}>
                 {quantidadeEstudando}
               </Text>
             </View>
@@ -162,8 +162,8 @@ export default function App({ navigation, route }) {
 
         <View>
           <View style={styles.tituloFlex}>
-            <View style={styles.countContainer}>
-              <Text style={styles.countText}>
+            <View style={[styles.countContainer, { backgroundColor: "#E09A8A" }]}>
+              <Text style={[styles.countText, { color: "rgb(69 10 10)" }]}>
                 {quantidadeParado}
               </Text>
             </View>
@@ -190,8 +190,8 @@ export default function App({ navigation, route }) {
 
         <View>
           <View style={styles.tituloFlex}>
-            <View style={styles.countContainer}>
-              <Text style={styles.countText}>
+            <View style={[styles.countContainer, { backgroundColor: "#ccc" }]}>
+              <Text style={[styles.countText, { color: "rgb(8 47 73)" }]}>
                 {quantidadeFuturo}
               </Text>
             </View>
@@ -218,8 +218,8 @@ export default function App({ navigation, route }) {
 
         <View>
           <View style={styles.tituloFlex}>
-            <View style={styles.countContainer}>
-              <Text style={styles.countText}>
+            <View style={[styles.countContainer, { backgroundColor: "#A2B5E6" }]}>
+              <Text style={[styles.countText, { color: "rgb(30 41 59)" }]}>
                 {quantidadeFinalizado}
               </Text>
             </View>
@@ -249,19 +249,11 @@ export default function App({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  estadoText: {
-    fontSize: 18,
-    color: "#909090",
-  },
-  tituloFlex: {
-    flexDirection: 'row', 
-    alignItems: "center", 
-    marginBottom: 10,
-    marginTop: 8,
-  },
+  estadoText: { ...Count.estadoText },
   container: { ...General.container },
   countContainer: { ...Count.container},
   countText: { ...Count.text},
+  tituloFlex: { ...Count.flex },
   titulo: { ...Typography.titulo },
   subtitulo: { ...Typography.subtitulo },
   buttonPrimary: { ...Buttons.primary },

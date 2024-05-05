@@ -14,6 +14,8 @@ import {
   addDoc,
   doc,
   getDocs,
+  query,
+  where
 } from "../../firebase/firebaseConfig";
 
 import { 
@@ -45,27 +47,74 @@ const Assunto = ({ navigation, assunto, disciplinaId }) => {
   )
 }
 
+const Estado = ({ children, estado }) => {
+  let background; 
+  let text;
+
+  if (estado == "Estudando") {
+    background = "#B5E08A"
+    text = "rgb(2 44 34)"
+  } else if (estado == "Parado") {
+    background = "#E09A8A"
+    text = "rgb(69 10 10)"
+  } else if (estado == "Finalizado") {
+    background = "#A2B5E6"
+    text = "rgb(8 47 73)"
+  } else {
+    background = "#ccc"
+    text = "rgb(30 41 59)"
+  }
+
+  return (
+    <Text style={[
+      styles.estado, 
+      { 
+        backgroundColor: background,
+        color: text
+      }
+    ]}>
+      { children }
+    </Text>
+  )
+}
+
 export default function App({ navigation, route }) {
   console.log('reload')
 
   const { id } = route.params
+
   const [detalhes, setDetalhes] = useState({})
-  const [assuntos, setAssuntos] = useState([])
+  const [estudando, setEstudando] = useState([])
+  const [finalizado, setFinalizado] = useState([])
+  const [futuro, setFuturo] = useState([])
+
+  const quantidadeEstudando = estudando.length
+  const quantidadeFinalizado = finalizado.length
+  const quantidadeFuturo = futuro.length
 
   useEffect(() => {
     const home = navigation.addListener('focus', () => {
+      const disciplinaRef = doc(db, "disciplinas", id);
+      const assuntosRef = collection(disciplinaRef, "assunto");
+
+      const estudandoQuery = query(assuntosRef, where("estado", "==", "Estudando"));
+      const finalizadoQuery = query(assuntosRef, where("estado", "==", "Finalizado"));
+      const futuroQuery = query(assuntosRef, where("estado", "==", "Futuro"));
+
       const getDisciplina = async () => {
         // obtem disciplina do banco de dados
-        const disciplinaRef = doc(db, "disciplinas", id);
         const disciplinaSnap = await getDoc(disciplinaRef);
-        
         setDetalhes(disciplinaSnap.data())
         
         // obtem os assuntos da disciplina do banco de dados
-        const assuntosRef = collection(disciplinaRef, "assunto");
-        const assuntosSnap = await getDocs(assuntosRef)
+
+        const estudandoSnapshot = await getDocs(estudandoQuery);
+        const finalizadoSnapshot = await getDocs(finalizadoQuery);
+        const futuroSnapshot = await getDocs(futuroQuery);
         
-        setAssuntos(assuntosSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        setEstudando(estudandoSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        setFinalizado(finalizadoSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        setFuturo(futuroSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
       }
   
       getDisciplina(); 
@@ -118,12 +167,12 @@ export default function App({ navigation, route }) {
           {detalhes.nome}
         </Text>
 
-        <Text style={styles.estado}>
+        <Estado estado={detalhes.estado}>
           {detalhes.estado}
-        </Text>
+        </Estado>
       </View>
 
-      <View>
+      <View style={{ gap: 20 }}>
         <View style={styles.assuntosTitulo}>
           <Text style={styles.subtitulo}>
             Assuntos
@@ -138,17 +187,93 @@ export default function App({ navigation, route }) {
             </Text>
           </Pressable>
         </View>
+
+        <View>
+          <View style={styles.tituloFlex}>
+            <View style={[styles.countContainer, { backgroundColor: "#B5E08A" }]}>
+              <Text style={[styles.countText, { color: "rgb(2 44 34)" }]}>
+                {quantidadeEstudando}
+              </Text>
+            </View>
+            
+            <Text style={styles.subtitulo}>
+              Estudando
+            </Text>
+          </View>
+          
+          { 
+            quantidadeEstudando !== 0 ?
+            estudando.map(item => 
+              <Assunto 
+                key={item.id} 
+                navigation={navigation}
+                disciplinaId={id}
+                assunto={item}
+              />
+            ) :
+            <Text style={styles.estadoText}>
+              Não há disciplinas sendo estudadas.
+            </Text>
+          }
+        </View>
         
-        { 
-          assuntos.map(item => 
-            <Assunto 
-            key={item.id} 
-            navigation={navigation}
-            disciplinaId={id}
-            assunto={item}
-            />
-          )
-        }
+        <View>
+          <View style={styles.tituloFlex}>
+            <View style={[styles.countContainer, { backgroundColor: "#ccc" }]}>
+              <Text style={[styles.countText, { color: "rgb(8 47 73)" }]}>
+                {quantidadeFuturo}
+              </Text>
+            </View>
+            
+            <Text style={styles.subtitulo}>
+              Futuro
+            </Text>
+          </View>
+          
+          { 
+            quantidadeFuturo !== 0 ?
+            futuro.map(item => 
+              <Assunto 
+                key={item.id} 
+                navigation={navigation}
+                disciplinaId={id}
+                assunto={item}
+              />
+            ) :
+            <Text style={styles.estadoText}>
+              Não há disciplinas finalizadas.
+            </Text>
+          }
+        </View>
+
+        <View>
+          <View style={styles.tituloFlex}>
+            <View style={[styles.countContainer, { backgroundColor: "#A2B5E6" }]}>
+              <Text style={[styles.countText, { color: "rgb(30 41 59)" }]}>
+                {quantidadeFinalizado}
+              </Text>
+            </View>
+            
+            <Text style={styles.subtitulo}>
+              Finalizado
+            </Text>
+          </View>
+          
+          { 
+            quantidadeFinalizado !== 0 ?
+            finalizado.map(item => 
+              <Assunto 
+                key={item.id} 
+                navigation={navigation}
+                disciplinaId={id}
+                assunto={item}
+              />
+            ) :
+            <Text style={styles.estadoText}>
+              Não há disciplinas finalizadas.
+            </Text>
+          }
+        </View>
       </View>
     </View>
   );
@@ -162,7 +287,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     justifyContent: "space-between", 
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: -10,
   },
   infoContainer: {
     gap: 10,
@@ -174,11 +299,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc',
     padding: 10,
     borderRadius: 6,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "500"
   },
+  estadoText: { ...Count.estadoText },
   countContainer: { ...Count.container},
   countText: { ...Count.text},
+  tituloFlex: { ...Count.flex },
   titulo: { ...Typography.titulo },
   subtitulo: { ...Typography.subtitulo },
   buttonPrimary: { ...Buttons.primary },
