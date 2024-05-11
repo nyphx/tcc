@@ -4,6 +4,7 @@ import * as Count from './count'
 import * as General from './general'
 import * as Form from './form'
 import * as Card from './card'
+import * as CustomModal from './modal'
 
 export { 
   Typography, 
@@ -11,5 +12,6 @@ export {
   Count,
   General,
   Form,
-  Card
+  Card,
+  CustomModal
 }

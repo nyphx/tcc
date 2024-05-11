@@ -49,10 +49,14 @@ const Disciplina = ({ navigation, disciplina }) => {
 export default function App({ navigation, route }) {
   // mostra disciplinas 
 
-  const [estudando, setEstudando] = useState([])
-  const [finalizado, setFinalizado] = useState([])
-  const [parado, setParado] = useState([])
-  const [futuro, setFuturo] = useState([])
+  const [disciplinas, setDisciplinas] = useState({
+    estudando: [],
+    finalizado: [],
+    parado: [],
+    futuro: []
+  });
+  
+  const { estudando, finalizado, parado, futuro } = disciplinas;
 
   const quantidadeEstudando = estudando.length
   const quantidadeFinalizado = finalizado.length
@@ -62,29 +66,20 @@ export default function App({ navigation, route }) {
   const quantidadeDisciplinas = quantidadeEstudando + quantidadeFinalizado + quantidadeParado + quantidadeFuturo
   
   useEffect(() => {
-    const home = navigation.addListener('focus', () => {
-      const disciplinasRef = collection(db, "disciplinas")
-
-      const estudandoQuery = query(disciplinasRef, where("estado", "==", "Estudando"));
-      const paradoQuery = query(disciplinasRef, where("estado", "==", "Parado"));
-      const finalizadoQuery = query(disciplinasRef, where("estado", "==", "Finalizado"));
-      const futuroQuery = query(disciplinasRef, where("estado", "==", "Futuro"));
+    const home = navigation.addListener('focus', async () => {
+      const disciplinasRef = collection(db, "disciplinas");
+      const snapshot = await getDocs(disciplinasRef);
       
-      const getDisciplinas = async () => {
-        const estudandoSnapshot = await getDocs(estudandoQuery);
-        const paradoSnapshot = await getDocs(paradoQuery);
-        const finalizadoSnapshot = await getDocs(finalizadoQuery);
-        const futuroSnapshot = await getDocs(futuroQuery);
-
-        setEstudando(estudandoSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        setParado(paradoSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        setFinalizado(finalizadoSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        setFuturo(futuroSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-      }
-      
-      getDisciplinas(); 
+      const disciplinasData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+  
+      setDisciplinas({
+        estudando: disciplinasData.filter(disciplina => disciplina.estado === "Estudando"),
+        finalizado: disciplinasData.filter(disciplina => disciplina.estado === "Finalizado"),
+        parado: disciplinasData.filter(disciplina => disciplina.estado === "Parado"),
+        futuro: disciplinasData.filter(disciplina => disciplina.estado === "Futuro")
+      });
     });
-
+  
     return home;
   }, [navigation]);
 
