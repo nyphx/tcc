@@ -1,13 +1,16 @@
 import { 
-  View, 
-  StyleSheet 
+  StyleSheet, 
+  ScrollView,
+  View
 } from 'react-native';
 
 export default Container = ({ children }) => {
   return (
-    <View style={styles.container}>
-      {children}
-    </View>
+    <ScrollView>
+      <View style={styles.container}>
+        {children}
+      </View>
+    </ScrollView>
   );
 };
 

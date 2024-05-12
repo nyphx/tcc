@@ -1,19 +1,22 @@
 import { useState } from 'react'
 import { View } from 'react-native';
-import { db, collection, addDoc } from "../../firebase/firebaseConfig";
+import { db, doc, updateDoc } from "../../firebase/firebaseConfig";
 
 import Container from '../../components/Container'
 import Title from '../../components/Title'
 import TextInputWithLabel from '../../components/TextInputWithLabel'
 import ButtonPrimary from '../../components/ButtonPrimary'
+import ButtonExcluir from '../../components/ButtonDelete'
 
-export default SimuladosForm = ({ navigation }) => {
+export default SimuladosForm = ({ route, navigation }) => {
+  const { data } = route.params
+
   const [simulado, setSimulado] = useState({
-    nome: '',
-    fase: '',
-    data: '',
-    notaFinal: '',
-    notaMaxima: ''
+    nome: data.nome,
+    fase: data.fase,
+    data: data.data,
+    notaFinal: data.notaFinal,
+    notaMaxima: data.notaMaxima
   });
 
   const handleInputChange = (name, value) => {
@@ -25,8 +28,8 @@ export default SimuladosForm = ({ navigation }) => {
 
   const handleSubmit = async () => {
     try {
-      const docRef = collection(db, "simulados")
-      await addDoc(docRef, simulado);
+      const docRef = doc(db, "simulados", data.id);
+      await updateDoc(docRef, simulado);
       
       navigation.goBack();
     } catch (error) {
@@ -34,9 +37,13 @@ export default SimuladosForm = ({ navigation }) => {
     }
   };
 
+  const handleDelete = async () => {
+    console.log("delete")
+  }
+
   return (
     <Container>
-      <Title>Adicionar simulado</Title>
+      <Title>Alterar simulado</Title>
 
       <View>
         <TextInputWithLabel
@@ -80,9 +87,15 @@ export default SimuladosForm = ({ navigation }) => {
         />
       </View>
 
-      <ButtonPrimary handlePress={handleSubmit}>
-        Adicionar simulado
-      </ButtonPrimary>
+      <View style={{ gap: 10 }}>
+        <ButtonPrimary handlePress={handleSubmit}>
+          Alterar simulado
+        </ButtonPrimary>
+
+        <ButtonDelete handlePress={handleDelete}>
+          Excluir
+        </ButtonDelete>
+      </View>
     </Container>
   );
 };

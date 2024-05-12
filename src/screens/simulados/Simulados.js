@@ -1,24 +1,32 @@
-import { 
-  Text, 
-  View,
-  TextInput,
-  StyleSheet
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { collection, getDocs, db } from '../../firebase/firebaseConfig';
 
-import { 
-  Typography, 
-  Buttons, 
-  Count,
-  General,
-  Card
-} from '../../styles/index.js';
+import Container from '../../components/Container';
+import Header from '../../components/Header';
+import Title from '../../components/Title';
+import RedirectButton from '../../components/RedirectButton';
 
-import Title from '../../components/Title'
-import Header from '../../components/Header'
-import RedirectButton from '../../components/RedirectButton'
-import Container from '../../components/Container'
+import Card from './Card';
 
-export default Simulados = () => {
+const Simulados = ({ navigation }) => {
+  const [simulados, setSimulados] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const docRef = collection(db, 'simulados');
+        const docSnap = await getDocs(docRef);
+        setSimulados(docSnap.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    return navigation.addListener('focus', fetchData);
+  }, [navigation]);
+
+  console.log("reload")
+
   return (
     <Container>
       <Header>
@@ -29,9 +37,17 @@ export default Simulados = () => {
         </RedirectButton>
       </Header>
 
-      <View>
-        <Text>dfçklajdflçadk</Text>
-      </View>
+      {
+        simulados.map(data => (
+          <Card 
+          simulado={data} 
+          key={data.id} 
+          onPress={{ navigation }} 
+          />
+        ))
+      }
     </Container>
   );
 };
+
+export default Simulados;

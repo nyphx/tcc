@@ -13,6 +13,8 @@ import AssuntoAlterar from './src/screens/disciplinas/AssuntoAlterar.js'
 
 import Simulados from './src/screens/simulados/Simulados.js'
 import SimuladosForm from './src/screens/simulados/SimuladosForm.js'
+import SimuladoDetalhes from './src/screens/simulados/SimuladoDetalhes.js'
+import SimuladoAlterar from './src/screens/simulados/SimuladoAlterar.js'
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -64,6 +66,16 @@ const NavSimulados = () => {
       <Stack.Screen 
         name="SimuladosForm" 
         component={SimuladosForm}
+      />
+
+      <Stack.Screen 
+        name="SimuladoDetalhes" 
+        component={SimuladoDetalhes}
+      />
+
+      <Stack.Screen 
+        name="SimuladoAlterar" 
+        component={SimuladoAlterar}
       />
     </Stack.Navigator>
   )
