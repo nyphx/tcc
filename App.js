@@ -96,14 +96,11 @@ export default function App() {
             fontSize: 12,
             fontWeight: "500"
           },
-          tabBarIcon: ({ focused, color, size }) => {
+          tabBarIcon: ({ color }) => {
             let iconName;
 
-            if (route.name === 'NavDisciplinas') {
-              iconName = 'book'
-            } if (route.nome === 'NavSimulados') {
-              iconName = 'file-text'
-            }
+            if (route.name === 'NavDisciplinas') iconName = 'book';
+            if (route.name === 'NavSimulados') iconName = 'file-text';
 
             return <Feather name={iconName} size={24} color={color} />;
           },
