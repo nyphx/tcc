@@ -8,6 +8,8 @@ import TextInputWithLabel from '../../components/TextInputWithLabel'
 import ButtonPrimary from '../../components/ButtonPrimary'
 import ButtonDelete from '../../components/ButtonDelete'
 
+import { StyleModal } from './styles/modal'
+
 export default SimuladosForm = ({ route, navigation }) => {
   const { data } = route.params
   const [simulado, setSimulado] = useState(data);
@@ -122,15 +124,15 @@ export default SimuladosForm = ({ route, navigation }) => {
                 Esta ação é irreversível.
               </Text>
             </View>
-            <View style={styles.modalButtonsContainer}>
+            <View style={{ flexDirection: 'row', marginTop: 26 }}>
               <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: 'rgb(220 38 38)' }]}
+                style={[styles.modalButton, { backgroundColor: 'rgb(220 38 38)', flex: 1 }]}
                 onPress={confirmDelete}
               >
                 <Text style={styles.modalButtonText}>Confirmar</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: '#e1e1e1' }]}
+                style={[styles.modalButton, { backgroundColor: '#e1e1e1', flex: 1 }]}
                 onPress={() => setModalVisible(false)}
               >
                 <Text style={[styles.modalButtonText, { color: "#505050" }]}>
@@ -146,45 +148,5 @@ export default SimuladosForm = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  modalTitle: {
-    fontSize: 22,
-    fontWeight: '600',
-    marginBottom: 10
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    marginBottom: 30,
-    backgroundColor: 'white',
-    paddingHorizontal: 20,
-    paddingVertical: 26,
-    borderRadius: 10,
-    alignItems: 'center',
-    width: '90%'
-  },
-  modalText: {
-    fontSize: 18,
-    color: '#505050',
-    textAlign: 'center'
-  },
-  modalButtonsContainer: {
-    flexDirection: 'row',
-    marginTop: 26,
-  },
-  modalButton: {
-    flex: 1,
-    padding: 10,
-    borderRadius: 5,
-    marginRight: 10,
-  },
-  modalButtonText: {
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'white',
-  },
+  ...StyleModal
 });

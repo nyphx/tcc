@@ -1,5 +1,3 @@
-import { useNavigation } from '@react-navigation/native';
-
 import { 
   TouchableOpacity, 
   Text, 

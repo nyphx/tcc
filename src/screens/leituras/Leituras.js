@@ -1,0 +1,51 @@
+import React, { useState, useEffect } from 'react';
+import { collection, getDocs, db } from '../../firebase/firebaseConfig';
+
+import Container from '../../components/Container';
+import Header from '../../components/Header';
+import Title from '../../components/Title';
+import RedirectButton from '../../components/RedirectButton';
+
+const Simulados = ({ navigation }) => {
+  // const [simulados, setSimulados] = useState([]);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const docRef = collection(db, 'simulados');
+  //       const docSnap = await getDocs(docRef);
+  //       setSimulados(docSnap.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+
+  //   return navigation.addListener('focus', fetchData);
+  // }, [navigation]);
+
+  // console.log("reload")
+
+  return (
+    <Container>
+      <Header>
+        <Title>Leituras Obrigatórias</Title>
+
+        <RedirectButton screen="SimuladosForm">
+          Adicionar leitura
+        </RedirectButton>
+      </Header>
+
+      {/* {
+        simulados.map(data => (
+          <Card 
+          simulado={data} 
+          key={data.id} 
+          onPress={{ navigation }} 
+          />
+        ))
+      } */}
+    </Container>
+  );
+};
+
+export default Simulados;

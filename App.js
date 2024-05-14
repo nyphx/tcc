@@ -16,6 +16,8 @@ import SimuladosForm from './src/screens/simulados/SimuladosForm.js'
 import SimuladoDetalhes from './src/screens/simulados/SimuladoDetalhes.js'
 import SimuladoAlterar from './src/screens/simulados/SimuladoAlterar.js'
 
+import Leituras from './src/screens/leituras/Leituras.js'
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -81,6 +83,17 @@ const NavSimulados = () => {
   )
 }
 
+const NavLeituras = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen 
+        name="Leituras" 
+        component={Leituras}
+      />
+    </Stack.Navigator>
+  )
+}
+
 export default function App() {
   return (
     <NavigationContainer>
@@ -121,6 +134,14 @@ export default function App() {
           component={NavSimulados} 
           options={{
             title: "Simulados"
+          }}
+        />
+
+        <Tab.Screen 
+          name="NavLeituras" 
+          component={NavLeituras} 
+          options={{
+            title: "Leituras"
           }}
         />
 
