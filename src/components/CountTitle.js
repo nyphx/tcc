@@ -7,11 +7,11 @@ import {
 
 import Title from './Title'
 
-export default CountTitle = ({ count, title }) => {
+export default CountTitle = ({ count, title, bgColor, textColor}) => {
   return (
     <View style={styles.flex}>
-      <View style={[styles.container, { backgroundColor: "rgb(191 219 254)" }]}>
-        <Text style={[styles.text, { color: "rgb(29 78 216)" }]}>
+      <View style={[styles.container, { backgroundColor: bgColor }]}>
+        <Text style={[styles.text, { color: textColor }]}>
           {count}
         </Text>
       </View>
@@ -26,19 +26,17 @@ export default CountTitle = ({ count, title }) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#ccc', 
-    minWidth: 36, 
-    height: 34, 
+    minWidth: 34, 
+    height: 32, 
     paddingHorizontal: 10,
     alignItems: 'center', 
     justifyContent: 'center',
     marginRight: 10,
-    borderRadius: 6
+    borderRadius: 8
   },
   flex: {
     flexDirection: 'row', 
-    alignItems: "center", 
-    marginBottom: 10,
-    marginTop: 8,
+    alignItems: "center",
   },
   text: {
     fontSize: 20,
