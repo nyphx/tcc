@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import { StatusBar } from 'expo-status-bar';
 import Feather from '@expo/vector-icons/Feather';
 
 import Disciplinas from './src/screens/disciplinas/Disciplinas.js'
@@ -17,6 +18,9 @@ import SimuladoDetalhes from './src/screens/simulados/SimuladoDetalhes.js'
 import SimuladoAlterar from './src/screens/simulados/SimuladoAlterar.js'
 
 import Leituras from './src/screens/leituras/Leituras.js'
+import LeiturasForm from './src/screens/leituras/LeiturasForm.js'
+import LeituraDetalhes from './src/screens/leituras/LeituraDetalhes.js'
+import LeituraAlterar from './src/screens/leituras/LeituraAlterar.js'
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -90,62 +94,82 @@ const NavLeituras = () => {
         name="Leituras" 
         component={Leituras}
       />
+
+      <Stack.Screen 
+        name="LeiturasForm" 
+        component={LeiturasForm}
+      />
+
+      <Stack.Screen 
+        name="LeituraDetalhes" 
+        component={LeituraDetalhes}
+      />
+
+      <Stack.Screen 
+        name="LeituraAlterar" 
+        component={LeituraAlterar}
+      />
     </Stack.Navigator>
   )
 }
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator 
-        initialRouteName="NavSimulados"
-        screenOptions={({ route }) => ({ 
-          headerShown: false,
-          tabBarStyle: { 
-            height: 64,
-            paddingBottom: 12,
-          },
-          tabBarLabelStyle: {
-            fontSize: 12,
-            fontWeight: "500"
-          },
-          tabBarIcon: ({ color }) => {
-            let iconName;
+    <>
+      <StatusBar backgroundColor="white" />
+      
+      <NavigationContainer>
+        <Tab.Navigator 
+          initialRouteName="NavLeituras"
+          screenOptions={({ route }) => ({ 
+            headerShown: false,
+            tabBarStyle: { 
+              height: 64,
+              paddingBottom: 12,
+            },
+            tabBarLabelStyle: {
+              fontSize: 12,
+              fontWeight: "500"
+            },
+            tabBarIcon: ({ color }) => {
+              let iconName;
 
-            if (route.name === 'NavDisciplinas') iconName = 'book';
-            if (route.name === 'NavSimulados') iconName = 'file-text';
+              if (route.name === 'NavDisciplinas') iconName = 'list';
+              if (route.name === 'NavSimulados') iconName = 'file-text';
+              if (route.name === 'NavLeituras') iconName = 'book';
 
-            return <Feather name={iconName} size={24} color={color} />;
-          },
-          tabBarActiveTintColor: 'rgb(59 130 246)',
-          tabBarInactiveTintColor: 'gray',
-      })}>
+              return <Feather name={iconName} size={24} color={color} />;
+            },
+            tabBarActiveTintColor: 'rgb(59 130 246)',
+            tabBarInactiveTintColor: 'gray',
+        })}>
 
-        <Tab.Screen 
-          name="NavDisciplinas" 
-          component={NavDisciplinas} 
-          options={{
-            title: "Discplinas"
-          }}
-        />
-        
-        <Tab.Screen 
-          name="NavSimulados" 
-          component={NavSimulados} 
-          options={{
-            title: "Simulados"
-          }}
-        />
+          <Tab.Screen 
+            name="NavDisciplinas" 
+            component={NavDisciplinas} 
+            options={{
+              title: "Discplinas"
+            }}
+          />
+          
+          <Tab.Screen 
+            name="NavSimulados" 
+            component={NavSimulados} 
+            options={{
+              title: "Simulados"
+            }}
+          />
 
-        <Tab.Screen 
-          name="NavLeituras" 
-          component={NavLeituras} 
-          options={{
-            title: "Leituras"
-          }}
-        />
+          <Tab.Screen 
+            name="NavLeituras" 
+            component={NavLeituras} 
+            options={{
+              title: "Leituras"
+            }}
+          />
 
-      </Tab.Navigator>
-    </NavigationContainer>
+        </Tab.Navigator>
+      </NavigationContainer>
+    </>
   );
 }

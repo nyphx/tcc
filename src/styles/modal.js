@@ -1,20 +1,49 @@
-export const container = {
+const modalTitle = {
+  fontSize: 22,
+  fontWeight: '600',
+  marginBottom: 10
+}
+
+const modalContainer = {
   flex: 1,
   justifyContent: 'flex-end',
+  alignItems: 'center',
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
 }
 
-export const content = {
-  alignItems: 'center',
+const modalContent = {
+  width: '90%',
+  marginBottom: 30,
   backgroundColor: 'white',
-  marginHorizontal: 20,
-  marginVertical: 30,
-  padding: 20,
-  borderRadius: 8,
+  paddingHorizontal: 20,
+  paddingVertical: 26,
+  borderRadius: 10,
 }
 
-export const title = {
-  fontSize: 20,
-  fontWeight: '700',
-  marginBottom: 10,
+const modalText = {
+  fontSize: 18,
+  color: '#505050',
+  textAlign: 'center'
+}
+
+const modalButton = {
+  padding: 10,
+  borderRadius: 5,
+  marginRight: 10,
+}
+
+const modalButtonText = {
+  textAlign: 'center',
+  fontSize: 16,
+  fontWeight: '600',
+  color: 'white',
+}
+
+export const StyleModal = {
+  modalTitle,
+  modalContainer,
+  modalContent,
+  modalText,
+  modalButton,
+  modalButtonText,
 }

@@ -4,48 +4,52 @@ import { collection, getDocs, db } from '../../firebase/firebaseConfig';
 import Container from '../../components/Container';
 import Header from '../../components/Header';
 import Title from '../../components/Title';
+import CountTitle from '../../components/CountTitle';
 import RedirectButton from '../../components/RedirectButton';
 
-const Simulados = ({ navigation }) => {
-  // const [simulados, setSimulados] = useState([]);
+import Card from './Card';
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const docRef = collection(db, 'simulados');
-  //       const docSnap = await getDocs(docRef);
-  //       setSimulados(docSnap.docs.map(doc => ({ ...doc.data(), id: doc.id })));
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
+export default Leituras = ({ navigation }) => {
+  const [leituras, setLeituras] = useState([]);
 
-  //   return navigation.addListener('focus', fetchData);
-  // }, [navigation]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const docRef = collection(db, 'leituras');
+        const docSnap = await getDocs(docRef);
+        setLeituras(docSnap.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-  // console.log("reload")
+    return navigation.addListener('focus', fetchData);
+  }, [navigation]);
+
+  console.log("reload")
 
   return (
     <Container>
       <Header>
-        <Title>Leituras Obrigatórias</Title>
+        <CountTitle 
+          title="Leituras Obrigatórias"
+          count="34"
+        />
 
-        <RedirectButton screen="SimuladosForm">
+        <RedirectButton screen="LeiturasForm">
           Adicionar leitura
         </RedirectButton>
       </Header>
 
-      {/* {
-        simulados.map(data => (
+      {
+        leituras.map(data => (
           <Card 
-          simulado={data} 
-          key={data.id} 
-          onPress={{ navigation }} 
+            leitura={data} 
+            key={data.id} 
+            onPress={{ navigation }} 
           />
         ))
-      } */}
+      }
     </Container>
   );
 };
-
-export default Simulados;

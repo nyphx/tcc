@@ -15,7 +15,7 @@ export default Title = ({ children }) => {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: "700"
   }
 });

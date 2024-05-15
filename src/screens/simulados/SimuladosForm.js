@@ -7,7 +7,7 @@ import Title from '../../components/Title'
 import TextInputWithLabel from '../../components/TextInputWithLabel'
 import ButtonPrimary from '../../components/ButtonPrimary'
 
-import { StyleModal } from './styles/modal'
+import { StyleModal } from '../../styles/modal'
 
 export default SimuladosForm = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);

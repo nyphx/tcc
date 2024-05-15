@@ -8,7 +8,7 @@ import TextInputWithLabel from '../../components/TextInputWithLabel'
 import ButtonPrimary from '../../components/ButtonPrimary'
 import ButtonDelete from '../../components/ButtonDelete'
 
-import { StyleModal } from './styles/modal'
+import { StyleModal } from '../../styles/modal'
 
 export default SimuladosForm = ({ route, navigation }) => {
   const { data } = route.params
