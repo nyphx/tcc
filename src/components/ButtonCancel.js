@@ -20,7 +20,7 @@ export default Button = ({ handlePress, children }) => {
 const styles = StyleSheet.create({
   text: {
     textAlign: 'center',
-    color: "white",
+    color: "#505050",
     fontWeight: "600",
     fontSize: 16
   },
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 6,
-    backgroundColor: "rgb(59 130 246)",
+    backgroundColor: "#ddd",
     width: '100%'
   }
 });

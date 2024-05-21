@@ -17,6 +17,11 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 
 import Container from '../../components/Container'
+import Title from '../../components/Title'
+import Estado from './components/Estado'
+import Info from './components/Info'
+import ProcessoPaginas from './components/ProcessoPaginas'
+import ProcessoCapitulos from './components/ProcessoCapitulos'
 
 export default LeituraDetalhes = ({ route, navigation }) => {
   const { id } = route.params
@@ -39,15 +44,45 @@ export default LeituraDetalhes = ({ route, navigation }) => {
   return (
     <ScrollView>
       <Container>
-        <TouchableOpacity 
-            style={styles.editButton}
-            onPress={() => navigation.navigate(
-              'LeituraAlterar',
-              { data: leitura }
-            )}
-          >
-            <MaterialIcons name="edit" size={26} color="#505050" />
-        </TouchableOpacity>
+        <View style={styles.header}>
+          <Title>{leitura.livro}</Title>
+
+          <TouchableOpacity 
+              style={styles.editButton}
+              onPress={() => navigation.navigate(
+                'LeituraAlterar',
+                { data: leitura }
+              )}
+              >
+              <MaterialIcons name="edit" size={26} color="#505050" />
+          </TouchableOpacity>
+        </View>
+
+        <Estado estado={leitura.estado} />
+      </Container>
+      
+      <Info livro={leitura} />
+
+      <Container>
+        <View style={{ marginTop: -30 }}>
+          <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 18 }}>
+            Processo de leitura
+          </Text>
+
+          <View style={{ flexDirection: 'row', gap: 18 }}>
+            <ProcessoPaginas
+              id={leitura.id}
+              atualPaginas={leitura.atualPaginas}
+              totalPaginas={leitura.totalPaginas}
+              />
+
+            <ProcessoCapitulos
+              id={leitura.id}
+              atualCapitulos={leitura.atualCapitulos}
+              totalCapitulos={leitura.totalCapitulos}
+              />
+          </View>
+        </View>
       </Container>
     </ScrollView> 
   );
@@ -55,30 +90,11 @@ export default LeituraDetalhes = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  headerContent: {
-    gap: 4,
-  },
-  subTitle: {
-    fontSize: 20,
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center'
   },
   editButton: {
     padding: 6,
-  },
-  info: {
-    backgroundColor: 'white',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  infoTitle: {
-    fontSize: 18,
-    fontWeight: '600',
   },
 });

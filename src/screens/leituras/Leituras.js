@@ -7,7 +7,7 @@ import Title from '../../components/Title';
 import CountTitle from '../../components/CountTitle';
 import RedirectButton from '../../components/RedirectButton';
 
-import Card from './Card';
+import Card from './components/Card';
 
 export default Leituras = ({ navigation }) => {
   const [leituras, setLeituras] = useState({

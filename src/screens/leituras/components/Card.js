@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View, Pressable, StyleSheet } from 'react-native';
-import TextPrimary from '../../components/TextPrimary';
+import TextPrimary from '../../../components/TextPrimary';
 
 const Card = ({ leitura, onPress }) => {
   const { navigation } = onPress;
