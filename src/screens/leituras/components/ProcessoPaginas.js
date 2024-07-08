@@ -6,25 +6,34 @@ import { Entypo } from '@expo/vector-icons';
 import ButtonPrimary from '../../../components/ButtonPrimary'
 import ButtonCancel from '../../../components/ButtonCancel'
 
-export default ProcessoPaginas = ({ id, atualPaginas, totalPaginas }) => {
+export default ProcessoPaginas = ({ atual, total }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [atual, setAtual] = useState(atualPaginas.toString())
+
+  const [atualPaginas, setAtualPaginas] = useState(atual)
 
   const aumentarValor = () => {
-    setAtual((prev) => 
-      (parseInt(prev, 10) + 1).toString()
-    );
+    // verifica se o número atual de capítulos é menor que o número total de capítulos
+    if (parseInt(atualPaginas) < parseInt(total)) {
+      // incrementa o número atual de capítulos em 1
+      const novoValor = parseInt(atualPaginas) + 1;
+      // atualiza o estado com o novo valor convertido para string
+      setAtualPaginas(novoValor.toString());
+    }
   };
 
   const diminuirValor = () => {
-    setAtual((prev) => 
-      (parseInt(prev, 10) > 0 ? (parseInt(prev, 10) - 1).toString() : '0')
-    );
+    // verifica se o número atual de capítulos é maior que 1
+    if (parseInt(atualPaginas) > 0) {
+      // decrementa o número atual de capítulos em 1
+      const novoValor = parseInt(atualPaginas) - 1;
+      // atualiza o estado com o novo valor convertido para string
+      setAtualPaginas(novoValor.toString());
+    }
   };
 
   const handleSubmit = () => {
     setModalVisible(!modalVisible)
-    console.log(atual)
+    console.log(atualPaginas)
   }
 
   return (
@@ -42,7 +51,7 @@ export default ProcessoPaginas = ({ id, atualPaginas, totalPaginas }) => {
             {atualPaginas}
           </Text>
           <Text style={styles.textTotal}>
-            / {totalPaginas}
+            / {total}
           </Text>
         </View>
       </Pressable>
@@ -62,7 +71,7 @@ export default ProcessoPaginas = ({ id, atualPaginas, totalPaginas }) => {
 
               <TouchableOpacity
                 style={styles.buttonControl}
-                onPress={diminuirValor}
+                // onPress={diminuirValor}
               >
                 <Text>
                   <Entypo name="minus" size={20} color="white" />
@@ -71,14 +80,14 @@ export default ProcessoPaginas = ({ id, atualPaginas, totalPaginas }) => {
 
               <TextInput 
                 style={styles.input}
-                value={atual}
-                onChangeText={(text) => setAtual(text)}
+                value={atualPaginas}
+                onChangeText={(text) => setAtualPaginas(text)}
                 keyboardType="numeric"
               />
 
               <TouchableOpacity
                 style={styles.buttonControl}
-                onPress={aumentarValor}
+                // onPress={aumentarValor}
               >
                 <Text>
                   <Entypo name="plus" size={20} color="white" />

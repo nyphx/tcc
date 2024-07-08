@@ -1,27 +1,39 @@
 import { useState } from 'react'
-import { View, Text, Pressable, StyleSheet, TextInput, Modal } from 'react-native'
+import { View, Text, Pressable, StyleSheet, TextInput, Modal, TouchableOpacity } from 'react-native'
 
 import { Entypo } from '@expo/vector-icons';
 
-export default ProcessoCapitulos = ({ id, atualCapitulos, totalCapitulos }) => {
+import ButtonPrimary from '../../../components/ButtonPrimary'
+import ButtonCancel from '../../../components/ButtonCancel'
+
+export default ProcessoCapitulos = ({ atual, total }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [atual, setAtual] = useState(atualCapitulos.toString())
+  
+  const [atualCapitulos, setAtualCapitulos] = useState(atual)
 
   const aumentarValor = () => {
-    setAtual((prev) => 
-      (parseInt(prev, 10) + 1).toString()
-    );
+    // verifica se o número atual de capítulos é menor que o número total de capítulos
+    if (parseInt(atualCapitulos) < parseInt(total)) {
+      // incrementa o número atual de capítulos em 1
+      const novoValor = parseInt(atualCapitulos) + 1;
+      // atualiza o estado com o novo valor convertido para string
+      setAtualCapitulos(novoValor.toString());
+    }
   };
 
   const diminuirValor = () => {
-    setAtual((prev) => 
-      (parseInt(prev, 10) > 0 ? (parseInt(prev, 10) - 1).toString() : '0')
-    );
+    // verifica se o número atual de capítulos é maior que 1
+    if (parseInt(atualCapitulos) > 0) {
+      // decrementa o número atual de capítulos em 1
+      const novoValor = parseInt(atualCapitulos) - 1;
+      // atualiza o estado com o novo valor convertido para string
+      setAtualCapitulos(novoValor.toString());
+    }
   };
 
   const handleSubmit = () => {
     setModalVisible(!modalVisible)
-    console.log(atual)
+    console.log(atualCapitulos)
   }
 
   return (
@@ -39,7 +51,7 @@ export default ProcessoCapitulos = ({ id, atualCapitulos, totalCapitulos }) => {
             {atualCapitulos}
           </Text>
           <Text style={styles.textTotal}>
-            / {totalCapitulos}
+            / {total}
           </Text>
         </View>
       </Pressable>
@@ -57,49 +69,41 @@ export default ProcessoCapitulos = ({ id, atualCapitulos, totalCapitulos }) => {
               </Text>
             <View style={styles.countForm}>
 
-              <Pressable
-                style={styles.buttonClose}
+              <TouchableOpacity
+                style={styles.buttonControl}
                 onPress={diminuirValor}
               >
                 <Text>
                   <Entypo name="minus" size={20} color="white" />
                 </Text>
-              </Pressable>
+              </TouchableOpacity>
 
               <TextInput 
                 style={styles.input}
-                value={atual}
-                onChangeText={(text) => setAtual(text)}
+                value={atualCapitulos}
+                onChangeText={(text) => setAtualCapitulos(text)}
                 keyboardType="numeric"
               />
 
-              <Pressable
-                style={styles.buttonClose}
+              <TouchableOpacity
+                style={styles.buttonControl}
                 onPress={aumentarValor}
               >
                 <Text>
                   <Entypo name="plus" size={20} color="white" />
                 </Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
           
-            <Pressable
-              onPress={handleSubmit}
-              style={styles.buttonClose}
-            >
-              <Text>
-                Confirmar
-              </Text>
-            </Pressable>
+            <ButtonPrimary handlePress={handleSubmit}>
+              <Text>Confirmar</Text>
+            </ButtonPrimary>
 
-            <Pressable
-              onPress={() => setModalVisible(!modalVisible)}
-              style={styles.buttonClose}
-            >
-              <Text>
-                Cancelar
-              </Text>
-            </Pressable>
+            <View style={{ marginBottom: 10 }} />
+
+            <ButtonCancel handlePress={() => setModalVisible(!modalVisible)} >
+              <Text>Cancelar</Text>
+            </ButtonCancel>
           </View>
         </View>
       </Modal>
@@ -131,22 +135,28 @@ const styles = StyleSheet.create({
     fontSize: 16, 
     color: "#909090"
   },
-  buttonClose: {
-    backgroundColor: '#2196F3',
+  buttonControl: {
+    backgroundColor: 'rgb(22 163 74)',
     padding: 10,
     borderRadius: 6,
+    alignContent: 'center',
+    justifyContent: 'center'
   },
-  input: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    textAlign: 'center',
+  input : {
     fontSize: 16,
-    width: '70%'
+    borderWidth: 1,
+    borderColor: 'rgb(148 163 184)',
+    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    backgroundColor: 'white',
+    width: '70%',
+    textAlign: 'center'
   },
   countForm: {
     flexDirection: 'row',
     gap: 8,
-    marginBottom: 14,
+    marginBottom: 20,
   },
   modalContainer: {
     flex: 1,
@@ -162,8 +172,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
-    marginBottom: 10,
+    marginBottom: 14,
   }
 })

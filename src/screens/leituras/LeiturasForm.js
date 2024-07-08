@@ -36,7 +36,14 @@ export default LeiturasForm = ({ navigation }) => {
   const handleSubmit = async () => {
     try {
       const docRef = collection(db, "leituras")
-      await addDoc(docRef, leitura);
+      await addDoc(
+        docRef, 
+        {
+          ...leitura,
+          atualPaginas: "0",
+          atualCapitulos: "0"
+        }
+      );
       
       navigation.goBack();
     } catch (error) {

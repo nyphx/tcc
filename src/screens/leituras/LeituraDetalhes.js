@@ -63,27 +63,27 @@ export default LeituraDetalhes = ({ route, navigation }) => {
       
       <Info livro={leitura} />
 
-      <Container>
-        <View style={{ marginTop: -30 }}>
-          <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 18 }}>
-            Processo de leitura
-          </Text>
+      { leitura.id && ( // verifica se o id da leitura está definido
+        <Container>
+          <View style={{ marginTop: -30 }}>
+            <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 18 }}>
+              Processo de leitura
+            </Text>
 
-          <View style={{ flexDirection: 'row', gap: 18 }}>
-            <ProcessoPaginas
-              id={leitura.id}
-              atualPaginas={leitura.atualPaginas}
-              totalPaginas={leitura.totalPaginas}
+            <View style={{ flexDirection: 'row', gap: 18 }}>
+              <ProcessoPaginas 
+                atual={leitura.atualPaginas}
+                total={leitura.totalPaginas}
               />
 
-            <ProcessoCapitulos
-              id={leitura.id}
-              atualCapitulos={leitura.atualCapitulos}
-              totalCapitulos={leitura.totalCapitulos}
+              <ProcessoCapitulos
+                atual={leitura.atualCapitulos}
+                total={leitura.totalCapitulos}
               />
+            </View>
           </View>
-        </View>
-      </Container>
+        </Container>
+      )}
     </ScrollView> 
   );
 };

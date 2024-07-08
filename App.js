@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { StatusBar } from 'expo-status-bar';
-import Feather from '@expo/vector-icons/Feather';
+import { Entypo } from '@expo/vector-icons';
 
 import Disciplinas from './src/screens/disciplinas/Disciplinas.js'
 import DisciplinasForm from './src/screens/disciplinas/DisciplinasForm.js'
@@ -21,6 +21,9 @@ import Leituras from './src/screens/leituras/Leituras.js'
 import LeiturasForm from './src/screens/leituras/LeiturasForm.js'
 import LeituraDetalhes from './src/screens/leituras/LeituraDetalhes.js'
 import LeituraAlterar from './src/screens/leituras/LeituraAlterar.js'
+
+import Redacoes from './src/screens/redacoes/Redacoes.js'
+import RedacoesForm from './src/screens/redacoes/RedacoesForm.js'
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -87,6 +90,22 @@ const NavSimulados = () => {
   )
 }
 
+const NavRedacoes = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen 
+        name="Redacoes" 
+        component={Redacoes}
+      />
+
+      <Stack.Screen 
+        name="RedacoesForm" 
+        component={RedacoesForm}
+      />
+    </Stack.Navigator>
+  )
+}
+
 const NavLeituras = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -124,8 +143,9 @@ export default function App() {
           screenOptions={({ route }) => ({ 
             headerShown: false,
             tabBarStyle: { 
-              height: 64,
+              height: 70,
               paddingBottom: 12,
+              paddingTop: 12,
             },
             tabBarLabelStyle: {
               fontSize: 12,
@@ -135,10 +155,11 @@ export default function App() {
               let iconName;
 
               if (route.name === 'NavDisciplinas') iconName = 'list';
-              if (route.name === 'NavSimulados') iconName = 'file-text';
+              if (route.name === 'NavSimulados') iconName = 'documents';
               if (route.name === 'NavLeituras') iconName = 'book';
+              if (route.name === 'NavRedacoes') iconName = 'pencil';
 
-              return <Feather name={iconName} size={24} color={color} />;
+              return <Entypo name={iconName} size={24} color={color} />;
             },
             tabBarActiveTintColor: 'rgb(59 130 246)',
             tabBarInactiveTintColor: 'gray',
@@ -161,13 +182,20 @@ export default function App() {
           />
 
           <Tab.Screen 
+            name="NavRedacoes" 
+            component={NavRedacoes} 
+            options={{
+              title: "Redações"
+            }}
+          />
+
+          <Tab.Screen 
             name="NavLeituras" 
             component={NavLeituras} 
             options={{
               title: "Leituras"
             }}
           />
-
         </Tab.Navigator>
       </NavigationContainer>
     </>
