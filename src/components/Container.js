@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 20,
-    marginTop: 60,
-    marginBottom: 20,
+    marginTop: 70,
+    marginBottom: 30,
     gap: 20
   }
 });

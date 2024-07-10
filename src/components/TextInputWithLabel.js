@@ -13,7 +13,7 @@ export default TextInputWithLabel = ({
   keyboardType 
 }) => {
   return (
-    <View style={{ marginBottom: 14 }}>
+    <View style={{ marginBottom: 14, flex: 1 }}>
       <Text style={styles.label}>
         {label}
       </Text>
