@@ -67,6 +67,7 @@ const RedacoesForm = ({ navigation }) => {
             value={redacao.notaFinal}
             onChangeText={text => handleInputRedacao('notaFinal', text)}
             keyboardType="numeric"
+            twoColumn={true}
           />
 
           <TextInputWithLabel
@@ -75,6 +76,7 @@ const RedacoesForm = ({ navigation }) => {
             value={redacao.notaMaxima}
             onChangeText={text => handleInputRedacao('notaMaxima', text)}
             keyboardType="numeric"
+            twoColumn={true}
           />
         </View>
 

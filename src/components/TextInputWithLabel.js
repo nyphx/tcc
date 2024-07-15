@@ -11,10 +11,11 @@ export default TextInputWithLabel = ({
   value, 
   onChangeText, 
   keyboardType,
-  numberOfLines
+  numberOfLines,
+  twoColumn=false,
 }) => {
   return (
-    <View style={{ marginBottom: 14, flex: 1 }}>
+    <View style={[{ marginBottom: 14}, twoColumn && { flex: 1 } ]}>
       <Text style={styles.label}>
         {label}
       </Text>
@@ -48,6 +49,6 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     paddingBottom: 6,
     paddingHorizontal: 16,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   }
 })
