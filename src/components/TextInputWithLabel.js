@@ -10,7 +10,8 @@ export default TextInputWithLabel = ({
   placeholder,
   value, 
   onChangeText, 
-  keyboardType 
+  keyboardType,
+  numberOfLines
 }) => {
   return (
     <View style={{ marginBottom: 14, flex: 1 }}>
@@ -19,6 +20,8 @@ export default TextInputWithLabel = ({
       </Text>
 
       <TextInput
+        multiline
+        numberOfLines={numberOfLines}
         style={styles.input}
         placeholder={placeholder}
         value={value}
@@ -31,18 +34,20 @@ export default TextInputWithLabel = ({
 
 
 const styles = StyleSheet.create({
-  label : {
+  label: {
     fontSize: 18,
     marginBottom: 8,
     fontWeight: "500"
   },
-  input : {
+  input: {
+    textAlignVertical: "top",
     fontSize: 16,
     borderWidth: 1,
     borderColor: 'rgb(203 213 225)',
     borderRadius: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
+    paddingTop: 14,
+    paddingBottom: 6,
+    paddingHorizontal: 16,
     backgroundColor: 'white'
   }
 })

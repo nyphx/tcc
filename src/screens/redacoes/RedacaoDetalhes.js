@@ -17,18 +17,18 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 
 import Container from '../../components/Container'
+import Info from './components/Info'
 
-export default SimuladoDetalhes = ({ route, navigation }) => {
+export default RedacaoDetalhes = ({ route, navigation }) => {
   const { id } = route.params
-  const [simulado, setSimulado] = useState(null);
-  console.log(simulado)
+  const [redacao, setRedacao] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const docRef = doc(db, "simulados", id);
+        const docRef = doc(db, "redacoes", id);
         const docSnap = await getDoc(docRef);
-        setSimulado({ ...docSnap.data(), id: docSnap.id });
+        setRedacao({ ...docSnap.data(), id: docSnap.id });
       } catch (error) {
         console.error(error);
       }
@@ -36,44 +36,38 @@ export default SimuladoDetalhes = ({ route, navigation }) => {
 
     return navigation.addListener('focus', fetchData);
   }, [navigation, id]);
+
   console.log("reload")
+  console.log(redacao)
 
   return (
-    <ScrollView>
-      <Container>
-        <View style={styles.header}>
-          <View style={styles.headerContent}>
-            <Title>{simulado?.nome}</Title>
-            <Text style={styles.subTitle}>
-              {simulado?.fase}ª fase / dia
-            </Text>
-          </View>
+    <Container>
+      <View style={styles.header}>
+        <Text style={{ fontSize: 20, fontWeight: '600', flex: 1 }}>
+          {redacao?.tema}
+        </Text>
 
-          <TouchableOpacity 
-            style={styles.editButton}
-            onPress={() => navigation.navigate(
-              'SimuladoAlterar',
-              { data: simulado }
-            )}
-          >
-            <MaterialIcons name="edit" size={26} color="#505050" />
-          </TouchableOpacity>
-        </View>
-      </Container>
-
-      <View style={styles.info}>
-        <Text style={styles.infoTitle}>Data realizada</Text>
-        <TextPrimary>{simulado?.data}</TextPrimary>
+        <TouchableOpacity 
+          style={styles.editButton}
+          // onPress={() => navigation.navigate(
+            //   'SimuladoAlterar',
+            //   { data: simulado }
+            // )}
+            >
+          <MaterialIcons name="edit" size={26} color="#505050" />
+        </TouchableOpacity>
       </View>
-    </ScrollView> 
+
+      <View style={{ marginHorizontal: -20 }}>
+        <Info redacao={redacao} />
+      </View>
+    </Container>
   );
 };
 
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
   },
   headerContent: {
     gap: 4,
@@ -83,6 +77,7 @@ const styles = StyleSheet.create({
   },
   editButton: {
     padding: 6,
+    marginLeft: 4
   },
   info: {
     backgroundColor: 'white',

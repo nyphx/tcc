@@ -24,6 +24,7 @@ import LeituraAlterar from './src/screens/leituras/LeituraAlterar.js'
 
 import Redacoes from './src/screens/redacoes/Redacoes.js'
 import RedacoesForm from './src/screens/redacoes/RedacoesForm.js'
+import RedacaoDetalhes from './src/screens/redacoes/RedacaoDetalhes.js'
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -102,6 +103,11 @@ const NavRedacoes = () => {
         name="RedacoesForm" 
         component={RedacoesForm}
       />
+
+      <Stack.Screen 
+        name="RedacaoDetalhes" 
+        component={RedacaoDetalhes}
+      />
     </Stack.Navigator>
   )
 }
@@ -139,7 +145,7 @@ export default function App() {
       
       <NavigationContainer>
         <Tab.Navigator 
-          initialRouteName="NavLeituras"
+          initialRouteName="NavRedacoes"
           screenOptions={({ route }) => ({ 
             headerShown: false,
             tabBarStyle: { 

@@ -5,25 +5,27 @@ import Container from '../../components/Container';
 import Header from '../../components/Header';
 import Title from '../../components/Title';
 import RedirectButton from '../../components/RedirectButton';
+import Card from './components/Card'
 
 const Redacao = ({ navigation }) => {
-  // const [simulados, setSimulados] = useState([]);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const docRef = collection(db, 'simulados');
-  //       const docSnap = await getDocs(docRef);
-  //       setSimulados(docSnap.docs.map(doc => ({ ...doc.data(), id: doc.id })));
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   return navigation.addListener('focus', fetchData);
-  // }, [navigation]);
-
   console.log("reload")
+ 
+  const [redacoes, setRedacoes] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const docRef = collection(db, 'redacoes');
+        const docSnap = await getDocs(docRef);
+
+        setRedacoes(docSnap.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    return navigation.addListener('focus', fetchData);
+  }, [navigation]);
 
   return (
     <Container>
@@ -35,15 +37,15 @@ const Redacao = ({ navigation }) => {
         </RedirectButton>
       </Header>
 
-      {/* {
-        simulados.map(data => (
+      {
+        redacoes.map(data => (
           <Card 
-          simulado={data} 
-          key={data.id} 
-          onPress={{ navigation }} 
+            redacao={data} 
+            key={data.id} 
+            onPress={{ navigation }} 
           />
         ))
-      } */}
+      }
     </Container>
   );
 };
