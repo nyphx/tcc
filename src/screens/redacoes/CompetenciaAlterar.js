@@ -1,16 +1,7 @@
 import { useState, useEffect } from 'react'
-import { db, collection, addDoc } from "../../firebase/firebaseConfig";
-import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid'; 
+import { db, doc, getDoc, updateDoc, deleteDoc } from "../../firebase/firebaseConfig";
+import { View, StyleSheet } from 'react-native';
 
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity
-} from 'react-native';
-
-import { Feather } from '@expo/vector-icons';
 import Container from '../../components/Container'
 import Title from '../../components/Title'
 import TextInputWithLabel from '../../components/TextInputWithLabel'
@@ -20,9 +11,6 @@ import ButtonDelete from '../../components/ButtonDelete'
 const CompetenciaAlterar = ({ navigation, route }) => {
   const { redacaoId, data } = route.params
   const [competencia, setCompetencia] = useState({});
-
-  console.log(redacaoId)
-  console.log(data)
 
   const handleInputCompetencia = (name, value) => {
     setCompetencia(prevState => ({
@@ -34,9 +22,10 @@ const CompetenciaAlterar = ({ navigation, route }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const competenciaRef = collection(db, 'redacoes', redacaoId, 'competencias', data.id);
+        const competenciaRef = doc(db, 'redacoes', redacaoId, 'competencias', data.id);
         const competenciaSnap = await getDoc(competenciaRef);
-        setCompetencia(competenciaSnap.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+
+        setCompetencia({...competenciaSnap.data(), id: competenciaSnap.id });
       } catch (error) {
         console.error(error);
       }
@@ -45,15 +34,31 @@ const CompetenciaAlterar = ({ navigation, route }) => {
     return navigation.addListener('focus', fetchData);
   }, []);
 
-  const handleSubmit = async () => {
+  const updateCompetencia = async () => {
     try {
-      console.log("ok")
+      const competenciaRef = doc(db, 'redacoes', redacaoId, 'competencias', data.id);
+      
+      await updateDoc(competenciaRef, {
+        "descricao": competencia.descricao,
+        "notaFinal": competencia.notaFinal,
+        "notaMaxima": competencia.notaMaxima
+      });
       
       navigation.goBack()
     } catch (error) {
       console.error(error);
     }
   };
+
+  const deleteCompetencia = async () => {
+    try {
+      const competenciaRef = doc(db, 'redacoes', redacaoId, 'competencias', data.id);
+      await deleteDoc(competenciaRef)
+      navigation.goBack()
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   console.log('reload')
 
@@ -100,11 +105,11 @@ const CompetenciaAlterar = ({ navigation, route }) => {
         />
       </View>
 
-      <ButtonPrimary handlePress={handleSubmit}>
+      <ButtonPrimary handlePress={updateCompetencia}>
         Alterar
       </ButtonPrimary>
 
-      <ButtonDelete>
+      <ButtonDelete handlePress={deleteCompetencia}>
         Excluir
       </ButtonDelete>
     </Container>

@@ -90,7 +90,7 @@ export default RedacaoDetalhes = ({ route, navigation }) => {
     };
 
     return navigation.addListener('focus', fetchData);
-  }, [navigation, id]);
+  }, []);
 
   console.log("reload")
 
