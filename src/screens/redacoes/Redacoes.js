@@ -37,6 +37,12 @@ const Redacao = ({ navigation }) => {
         </RedirectButton>
       </Header>
 
+      { redacoes.length === 0 &&
+        <Text style={{ fontSize: 16, marginTop: 16 }}>
+          Você ainda adicionou nenhuma redação.
+        </Text>
+      }
+
       {
         redacoes.map(data => (
           <Card 

@@ -116,22 +116,4 @@ const CompetenciaAlterar = ({ navigation, route }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  competenciaHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between', 
-    alignItems: 'center',
-  },
-  competenciaTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  separator: {
-    borderWidth: 0.5,
-    borderColor: '#ccc',
-    marginBottom: 20,
-    marginTop: 10,
-  }
-});
-
 export default CompetenciaAlterar;

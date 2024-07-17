@@ -25,6 +25,7 @@ import LeituraAlterar from './src/screens/leituras/LeituraAlterar.js'
 import Redacoes from './src/screens/redacoes/Redacoes.js'
 import RedacoesForm from './src/screens/redacoes/RedacoesForm.js'
 import RedacaoDetalhes from './src/screens/redacoes/RedacaoDetalhes.js'
+import RedacaoAlterar from './src/screens/redacoes/RedacaoAlterar.js'
 import CompetenciaForm from './src/screens/redacoes/CompetenciaForm.js'
 import CompetenciaAlterar from './src/screens/redacoes/CompetenciaAlterar.js'
 
@@ -109,6 +110,11 @@ const NavRedacoes = () => {
       <Stack.Screen 
         name="RedacaoDetalhes" 
         component={RedacaoDetalhes}
+      />
+
+      <Stack.Screen 
+        name="RedacaoAlterar" 
+        component={RedacaoAlterar}
       />
 
       <Stack.Screen 

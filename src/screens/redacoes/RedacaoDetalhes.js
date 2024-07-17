@@ -21,7 +21,7 @@ import Container from '../../components/Container'
 import ButtonPrimary from '../../components/ButtonPrimary'
 import Info from './components/Info'
 
-const Header = ({ redacao }) => {
+const Header = ({ redacao, navigation }) => {
   return (
     <View style={styles.header}>
       <Text style={{ fontSize: 20, fontWeight: '600', flex: 1 }}>
@@ -30,11 +30,11 @@ const Header = ({ redacao }) => {
 
       <TouchableOpacity 
         style={styles.editButton}
-        // onPress={() => navigation.navigate(
-          //   'SimuladoAlterar',
-          //   { data: simulado }
-          // )}
-          >
+        onPress={() => navigation.navigate(
+          'RedacaoAlterar',
+          { id: redacao.id }
+        )}
+      >
         <MaterialIcons name="edit" size={26} color="#505050" />
       </TouchableOpacity>
     </View>
@@ -96,7 +96,10 @@ export default RedacaoDetalhes = ({ route, navigation }) => {
 
   return (
     <Container>
-      <Header redacao={redacao} />
+      <Header 
+        redacao={redacao}
+        navigation={navigation}
+      />
 
       <View style={{ marginHorizontal: -20 }}>
         <Info redacao={redacao} />
