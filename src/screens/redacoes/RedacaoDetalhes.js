@@ -5,14 +5,14 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
-  Modal
 } from 'react-native';
 
 import {
   db,
   getDoc,
+  getDocs,
   doc,
+  collection,
 } from "../../firebase/firebaseConfig";
 
 import { MaterialIcons } from '@expo/vector-icons';
@@ -41,99 +41,49 @@ const Header = ({ redacao }) => {
   )
 }
 
-const ModalAdicionarCompetencia = ({ modalVisible, setModalVisible }) => {
-  const [novaCompetencia, setNovaCompetencia] = useState({
-    titulo: '',
-    notaFinal: '',
-    notaMaxima: '',
-    descricao: ''
-  });
+const ItemCompetencia = ({ navigation, competencia, redacaoId }) => {
+  return(
+    <View>
+      <View style={styles.flex}>
+        <Text style={{ fontSize: 18, fontWeight: '600' }}>
+          Competências {competencia.numeroCompetencia}
+        </Text>
 
-  const handleInputNovaCompetencia = (name, value) => {
-    setNovaCompetencia(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
 
-  return (
-    <Modal
-      animationType="none"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={() => {
-        setModalVisible(!modalVisible);
-      }}
-    >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 10 }}>
-            Adicionar competência
-          </Text>
-
-          <TextInputWithLabel
-            label="Título"
-            placeholder="Ex: Competência 1"
-            value={novaCompetencia.titulo}
-            onChangeText={text => handleInputNovaCompetencia('titulo', text)}
-            keyboardType="deafult"
-          />
-
-          <View style={{ flexDirection: 'row', gap: 20 }}>
-            <TextInputWithLabel
-              label="Nota final"
-              placeholder="Ex: 2"
-              value={novaCompetencia.notaFinal}
-              onChangeText={text => handleInputNovaCompetencia('notaFinal', text)}
-              keyboardType="numeric"
-              twoColumn={true}
-            />
-
-            <TextInputWithLabel
-              label="Nota máxima"
-              placeholder="Ex: 10"
-              value={novaCompetencia.notaMaxima}
-              onChangeText={text => handleInputNovaCompetencia('notaMaxima', text)}
-              keyboardType="numeric"
-              twoColumn={true}
-            />
-          </View>
-
-          <TextInputWithLabel
-            label="Descrição"
-            placeholder="Ex: Estrutura sintática excelente e, no máximo, dois desvios"
-            value={novaCompetencia.titulo}
-            onChangeText={text => handleInputNovaCompetencia('descricao', text)}
-            keyboardType="deafult"
-            numberOfLines={3}
-          />
-
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setModalVisible(!modalVisible)}
-          >
-            <Text style={styles.textStyle}>Close Modal</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity 
+          style={styles.editButton}
+          onPress={() => navigation.navigate(
+            'CompetenciaAlterar',
+            { data: competencia, redacaoId: redacaoId  }
+          )}
+        >
+          <MaterialIcons name="edit" size={22} color="#505050" />
+        </TouchableOpacity>
       </View>
-    </Modal>
+
+      <Text>Nota: {competencia.notaFinal} / {competencia.notaMaxima}</Text>
+      <Text>Descrição da correção: {competencia.descricao}</Text>
+    </View>
   )
 }
 
 export default RedacaoDetalhes = ({ route, navigation }) => {
   const { id } = route.params
-  const [modalVisible, setModalVisible] = useState(false);
 
   const [redacao, setRedacao] = useState({});
   const [competencias, setCompetencias] = useState([]);
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const docRef = doc(db, "redacoes", id);
-        const docSnap = await getDoc(docRef);
-        setRedacao({ ...docSnap.data(), id: docSnap.id });
+        const redacaoRef = doc(db, 'redacoes', id);
+        const competenciasRef = collection(db, 'redacoes', id, 'competencias');
+
+        const redacaoSnap = await getDoc(redacaoRef);
+        const competenciasSnap = await getDocs(competenciasRef);
+
+        setRedacao({ ...redacaoSnap.data(), id: redacaoSnap.id });
+        setCompetencias(competenciasSnap.docs.map(doc => ({ ...doc.data(), id: doc.id })));
       } catch (error) {
         console.error(error);
       }
@@ -143,7 +93,6 @@ export default RedacaoDetalhes = ({ route, navigation }) => {
   }, [navigation, id]);
 
   console.log("reload")
-  console.log(redacao)
 
   return (
     <Container>
@@ -154,12 +103,14 @@ export default RedacaoDetalhes = ({ route, navigation }) => {
       </View>
 
       <View>
-        <View style={styles.competenciaHeader}>
+        <View style={[styles.competenciaHeader, styles.flex]}>
           <Text style={{ fontSize: 20, fontWeight: '600' }}>
             Competências
           </Text>
 
-          <ButtonPrimary handlePress={() => setModalVisible(true)}>
+          <ButtonPrimary 
+            handlePress={() => navigation.navigate('CompetenciaForm', { id: id })}
+          >
             Adicionar
           </ButtonPrimary>
         </View>
@@ -169,12 +120,24 @@ export default RedacaoDetalhes = ({ route, navigation }) => {
             Você ainda adicionou nenhuma competência.
           </Text>
         }
-      </View>
 
-      <ModalAdicionarCompetencia
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-      />
+        { competencias.map((data, index) => (
+            <View>
+              { index !== 0 &&
+                <View style={styles.separator} />
+              }
+
+              <ItemCompetencia
+                competencia={data} 
+                navigation={navigation}
+                key={data.id} 
+                onPress={{ navigation }} 
+                redacaoId={redacao.id}
+              />
+            </View>
+          ))
+        }
+      </View>
     </Container>
   );
 };
@@ -207,51 +170,19 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   competenciaHeader: {
+    marginTop: 6,
+    marginBottom: 20
+  },
+  separator: {
+    width: '100%',
+    height: 1.25,
+    backgroundColor: '#ccc',
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  flex: {
     flexDirection: 'row', 
     alignItems: 'center', 
     justifyContent: 'space-between',
-    marginTop: 6
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    paddingBottom: 10
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 24,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  openButton: {
-    backgroundColor: '#F194FF',
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  closeButton: {
-    backgroundColor: '#2196F3',
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-    marginTop: 10,
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
-  },
+  }
 });

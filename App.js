@@ -25,6 +25,8 @@ import LeituraAlterar from './src/screens/leituras/LeituraAlterar.js'
 import Redacoes from './src/screens/redacoes/Redacoes.js'
 import RedacoesForm from './src/screens/redacoes/RedacoesForm.js'
 import RedacaoDetalhes from './src/screens/redacoes/RedacaoDetalhes.js'
+import CompetenciaForm from './src/screens/redacoes/CompetenciaForm.js'
+import CompetenciaAlterar from './src/screens/redacoes/CompetenciaAlterar.js'
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -107,6 +109,16 @@ const NavRedacoes = () => {
       <Stack.Screen 
         name="RedacaoDetalhes" 
         component={RedacaoDetalhes}
+      />
+
+      <Stack.Screen 
+        name="CompetenciaForm" 
+        component={CompetenciaForm}
+      />
+
+      <Stack.Screen 
+        name="CompetenciaAlterar" 
+        component={CompetenciaAlterar}
       />
     </Stack.Navigator>
   )
