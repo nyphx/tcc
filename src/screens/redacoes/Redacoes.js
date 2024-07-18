@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, db } from '../../firebase/firebaseConfig';
 
+import { Text } from 'react-native';
+
 import Container from '../../components/Container';
 import Header from '../../components/Header';
 import Title from '../../components/Title';

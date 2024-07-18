@@ -46,7 +46,7 @@ const ItemCompetencia = ({ navigation, competencia, redacaoId }) => {
     <View>
       <View style={styles.flex}>
         <Text style={{ fontSize: 18, fontWeight: '600' }}>
-          Competências {competencia.numeroCompetencia}
+          Competência {competencia.numeroCompetencia}
         </Text>
 
 

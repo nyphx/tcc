@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { View, Text, Modal, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { db, collection, addDoc } from "../../firebase/firebaseConfig";
 
 import Container from '../../components/Container'
@@ -7,55 +8,78 @@ import Title from '../../components/Title'
 import TextInputWithLabel from '../../components/TextInputWithLabel'
 import ButtonPrimary from '../../components/ButtonPrimary'
 
-import { StyleModal } from '../../styles/modal'
+import { AntDesign } from '@expo/vector-icons';
 
-export default SimuladosForm = ({ navigation }) => {
-  const [modalVisible, setModalVisible] = useState(false);
-
+const SimuladoForm = ({ navigation }) => {
+  // contém as informações principais do simulado
   const [simulado, setSimulado] = useState({
     nome: '',
     fase: '',
     data: '',
     notaFinal: '',
     notaMaxima: '',
+    conteudos: []
   });
 
-  const [conteudo, setConteudo] = useState({
-    nome: '',
-    notaFinal: '',
-    notaMaxima: '',
-  })
+  // gerencia os campos dinâmicos para adicionar conteúdos
+  const [conteudoFields, setConteudoFields] = useState([
+    { id: uuidv4(), nome: '', acertadas: '', totais: '' }
+  ]);
 
-  const handleInputSimulados = (name, value) => {
-    setSimulado(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+  // função que adiciona um novo conjunto de campos de conteúdo
+  const addConteudoField = () => {
+    setConteudoFields([
+      ...conteudoFields, 
+      { id: uuidv4(), nome: '', acertadas: '', totais: '' }
+    ]);
   };
 
-  const handleInputConteudos = (name, value) => {
-    setConteudo(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+  // função que recebe um id e remove o campo
+  // de conteúdo correspondente do estado
+  const removeConteudoField = id => {
+    setConteudoFields(conteudoFields.filter(field => field.id !== id));
   };
 
-  const handleSubmitSimulado = async () => {
+  // atualiza os valores dos campos do simulado
+  const handleSimuladoChange = (name, value) => {
+    setSimulado({ ...simulado, [name]: value });
+  };
+
+  // atualiza os valores dos campos dos conteúdos
+  const handleConteudoChange = (id, name, value) => {
+    const newFields = conteudoFields.map(field => {
+      if (field.id === id) {
+        return { ...field, [name]: value };
+      }
+      return field;
+    });
+    setConteudoFields(newFields);
+  };
+
+  // consolida os dados do simulado e dos conteúdos
+  // e os envia para o banco de dados
+  const handleSubmit = async () => {
     try {
-      const docRef = collection(db, "simulados")
-      await addDoc(docRef, simulado);
-      
-      navigation.goBack();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+      const conteudos = conteudoFields.reduce((acc, field) => {
+        acc[field.nome] = {
+          acertadas: field.acertadas,
+          totais: field.totais
+        };
+        return acc;
+      }, {});
+  
+      const simuladoData = {
+        ...simulado,
+        conteudos
+      };
 
-  const handleSubmitConteudo = async () => {
-    try {
-      const docRef = collection(db, "simulados")
-      await addDoc(docRef, simulado);
-      
+      const simuladosRef = collection(db, "simulados")
+
+      await addDoc(
+        simuladosRef, 
+        { ...simuladoData }
+      );
+
       navigation.goBack();
     } catch (error) {
       console.error(error);
@@ -65,29 +89,28 @@ export default SimuladosForm = ({ navigation }) => {
   return (
     <Container>
       <Title>Adicionar simulado</Title>
-
       <View>
         <TextInputWithLabel
           label="Nome"
           placeholder="Ex: UNESP 2018"
           value={simulado.nome}
-          onChangeText={text => handleInputSimulados('nome', text)}
+          onChangeText={text => handleSimuladoChange('nome', text)}
           keyboardType="default"
         />
 
         <TextInputWithLabel
           label="Fase"
-          placeholder="Ex: 1ª fase"
+          placeholder="Ex: 1"
           value={simulado.fase}
-          onChangeText={text => handleInputSimulados('fase', text)}
-          keyboardType="numeric"
+          onChangeText={text => handleSimuladoChange('fase', text)}
+          keyboardType="default"
         />
 
         <TextInputWithLabel
           label="Data Realizada"
           placeholder="Ex: 23/03/2023"
           value={simulado.data}
-          onChangeText={text => handleInputSimulados('data', text)}
+          onChangeText={text => handleSimuladoChange('data', text)}
           keyboardType="default"
         />
 
@@ -95,7 +118,7 @@ export default SimuladosForm = ({ navigation }) => {
           label="Nota Final"
           placeholder="Ex: 70"
           value={simulado.notaFinal}
-          onChangeText={text => handleInputSimulados('notaFinal', text)}
+          onChangeText={text => handleSimuladoChange('notaFinal', text)}
           keyboardType="numeric"
         />
 
@@ -103,87 +126,86 @@ export default SimuladosForm = ({ navigation }) => {
           label="Nota Máxima"
           placeholder="Ex: 90"
           value={simulado.notaMaxima}
-          onChangeText={text => handleInputSimulados('notaMaxima', text)}
+          onChangeText={text => handleSimuladoChange('notaMaxima', text)}
           keyboardType="numeric"
         />
       </View>
 
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={{ fontSize: 22, fontWeight: "700" }}>
+      <View style={styles.flexSpaceBetween}>
+        <Text style={{ fontSize: 22, fontWeight: '600' }}>
           Conteúdos
         </Text>
 
-        <ButtonPrimary handlePress={() => setModalVisible(true)}>
+        <ButtonPrimary handlePress={addConteudoField}>
           Adicionar
         </ButtonPrimary>
-
-        <Modal
-          animationType="none"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>
-                Adicionar conteúdo
-              </Text>
-
-              <View>
-                <TextInputWithLabel
-                  label="Nome"
-                  placeholder="Ex: Biologia"
-                  value={conteudo.nome}
-                  onChangeText={text => handleInputConteudos('nome', text)}
-                  keyboardType="default"
-                />
-
-                <View>
-                  <TextInputWithLabel
-                    label="Nota final"
-                    placeholder="Ex: 12"
-                    value={conteudo.notaFinal}
-                    onChangeText={text => handleInputConteudos('notaFinal', text)}
-                    keyboardType="numeric"
-                  />
-
-                  <TextInputWithLabel
-                    label="Nota máxima"
-                    placeholder="Ex: 15"
-                    value={conteudo.notaMaxima}
-                    onChangeText={text => handleInputConteudos('notaMaxima', text)}
-                    keyboardType="numeric"
-                  />
-                </View>
-              </View>
-
-              <View style={{ gap: 10, marginTop: 10 }}>
-                <TouchableOpacity
-                  style={[styles.modalButton, { backgroundColor: 'rgb(59 130 246)', width: '100%' }]}
-                >
-                  <Text style={styles.modalButtonText}>Adicionar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.modalButton, { backgroundColor: '#e1e1e1', width: '100%' }]}
-                  onPress={() => setModalVisible(false)}
-                >
-                  <Text style={[styles.modalButtonText, { color: "#505050" }]}>
-                    Cancelar
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
       </View>
 
-      <ButtonPrimary handlePress={handleSubmitSimulado}>
-        Adicionar simulado
+      {conteudoFields.map((field, index) => (
+        <View key={field.id}>
+          { index !== 0 &&
+            <View style={styles.separator}  />
+          }
+
+          {/* adicionado ao lado de cada campo de conteúdo para
+          fornecer um botão de remoção. quando pressionado, 
+          chama a função removeConteudoField com o id do campo. */}
+          <TouchableOpacity
+            style={styles.removeButton}
+            onPress={() => removeConteudoField(field.id)}
+          >
+            <AntDesign name="delete" size={24} color="black" />
+          </TouchableOpacity>
+
+          <TextInputWithLabel
+            label="Nome"
+            placeholder="Ex: Biologia"
+            value={field.nome}
+            onChangeText={text => handleConteudoChange(field.id, 'nome', text)}
+            keyboardType="default"
+          />
+
+          <TextInputWithLabel
+            label="Questões acertadas"
+            placeholder="Ex: 10"
+            value={field.acertadas}
+            onChangeText={text => handleConteudoChange(field.id, 'acertadas', text)}
+            keyboardType="numeric"
+          />
+
+          <TextInputWithLabel
+            label="Questões totais"
+            placeholder="Ex: 15"
+            value={field.totais}
+            onChangeText={text => handleConteudoChange(field.id, 'totais', text)}
+            keyboardType="numeric"
+          />
+        </View>
+      ))}
+
+      <ButtonPrimary handlePress={handleSubmit}>
+        Salvar simulado
       </ButtonPrimary>
     </Container>
   );
 };
 
 const styles = StyleSheet.create({
-  ...StyleModal
+  flexSpaceBetween:{
+    flexDirection: 'row',
+    alignItems: 'center', 
+    justifyContent: 'space-between'
+  },
+  separator: {
+    backgroundColor: '#ccc', 
+    height: 1, 
+    width: '100%',
+    marginBottom: 24
+  },
+  removeButton: {
+    position: 'absolute',
+    right: 0,
+  }
 });
+
+export default SimuladoForm;

@@ -65,6 +65,10 @@ export default SimuladoDetalhes = ({ route, navigation }) => {
         <Text style={styles.infoTitle}>Data realizada</Text>
         <TextPrimary>{simulado?.data}</TextPrimary>
       </View>
+
+      <View>
+        <Text>Acertos por conteúdo</Text>
+      </View>
     </ScrollView> 
   );
 };
