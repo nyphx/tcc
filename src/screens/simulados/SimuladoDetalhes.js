@@ -53,7 +53,7 @@ export default SimuladoDetalhes = ({ route, navigation }) => {
             style={styles.editButton}
             onPress={() => navigation.navigate(
               'SimuladoAlterar',
-              { data: simulado }
+              { id: simulado.id }
             )}
           >
             <MaterialIcons name="edit" size={26} color="#505050" />

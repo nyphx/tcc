@@ -1,79 +1,135 @@
-import { useState } from 'react'
-import { View, Modal, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { db, doc, updateDoc, deleteDoc } from "../../firebase/firebaseConfig";
+import { useState, useEffect } from 'react'
+import { db, doc, getDoc, updateDoc, deleteDoc } from "../../firebase/firebaseConfig";
+import { v4 as uuidv4 } from 'uuid';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import Container from '../../components/Container'
 import Title from '../../components/Title'
 import TextInputWithLabel from '../../components/TextInputWithLabel'
 import ButtonPrimary from '../../components/ButtonPrimary'
-import ButtonDelete from '../../components/ButtonDelete'
 
-import { StyleModal } from '../../styles/modal'
+import { AntDesign } from '@expo/vector-icons';
 
-export default SimuladosForm = ({ route, navigation }) => {
-  const { data } = route.params
-  const [simulado, setSimulado] = useState(data);
-  const [modalVisible, setModalVisible] = useState(false);
+const SimuladoForm = ({ navigation, route }) => {
+  const { id } = route.params;
 
-  const handleInputChange = (name, value) => {
-    setSimulado(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+  const [simulado, setSimulado] = useState({});
+
+  const [conteudoFields, setConteudoFields] = useState([
+    { id: uuidv4(), nome: '', acertadas: '', totais: '' }
+  ]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const simuladoRef = doc(db, 'simulados', id);
+        const simuladoSnap = await getDoc(simuladoRef);
+
+        setSimulado({...simuladoSnap.data()});
+
+        const conteudosArray = Object
+          .keys(simuladoSnap.data().conteudos || {})
+          .map(key => ({
+            id: uuidv4(),
+            nome: key,
+            acertadas: simuladoSnap.data().conteudos[key].acertadas,
+            totais: simuladoSnap.data().conteudos[key].totais
+          }));
+
+        setConteudoFields(conteudosArray);
+
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    return navigation.addListener('focus', fetchData);
+  }, []);
+
+  console.log(simulado)
+
+  const addConteudoField = () => {
+    setConteudoFields([...conteudoFields, { id: uuidv4(), nome: '', acertadas: '', totais: '' }]);
   };
 
-  const handleSubmit = async () => {
+  const removeConteudoField = id => {
+    setConteudoFields(conteudoFields.filter(field => field.id !== id));
+  };
+
+  const handleSimuladoChange = (name, value) => {
+    setSimulado({ ...simulado, [name]: value });
+  };
+
+  const handleConteudoChange = (id, name, value) => {
+    const newFields = conteudoFields.map(field => {
+      if (field.id === id) {
+        return { ...field, [name]: value };
+      }
+      return field;
+    });
+    setConteudoFields(newFields);
+  };
+
+  const updateSimulado = async () => {
     try {
-      const docRef = doc(db, "simulados", data.id);
-      await updateDoc(docRef, simulado);
-      
+      const conteudos = conteudoFields.reduce((acc, field) => {
+        acc[field.nome] = {
+          acertadas: field.acertadas,
+          totais: field.totais
+        };
+        return acc;
+      }, {});
+
+      const simuladoData = {
+        ...simulado,
+        conteudos
+      };
+
+      const simuladoRef = doc(db, 'simulado', id);
+
+      await updateDoc(simuladoRef, simuladoData);
+
       navigation.goBack();
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleDelete = async () => {
+  const deleteSimulado = async () => {
     try {
-      const docRef = doc(db, "simulados", data.id);
-      await deleteDoc(docRef);
+      const simuladoRef = doc(db, 'simulado', id);
+      await deleteDoc(simuladoRef);
       navigation.navigate('Simulados');
     } catch (error) {
       console.error(error);
     }
   };
 
-  const confirmDelete = () => {
-    handleDelete();
-    setModalVisible(false);
-  };
-
   return (
     <Container>
       <Title>Alterar simulado</Title>
-
       <View>
         <TextInputWithLabel
           label="Nome"
           placeholder="Ex: UNESP 2018"
           value={simulado.nome}
-          onChangeText={text => handleInputChange('nome', text)}
+          onChangeText={text => handleSimuladoChange('nome', text)}
           keyboardType="default"
         />
 
         <TextInputWithLabel
           label="Fase"
-          placeholder="Ex: 1ª fase"
+          placeholder="Ex: 1"
           value={simulado.fase}
-          onChangeText={text => handleInputChange('fase', text)}
-          keyboardType="numeric"
+          onChangeText={text => handleSimuladoChange('fase', text)}
+          keyboardType="default"
         />
 
         <TextInputWithLabel
           label="Data Realizada"
           placeholder="Ex: 23/03/2023"
           value={simulado.data}
-          onChangeText={text => handleInputChange('data', text)}
+          onChangeText={text => handleSimuladoChange('data', text)}
           keyboardType="default"
         />
 
@@ -81,7 +137,7 @@ export default SimuladosForm = ({ route, navigation }) => {
           label="Nota Final"
           placeholder="Ex: 70"
           value={simulado.notaFinal}
-          onChangeText={text => handleInputChange('notaFinal', text)}
+          onChangeText={text => handleSimuladoChange('notaFinal', text)}
           keyboardType="numeric"
         />
 
@@ -89,64 +145,77 @@ export default SimuladosForm = ({ route, navigation }) => {
           label="Nota Máxima"
           placeholder="Ex: 90"
           value={simulado.notaMaxima}
-          onChangeText={text => handleInputChange('notaMaxima', text)}
+          onChangeText={text => handleSimuladoChange('notaMaxima', text)}
           keyboardType="numeric"
         />
       </View>
 
-      <View style={{ gap: 10 }}>
-        <ButtonPrimary handlePress={handleSubmit}>
-          Alterar simulado
-        </ButtonPrimary>
+      <View style={styles.flexSpaceBetween}>
+        <Text style={{ fontSize: 22, fontWeight: '600' }}>Conteúdos</Text>
 
-        <ButtonDelete handlePress={() => setModalVisible(true)}>
-          Excluir
-        </ButtonDelete>
+        <ButtonPrimary handlePress={addConteudoField}>Adicionar</ButtonPrimary>
       </View>
 
-      <Modal
-        animationType="none"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>
-              Deletar simulado
-            </Text>
+      {conteudoFields.map((field, index) => (
+        <View key={field.id}>
+          {index !== 0 && <View style={styles.separator} />}
 
-            <View style={{ width: '70%' }}>
-              <Text style={styles.modalText}>
-                Você tem certeza que deseja excluir este simulado? 
-              </Text>
-              <Text style={styles.modalText}>
-                Esta ação é irreversível.
-              </Text>
-            </View>
-            <View style={{ flexDirection: 'row', marginTop: 26 }}>
-              <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: 'rgb(220 38 38)', flex: 1 }]}
-                onPress={confirmDelete}
-              >
-                <Text style={styles.modalButtonText}>Confirmar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: '#e1e1e1', flex: 1 }]}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={[styles.modalButtonText, { color: "#505050" }]}>
-                  Cancelar
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          <TouchableOpacity
+            style={styles.removeButton}
+            onPress={() => removeConteudoField(field.id)}
+          >
+            <AntDesign name="delete" size={24} color="black" />
+          </TouchableOpacity>
+
+          <TextInputWithLabel
+            label="Nome"
+            placeholder="Ex: Biologia"
+            value={field.nome}
+            onChangeText={text => handleConteudoChange(field.id, 'nome', text)}
+            keyboardType="default"
+          />
+
+          <TextInputWithLabel
+            label="Questões acertadas"
+            placeholder="Ex: 10"
+            value={field.acertadas}
+            onChangeText={text => handleConteudoChange(field.id, 'acertadas', text)}
+            keyboardType="numeric"
+          />
+
+          <TextInputWithLabel
+            label="Questões totais"
+            placeholder="Ex: 15"
+            value={field.totais}
+            onChangeText={text => handleConteudoChange(field.id, 'totais', text)}
+            keyboardType="numeric"
+          />
         </View>
-      </Modal>
+      ))}
+
+      <ButtonPrimary handlePress={updateSimulado}>Alterar</ButtonPrimary>
+
+      <ButtonDelete handlePress={deleteSimulado}>Excluir</ButtonDelete>
     </Container>
   );
 };
 
 const styles = StyleSheet.create({
-  ...StyleModal
+  flexSpaceBetween:{
+    flexDirection: 'row',
+    alignItems: 'center', 
+    justifyContent: 'space-between'
+  },
+  separator: {
+    backgroundColor: '#ccc', 
+    height: 1, 
+    width: '100%',
+    marginBottom: 24
+  },
+  removeButton: {
+    position: 'absolute',
+    right: 0,
+  }
 });
+
+export default SimuladoForm;
