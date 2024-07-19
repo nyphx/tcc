@@ -77,44 +77,52 @@ export default LeiturasAlterar = ({ route, navigation }) => {
         />
 
         <TextInputWithLabel
-          label="Total de páginas"
-          placeholder="Ex: 350"
-          value={leitura.totalPaginas}
-          onChangeText={text => handleInputChange('totalPaginas', text)}
-          keyboardType="numeric"
-        />
-
-        <TextInputWithLabel
-          label="Total de capítulos"
-          placeholder="Ex: 20"
-          value={leitura.totalCapitulos}
-          onChangeText={text => handleInputChange('totalCapitulos', text)}
-          keyboardType="numeric"
-        />
-
-        <TextInputWithLabel
-          label="Data do início"
-          placeholder="Ex: 20/03/2023"
-          value={leitura.dataInicio}
-          onChangeText={text => handleInputChange('dataInicio', text)}
-          keyboardType="default"
-        />
-
-        <TextInputWithLabel
-          label="Data do términio"
-          placeholder="Ex: 03/04/2023"
-          value={leitura.dataTerminio}
-          onChangeText={text => handleInputChange('dataTerminio', text)}
-          keyboardType="default"
-        />
-
-        <TextInputWithLabel
           label="Vestibular"
           placeholder="Ex: FUVEST"
           value={leitura.vestibular}
           onChangeText={text => handleInputChange('vestibular', text)}
           keyboardType="default"
         />
+
+        <View style={{ flexDirection: 'row', gap: 20 }}>
+          <TextInputWithLabel
+            label="Data do início"
+            placeholder="Ex: 20/03/2023"
+            value={leitura.dataInicio}
+            onChangeText={text => handleInputChange('dataInicio', text)}
+            keyboardType="default"
+            twoColumn={true}
+          />
+
+          <TextInputWithLabel
+            label="Data do términio"
+            placeholder="Ex: 03/04/2023"
+            value={leitura.dataTerminio}
+            onChangeText={text => handleInputChange('dataTerminio', text)}
+            keyboardType="default"
+            twoColumn={true}
+          />
+        </View>
+
+        <View style={{ flexDirection: 'row', gap: 20 }}>
+          <TextInputWithLabel
+            label="Total de páginas"
+            placeholder="Ex: 350"
+            value={leitura.totalPaginas}
+            onChangeText={text => handleInputChange('totalPaginas', text)}
+            keyboardType="numeric"
+            twoColumn={true}
+          />
+
+          <TextInputWithLabel
+            label="Total de capítulos"
+            placeholder="Ex: 20"
+            value={leitura.totalCapitulos}
+            onChangeText={text => handleInputChange('totalCapitulos', text)}
+            keyboardType="numeric"
+            twoColumn={true}
+          />
+        </View>
 
         <View style={styles.itemContainerForm}>
           <Text style={styles.label}>
