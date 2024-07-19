@@ -117,37 +117,45 @@ const SimuladoForm = ({ navigation, route }) => {
           keyboardType="default"
         />
 
-        <TextInputWithLabel
-          label="Fase"
-          placeholder="Ex: 1"
-          value={simulado.fase}
-          onChangeText={text => handleSimuladoChange('fase', text)}
-          keyboardType="default"
-        />
+        <View style={{ flexDirection: 'row', gap: 20 }}>
+          <TextInputWithLabel
+            label="Fase"
+            placeholder="Ex: 1"
+            value={simulado.fase}
+            onChangeText={text => handleSimuladoChange('fase', text)}
+            keyboardType="default"
+            twoColumn={true}
+          />
 
-        <TextInputWithLabel
-          label="Data Realizada"
-          placeholder="Ex: 23/03/2023"
-          value={simulado.data}
-          onChangeText={text => handleSimuladoChange('data', text)}
-          keyboardType="default"
-        />
+          <TextInputWithLabel
+            label="Data Realizada"
+            placeholder="Ex: 23/03/2023"
+            value={simulado.data}
+            onChangeText={text => handleSimuladoChange('data', text)}
+            keyboardType="default"
+            twoColumn={true}
+          />
+        </View>
 
-        <TextInputWithLabel
-          label="Nota Final"
-          placeholder="Ex: 70"
-          value={simulado.notaFinal}
-          onChangeText={text => handleSimuladoChange('notaFinal', text)}
-          keyboardType="numeric"
-        />
+        <View style={{ flexDirection: 'row', gap: 20 }}>
+          <TextInputWithLabel
+            label="Nota Final"
+            placeholder="Ex: 70"
+            value={simulado.notaFinal}
+            onChangeText={text => handleSimuladoChange('notaFinal', text)}
+            keyboardType="numeric"
+            twoColumn={true}
+          />
 
-        <TextInputWithLabel
-          label="Nota Máxima"
-          placeholder="Ex: 90"
-          value={simulado.notaMaxima}
-          onChangeText={text => handleSimuladoChange('notaMaxima', text)}
-          keyboardType="numeric"
-        />
+          <TextInputWithLabel
+            label="Nota Máxima"
+            placeholder="Ex: 90"
+            value={simulado.notaMaxima}
+            onChangeText={text => handleSimuladoChange('notaMaxima', text)}
+            keyboardType="numeric"
+            twoColumn={true}
+          />
+        </View>
       </View>
 
       <View style={[styles.flexSpaceBetween, { marginBottom: -20 }]}>
