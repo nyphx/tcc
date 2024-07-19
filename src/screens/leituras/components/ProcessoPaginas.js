@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
 import { View, Text, Pressable, TouchableOpacity, StyleSheet, TextInput, Modal } from 'react-native'
+import { db, doc, updateDoc } from "../../../firebase/firebaseConfig";
 
 import { Entypo } from '@expo/vector-icons';
 
 import ButtonPrimary from '../../../components/ButtonPrimary'
 import ButtonCancel from '../../../components/ButtonCancel'
 
-export default ProcessoPaginas = ({ atual, total }) => {
+export default ProcessoPaginas = ({ leitura, atual, total }) => {
   const [modalVisible, setModalVisible] = useState(false);
-
   const [atualPaginas, setAtualPaginas] = useState(atual)
 
   const aumentarValor = () => {
@@ -31,10 +31,22 @@ export default ProcessoPaginas = ({ atual, total }) => {
     }
   };
 
-  const handleSubmit = () => {
-    setModalVisible(!modalVisible)
-    console.log(atualPaginas)
-  }
+  const handleSubmit = async () => {
+    try {
+      const docRef = doc(db, "leituras", leitura.id)
+      await updateDoc(
+        docRef,
+        { 
+          ...leitura, 
+          atualPaginas: atualPaginas 
+        }
+      );
+      
+      setModalVisible(!modalVisible)
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -48,7 +60,7 @@ export default ProcessoPaginas = ({ atual, total }) => {
 
         <View style={{ flexDirection: 'row', gap: 6 }}>
           <Text style={styles.textAtual}>
-            {atualPaginas}
+            {atual}
           </Text>
           <Text style={styles.textTotal}>
             / {total}
@@ -71,7 +83,7 @@ export default ProcessoPaginas = ({ atual, total }) => {
 
               <TouchableOpacity
                 style={styles.buttonControl}
-                // onPress={diminuirValor}
+                onPress={diminuirValor}
               >
                 <Text>
                   <Entypo name="minus" size={20} color="white" />
@@ -87,7 +99,7 @@ export default ProcessoPaginas = ({ atual, total }) => {
 
               <TouchableOpacity
                 style={styles.buttonControl}
-                // onPress={aumentarValor}
+                onPress={aumentarValor}
               >
                 <Text>
                   <Entypo name="plus" size={20} color="white" />
@@ -95,14 +107,19 @@ export default ProcessoPaginas = ({ atual, total }) => {
               </TouchableOpacity>
             </View>
           
-            <ButtonPrimary handlePress={handleSubmit}>
-              <Text>Confirmar</Text>
+            <ButtonPrimary 
+              handlePress={handleSubmit}
+              maxWidth={true}
+            >
+              Confirmar
             </ButtonPrimary>
 
             <View style={{ marginBottom: 10 }} />
 
-            <ButtonCancel handlePress={() => setModalVisible(!modalVisible)} >
-              <Text>Cancelar</Text>
+            <ButtonCancel 
+              handlePress={() => setModalVisible(!modalVisible)}
+            >
+              Cancelar
             </ButtonCancel>
           </View>
         </View>

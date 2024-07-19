@@ -4,10 +4,14 @@ import {
   StyleSheet 
 } from 'react-native';
 
-export default Button = ({ handlePress, children }) => {
+export default ButtonPrimary = ({ 
+  handlePress, 
+  children,
+  maxWidth=false
+ }) => {
   return (
     <TouchableOpacity 
-      style={styles.button}
+      style={[styles.button, maxWidth && styles.maxWidth ]}
       onPress={handlePress}
     >
       <Text style={styles.text}>
@@ -22,9 +26,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: "white",
     fontWeight: "600",
-    fontSize: 16
+    fontSize: 16,
   },
-   button: {
+  maxWidth: {
+    width: '100%'
+  },
+  button: {
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 6,

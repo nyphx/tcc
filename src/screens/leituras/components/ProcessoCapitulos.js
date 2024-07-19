@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { View, Text, Pressable, StyleSheet, TextInput, Modal, TouchableOpacity } from 'react-native'
+import { db, doc, updateDoc } from "../../../firebase/firebaseConfig";
 
 import { Entypo } from '@expo/vector-icons';
 
 import ButtonPrimary from '../../../components/ButtonPrimary'
 import ButtonCancel from '../../../components/ButtonCancel'
 
-export default ProcessoCapitulos = ({ atual, total }) => {
+export default ProcessoCapitulos = ({ leitura, atual, total }) => {
   const [modalVisible, setModalVisible] = useState(false);
   
   const [atualCapitulos, setAtualCapitulos] = useState(atual)
@@ -31,10 +32,22 @@ export default ProcessoCapitulos = ({ atual, total }) => {
     }
   };
 
-  const handleSubmit = () => {
-    setModalVisible(!modalVisible)
-    console.log(atualCapitulos)
-  }
+  const handleSubmit = async () => {
+    try {
+      const docRef = doc(db, "leituras", leitura.id)
+      await updateDoc(
+        docRef,
+        { 
+          ...leitura, 
+          atualCapitulos: atualCapitulos 
+        }
+      );
+      
+      setModalVisible(!modalVisible)
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -48,7 +61,7 @@ export default ProcessoCapitulos = ({ atual, total }) => {
 
         <View style={{ flexDirection: 'row', gap: 6 }}>
           <Text style={styles.textAtual}>
-            {atualCapitulos}
+            {atual}
           </Text>
           <Text style={styles.textTotal}>
             / {total}
@@ -94,15 +107,18 @@ export default ProcessoCapitulos = ({ atual, total }) => {
                 </Text>
               </TouchableOpacity>
             </View>
-          
-            <ButtonPrimary handlePress={handleSubmit}>
-              <Text>Confirmar</Text>
+
+            <ButtonPrimary 
+              handlePress={handleSubmit}
+              maxWidth={true}
+            >
+              Confirmar
             </ButtonPrimary>
 
             <View style={{ marginBottom: 10 }} />
 
             <ButtonCancel handlePress={() => setModalVisible(!modalVisible)} >
-              <Text>Cancelar</Text>
+              Cancelar
             </ButtonCancel>
           </View>
         </View>

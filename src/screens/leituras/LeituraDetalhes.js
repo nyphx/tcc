@@ -10,7 +10,7 @@ import {
 
 import {
   db,
-  getDoc,
+  onSnapshot,
   doc,
 } from "../../firebase/firebaseConfig";
 
@@ -28,18 +28,18 @@ export default LeituraDetalhes = ({ route, navigation }) => {
   const [leitura, setLeitura] = useState({});
   
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const docRef = doc(db, "leituras", id);
-        const docSnap = await getDoc(docRef);
-        setLeitura({ id: docSnap.id, ...docSnap.data() });
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    
-    return navigation.addListener('focus', fetchData);
-  }, [navigation, id]);
+    const docRef = doc(db, 'leituras', id);
+
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+      setLeitura({ id: docSnap.id, ...docSnap.data() });
+    }, (error) => {
+      console.error(error);
+    });
+
+    return () => unsubscribe();
+  }, [id]);
+
+  console.log("reload")
 
   return (
     <ScrollView>
@@ -72,11 +72,13 @@ export default LeituraDetalhes = ({ route, navigation }) => {
 
             <View style={{ flexDirection: 'row', gap: 18 }}>
               <ProcessoPaginas 
+                leitura={leitura}
                 atual={leitura.atualPaginas}
                 total={leitura.totalPaginas}
-              />
+                />
 
               <ProcessoCapitulos
+                leitura={leitura}
                 atual={leitura.atualCapitulos}
                 total={leitura.totalCapitulos}
               />

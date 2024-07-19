@@ -10,7 +10,8 @@ import {
   where,
   doc,
   deleteDoc,
-  updateDoc
+  updateDoc,
+  onSnapshot
 } from "firebase/firestore";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -45,5 +46,6 @@ export {
   where,
   doc,
   deleteDoc,
-  updateDoc
+  updateDoc,
+  onSnapshot
 }
