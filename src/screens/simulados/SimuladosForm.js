@@ -1,6 +1,3 @@
-import React, { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { db, collection, addDoc } from "../../firebase/firebaseConfig";
 
 import Container from '../../components/Container'
@@ -9,6 +6,10 @@ import TextInputWithLabel from '../../components/TextInputWithLabel'
 import ButtonPrimary from '../../components/ButtonPrimary'
 
 import { AntDesign } from '@expo/vector-icons';
+import { v4 as uuidv4 } from 'uuid';
+
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Button, StyleSheet, ScrollView } from 'react-native';
 
 const SimuladoForm = ({ navigation }) => {
   // contém as informações principais do simulado
@@ -131,7 +132,7 @@ const SimuladoForm = ({ navigation }) => {
         />
       </View>
 
-      <View style={styles.flexSpaceBetween}>
+      <View style={[styles.flexSpaceBetween, { marginBottom: -20 }]}>
         <Text style={{ fontSize: 22, fontWeight: '600' }}>
           Conteúdos
         </Text>
@@ -143,43 +144,47 @@ const SimuladoForm = ({ navigation }) => {
 
       {conteudoFields.map((field, index) => (
         <View key={field.id}>
-          { index !== 0 &&
-            <View style={styles.separator}  />
-          }
+          { index !== 0 && <View style={styles.separator} /> }
 
-          {/* adicionado ao lado de cada campo de conteúdo para
-          fornecer um botão de remoção. quando pressionado, 
-          chama a função removeConteudoField com o id do campo. */}
-          <TouchableOpacity
-            style={styles.removeButton}
-            onPress={() => removeConteudoField(field.id)}
-          >
-            <AntDesign name="delete" size={24} color="black" />
-          </TouchableOpacity>
+          <View style={{ marginTop: 26 }}>
+            {/* adicionado ao lado de cada campo de conteúdo para
+            fornecer um botão de remoção. quando pressionado, 
+            chama a função removeConteudoField com o id do campo. */}
+            <TouchableOpacity
+              style={styles.removeButton}
+              onPress={() => removeConteudoField(field.id)}
+            >
+              <AntDesign name="delete" size={24} color="black" />
+            </TouchableOpacity>
+          
+            <TextInputWithLabel
+              label="Nome"
+              placeholder="Ex: Biologia"
+              value={field.nome}
+              onChangeText={text => handleConteudoChange(field.id, 'nome', text)}
+              keyboardType="default"
+            />
 
-          <TextInputWithLabel
-            label="Nome"
-            placeholder="Ex: Biologia"
-            value={field.nome}
-            onChangeText={text => handleConteudoChange(field.id, 'nome', text)}
-            keyboardType="default"
-          />
+            <View style={{ flexDirection: 'row', gap: 20 }}>
+              <TextInputWithLabel
+                label="Questões acertadas"
+                placeholder="Ex: 10"
+                value={field.acertadas}
+                onChangeText={text => handleConteudoChange(field.id, 'acertadas', text)}
+                keyboardType="numeric"
+                twoColumn={true}
+              />
 
-          <TextInputWithLabel
-            label="Questões acertadas"
-            placeholder="Ex: 10"
-            value={field.acertadas}
-            onChangeText={text => handleConteudoChange(field.id, 'acertadas', text)}
-            keyboardType="numeric"
-          />
-
-          <TextInputWithLabel
-            label="Questões totais"
-            placeholder="Ex: 15"
-            value={field.totais}
-            onChangeText={text => handleConteudoChange(field.id, 'totais', text)}
-            keyboardType="numeric"
-          />
+              <TextInputWithLabel
+                label="Questões totais"
+                placeholder="Ex: 15"
+                value={field.totais}
+                onChangeText={text => handleConteudoChange(field.id, 'totais', text)}
+                keyboardType="numeric"
+                twoColumn={true}
+              />
+            </View>
+          </View>
         </View>
       ))}
 
@@ -200,11 +205,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc', 
     height: 1, 
     width: '100%',
-    marginBottom: 24
   },
   removeButton: {
     position: 'absolute',
     right: 0,
+    top: -6
   }
 });
 

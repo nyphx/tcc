@@ -20,8 +20,7 @@ import Container from '../../components/Container'
 
 export default SimuladoDetalhes = ({ route, navigation }) => {
   const { id } = route.params
-  const [simulado, setSimulado] = useState(null);
-  console.log(simulado)
+  const [simulado, setSimulado] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,7 +35,39 @@ export default SimuladoDetalhes = ({ route, navigation }) => {
 
     return navigation.addListener('focus', fetchData);
   }, [navigation, id]);
+
   console.log("reload")
+
+  const Disciplina = ({ disciplina, dados }) => {
+    return (
+      <View key={disciplina} style={{ marginBottom: 10 }}>
+        <Text style={{ fontSize: 18, textTransform: 'uppercase' }}>
+          {disciplina}
+        </Text>
+        <Text>Acertadas: {dados.acertadas}</Text>
+        <Text>Totais: {dados.totais}</Text>
+      </View>
+    );
+  };
+
+  const RenderConteudos = () => {
+    const elementos = [];
+
+    for (let disciplina in simulado.conteudos) {
+      if (simulado.conteudos.hasOwnProperty(disciplina)) {
+        let dados = simulado.conteudos[disciplina];
+        elementos.push(
+          <Disciplina 
+            key={disciplina} 
+            disciplina={disciplina} 
+            dados={dados}
+          />
+        );
+      }
+    }
+    return elementos;
+  };
+
 
   return (
     <ScrollView>
@@ -65,10 +96,16 @@ export default SimuladoDetalhes = ({ route, navigation }) => {
         <Text style={styles.infoTitle}>Data realizada</Text>
         <TextPrimary>{simulado?.data}</TextPrimary>
       </View>
-
-      <View>
-        <Text>Acertos por conteúdo</Text>
-      </View>
+      
+      <Container>
+        <View style={{ marginTop: -34 }}>
+          <Text style={{ fontSize: 22, fontWeight: '600' }}>
+            Acertos por conteúdo
+          </Text>
+        </View>
+        
+        {RenderConteudos()}
+      </Container>
     </ScrollView> 
   );
 };
