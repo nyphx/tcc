@@ -6,7 +6,7 @@ import Header from '../../components/Header';
 import Title from '../../components/Title';
 import RedirectButton from '../../components/RedirectButton';
 
-import Card from './Card';
+import Card from './components/Card';
 
 const Simulados = ({ navigation }) => {
   const [simulados, setSimulados] = useState([]);

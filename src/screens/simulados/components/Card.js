@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View, Pressable, StyleSheet } from 'react-native';
-import TextPrimary from '../../components/TextPrimary';
+import TextPrimary from '../../../components/TextPrimary';
 
 const Card = ({ simulado, onPress }) => {
   const { navigation } = onPress;
@@ -16,11 +16,6 @@ const Card = ({ simulado, onPress }) => {
       <View>
         <TextPrimary>{simulado.nome}</TextPrimary>
         <TextPrimary>{simulado.fase}ª fase / dia</TextPrimary>
-      </View>
-      <View>
-        <Text style={styles.notas}>
-          {simulado.notaFinal} / {simulado.notaMaxima}
-        </Text>
       </View>
     </Pressable>
   );

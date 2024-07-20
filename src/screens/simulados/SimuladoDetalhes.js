@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react'
+import * as Progress from 'react-native-progress';
+import { MaterialIcons } from '@expo/vector-icons';
+import Container from '../../components/Container'
 
 import {
   TouchableOpacity,
@@ -14,13 +17,69 @@ import {
   doc,
 } from "../../firebase/firebaseConfig";
 
-import { MaterialIcons } from '@expo/vector-icons';
+const Disciplina = ({ disciplina, dados }) => {
+  return (
+    <View key={disciplina}>
+      <Text style={{ fontSize: 20, textTransform: 'uppercase', marginBottom: 8 }}>
+        {disciplina}
+      </Text>
 
-import Container from '../../components/Container'
+      <Progress.Bar 
+        progress={dados.acertadas / dados.totais} 
+        width={null}
+        height={24}
+        color={'rgba(88, 94, 255, 1)'}
+        unfilledColor={'rgba(217, 217, 217, 1)'}
+        borderWidth={0}
+      />
+
+      <Text>Acertadas: {dados.acertadas}</Text>
+      <Text>Totais: {dados.totais}</Text>
+    </View>
+  );
+};
+
+const RenderConteudos = (simulado) => {
+  const elementos = [];
+  if (simulado.conteudos) {
+    for (let disciplina in simulado.conteudos) {
+      if (simulado.conteudos.hasOwnProperty(disciplina)) {
+        let dados = simulado.conteudos[disciplina];
+        elementos.push(
+          <Disciplina 
+            key={disciplina} 
+            disciplina={disciplina} 
+            dados={dados}
+          />
+        );
+      }
+    }
+  }
+  return elementos;
+};
 
 export default SimuladoDetalhes = ({ route, navigation }) => {
   const { id } = route.params
   const [simulado, setSimulado] = useState({});
+
+  const calcularAcertos = (conteudos) => {
+    let acertadas = 0;
+    let totais = 0;
+
+    if (conteudos) {
+      for (let disciplina in conteudos) {
+        if (conteudos.hasOwnProperty(disciplina)) {
+          let dados = conteudos[disciplina];
+          acertadas += Number(dados["acertadas"]);
+          totais += Number(dados["totais"]);
+        }
+      }
+    }
+
+    return { acertadas, totais };
+  };
+
+  const { acertadas, totais } = calcularAcertos(simulado.conteudos);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,37 +96,6 @@ export default SimuladoDetalhes = ({ route, navigation }) => {
   }, [navigation, id]);
 
   console.log("reload")
-
-  const Disciplina = ({ disciplina, dados }) => {
-    return (
-      <View key={disciplina} style={{ marginBottom: 10 }}>
-        <Text style={{ fontSize: 18, textTransform: 'uppercase' }}>
-          {disciplina}
-        </Text>
-        <Text>Acertadas: {dados.acertadas}</Text>
-        <Text>Totais: {dados.totais}</Text>
-      </View>
-    );
-  };
-
-  const RenderConteudos = () => {
-    const elementos = [];
-
-    for (let disciplina in simulado.conteudos) {
-      if (simulado.conteudos.hasOwnProperty(disciplina)) {
-        let dados = simulado.conteudos[disciplina];
-        elementos.push(
-          <Disciplina 
-            key={disciplina} 
-            disciplina={disciplina} 
-            dados={dados}
-          />
-        );
-      }
-    }
-    return elementos;
-  };
-
 
   return (
     <ScrollView>
@@ -90,12 +118,24 @@ export default SimuladoDetalhes = ({ route, navigation }) => {
             <MaterialIcons name="edit" size={26} color="#505050" />
           </TouchableOpacity>
         </View>
+        
+        { totais > 0 && (
+          <Progress.Bar 
+            progress={acertadas / totais} 
+            width={null}
+            height={24}
+            color={'rgba(88, 94, 255, 1)'}
+            unfilledColor={'rgba(217, 217, 217, 1)'}
+            borderWidth={0}
+          />
+        )}
       </Container>
 
-      <View style={styles.info}>
-        <Text style={styles.infoTitle}>Data realizada</Text>
-        <TextPrimary>{simulado?.data}</TextPrimary>
-      </View>
+      <Info 
+        title="Data realizada"
+        info={simulado?.data}
+      />
+
       
       <Container>
         <View style={{ marginTop: -34 }}>
@@ -104,7 +144,7 @@ export default SimuladoDetalhes = ({ route, navigation }) => {
           </Text>
         </View>
         
-        {RenderConteudos()}
+        {RenderConteudos(simulado)}
       </Container>
     </ScrollView> 
   );
