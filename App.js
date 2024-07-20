@@ -163,7 +163,7 @@ export default function App() {
       
       <NavigationContainer>
         <Tab.Navigator 
-          initialRouteName="NavSimulados"
+          initialRouteName="NavRedacoes"
           screenOptions={({ route }) => ({ 
             headerShown: false,
             tabBarStyle: { 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import * as Progress from 'react-native-progress';
 
 import {
   TouchableOpacity,
@@ -19,12 +20,13 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 import Container from '../../components/Container'
 import ButtonPrimary from '../../components/ButtonPrimary'
+import TextPrimary from '../../components/TextPrimary'
 import Info from './components/Info'
 
 const Header = ({ redacao, navigation }) => {
   return (
     <View style={styles.header}>
-      <Text style={{ fontSize: 20, fontWeight: '600', flex: 1 }}>
+      <Text style={{ fontSize: 22, fontWeight: '600', flex: 1 }}>
         {redacao?.tema}
       </Text>
 
@@ -32,7 +34,7 @@ const Header = ({ redacao, navigation }) => {
         style={styles.editButton}
         onPress={() => navigation.navigate(
           'RedacaoAlterar',
-          { id: redacao.id }
+          { id: redacao?.id }
         )}
       >
         <MaterialIcons name="edit" size={26} color="#505050" />
@@ -44,11 +46,10 @@ const Header = ({ redacao, navigation }) => {
 const ItemCompetencia = ({ navigation, competencia, redacaoId }) => {
   return(
     <View>
-      <View style={styles.flex}>
-        <Text style={{ fontSize: 18, fontWeight: '600' }}>
+      <View style={[styles.flex, { marginBottom: 8 }]}>
+        <Text style={{ fontSize: 20, fontWeight: '600' }}>
           Competência {competencia.numeroCompetencia}
         </Text>
-
 
         <TouchableOpacity 
           style={styles.editButton}
@@ -61,16 +62,40 @@ const ItemCompetencia = ({ navigation, competencia, redacaoId }) => {
         </TouchableOpacity>
       </View>
 
-      <Text>Nota: {competencia.notaFinal} / {competencia.notaMaxima}</Text>
-      <Text>Descrição da correção: {competencia.descricao}</Text>
+      <Progress.Bar 
+        progress={Number(competencia.notaFinal) / Number(competencia.notaMaxima)} 
+        width={null}
+        height={24}
+        color={'rgba(88, 94, 255, 1)'}
+        unfilledColor={'rgba(217, 217, 217, 1)'}
+        borderWidth={0}
+      />
+      
+      <View style={{ marginHorizontal: -20, marginTop: 20 }}>
+        <Info 
+          title={"Nota tirada"}
+          info={competencia.notaFinal}
+        />
+
+        <Info 
+          title={"Nota máxima"}
+          info={competencia.notaMaxima}
+        />
+
+        <Info 
+          title={"Descrição"}
+          info={competencia.descricao}
+          twoColumn={false}
+        />
+      </View>
     </View>
   )
 }
 
-export default RedacaoDetalhes = ({ route, navigation }) => {
-  const { id } = route.params
+const RedacaoDetalhes = ({ route, navigation }) => {
+  const { id } = route.params;
 
-  const [redacao, setRedacao] = useState({});
+  const [redacao, setRedacao] = useState(null);
   const [competencias, setCompetencias] = useState([]);
 
   useEffect(() => {
@@ -92,7 +117,7 @@ export default RedacaoDetalhes = ({ route, navigation }) => {
     return navigation.addListener('focus', fetchData);
   }, []);
 
-  console.log("reload")
+  console.log("reload");
 
   return (
     <Container>
@@ -101,13 +126,34 @@ export default RedacaoDetalhes = ({ route, navigation }) => {
         navigation={navigation}
       />
 
-      <View style={{ marginHorizontal: -20 }}>
-        <Info redacao={redacao} />
+      <Text>Nota da redação</Text>
+
+      { redacao &&
+        <Progress.Bar 
+          progress={Number(redacao.notaFinal) / Number(redacao.notaMaxima)} 
+          width={null}
+          height={24}
+          color={'rgba(88, 94, 255, 1)'}
+          unfilledColor={'rgba(217, 217, 217, 1)'}
+          borderWidth={0}
+        />
+      }
+
+      <View style={{ flexDirection: 'row', gap: 30 }}>
+        <View>
+          <Text>Nota final</Text>
+          <Text>{redacao?.notaFinal}</Text>
+        </View>
+
+        <View>
+          <Text>Nota máxima</Text>
+          <Text>{redacao?.notaMaxima}</Text>
+        </View>
       </View>
 
       <View>
         <View style={[styles.competenciaHeader, styles.flex]}>
-          <Text style={{ fontSize: 20, fontWeight: '600' }}>
+          <Text style={{ fontSize: 24, fontWeight: '600' }}>
             Competências
           </Text>
 
@@ -125,7 +171,7 @@ export default RedacaoDetalhes = ({ route, navigation }) => {
         }
 
         { competencias.map((data, index) => (
-            <View>
+            <View key={data.id}>
               { index !== 0 &&
                 <View style={styles.separator} />
               }
@@ -133,9 +179,7 @@ export default RedacaoDetalhes = ({ route, navigation }) => {
               <ItemCompetencia
                 competencia={data} 
                 navigation={navigation}
-                key={data.id} 
-                onPress={{ navigation }} 
-                redacaoId={redacao.id}
+                redacaoId={redacao?.id}
               />
             </View>
           ))
@@ -149,43 +193,26 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
   },
-  headerContent: {
-    gap: 4,
-  },
-  subTitle: {
-    fontSize: 20,
-  },
   editButton: {
     padding: 6,
-    marginLeft: 4
-  },
-  info: {
-    backgroundColor: 'white',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  infoTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    marginLeft: 4,
   },
   competenciaHeader: {
     marginTop: 6,
-    marginBottom: 20
+    marginBottom: 14
   },
   separator: {
     width: '100%',
     height: 1.25,
     backgroundColor: '#ccc',
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: 30,
+    marginBottom: 18,
   },
   flex: {
     flexDirection: 'row', 
     alignItems: 'center', 
     justifyContent: 'space-between',
-  }
+  },
 });
+
+export default RedacaoDetalhes;

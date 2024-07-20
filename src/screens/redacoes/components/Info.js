@@ -1,43 +1,17 @@
 import { View, Text, StyleSheet } from 'react-native'
 
-const Item = ({ title, info }) => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>
-        {title}
-      </Text>
-      
-      <Text style={styles.data}>
-        {info}
-      </Text>
-    </View>
-  )
-}
-
-const Nota = ({ notaFinal, notaMaxima }) => {
-  return (
-    <View style={[styles.container, { flexDirection: 'column' }]}>
-      <Text style={styles.titleNotas}>
-        Nota da redação
-      </Text>
-      
-      <Text>{ notaFinal } / { notaMaxima }</Text>
-    </View>
-  )
-}
-
-export default Info = ({ redacao }) => {
+export default Info = ({ title, info, twoColumn=true }) => {
   return (
     <View>
-      <Nota
-        notaFinal={redacao.notaFinal}
-        notaMaxima={redacao.notaMaxima}
-      />
-
-      <Item 
-        title="Data realizada"
-        info={redacao.data}
-      />
+      <View style={styles.container}>
+        <Text style={styles.title}>
+          {title}
+        </Text>
+        
+        <Text style={styles.data}>
+          {info}
+        </Text>
+      </View>
     </View>
   )
 }
@@ -50,16 +24,16 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: '#ccc',
-    flexDirection: 'row',
     marginTop: -1,
+    flexDirection: 'row'
   },
-  title: {
+  title: { 
     fontSize: 16,
-    width: 100,
+    width: 120,
     color: 'rgb(107 114 128)',
     fontWeight: 'bold',
     marginRight: 20,
-    flex: 1
+    textTransform: 'uppercase'
   },
   titleNotas: {
     fontSize: 16,
@@ -68,5 +42,6 @@ const styles = StyleSheet.create({
   },
   data: {
     fontSize: 16,
+    flex: 2
   }
 })
