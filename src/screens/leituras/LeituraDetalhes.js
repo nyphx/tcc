@@ -50,8 +50,8 @@ export default LeituraDetalhes = ({ route, navigation }) => {
 }
 
   return (
-    <ScrollView>
-      <Container>
+    <Container>
+      <View>
         <View style={styles.header}>
           <Title>{leitura.livro}</Title>
 
@@ -67,30 +67,32 @@ export default LeituraDetalhes = ({ route, navigation }) => {
         </View>
 
         <Estado estado={leitura.estado} />
-      </Container>
-      
-      <Info 
-        title="Autor"
-        info={leitura.autor}
-      />
+      </View>
 
-      <Info 
-        title="Vestibular"
-        info={leitura.vestibular}
-      />
-      
-      <Info 
-        title="Início"
-        info={leitura.dataInicio}
-      />
+      <View style={{ marginHorizontal: -20 }}>
+        <Info 
+          title="Autor"
+          info={leitura.autor}
+          />
 
-      <Info 
-        title="Termínio"
-        info={leitura.dataTerminio}
-      />
+        <Info 
+          title="Vestibular"
+          info={leitura.vestibular}
+          />
+        
+        <Info 
+          title="Início"
+          info={leitura.dataInicio}
+          />
+
+        <Info 
+          title="Termínio"
+          info={leitura.dataTerminio}
+        />
+      </View>
 
       { leitura.id && ( // verifica se o id da leitura está definido
-        <Container>
+        <View marginTop={false}>
             <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 18 }}>
               Processo de leitura
             </Text>
@@ -120,11 +122,20 @@ export default LeituraDetalhes = ({ route, navigation }) => {
                 </Text>
               </View>
 
-              <ProcessoPaginas 
-                leitura={leitura}
-                atual={leitura.atualPaginas}
-                total={leitura.totalPaginas}
-              />
+              <View style={{ marginHorizontal: -20 }}>
+                <View>
+                  
+                </View>
+                <Info 
+                  title={"Leitura atual"}
+                  info={leitura.atualPaginas}
+                />
+
+                <Info 
+                  title={"Total"}
+                  info={leitura.atualPaginas}
+                />
+              </View>
             </View>
 
             <View>
@@ -158,9 +169,9 @@ export default LeituraDetalhes = ({ route, navigation }) => {
                 total={leitura.totalCapitulos}
               />
           </View>
-        </Container>
+        </View>
       )}
-    </ScrollView> 
+    </Container> 
   );
 };
 
@@ -168,7 +179,8 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row', 
     justifyContent: 'space-between', 
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 20
   },
   editButton: {
     padding: 6,

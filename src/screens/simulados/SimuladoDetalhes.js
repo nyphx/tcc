@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import * as Progress from 'react-native-progress';
 import { MaterialIcons } from '@expo/vector-icons';
 import Container from '../../components/Container'
-
 import {
   TouchableOpacity,
   View,
@@ -33,8 +32,17 @@ const Disciplina = ({ disciplina, dados }) => {
         borderWidth={0}
       />
 
-      <Text>Acertadas: {dados.acertadas}</Text>
-      <Text>Totais: {dados.totais}</Text>
+      <View style={{ marginHorizontal: -20, marginTop: 20 }}>
+        <Info 
+          title="Acertos"
+          info={`${dados.acertadas} questões`}
+        />
+
+        <Info 
+          title="Total"
+          info={`${dados.totais} questões`}
+        />  
+      </View>
     </View>
   );
 };
@@ -81,6 +89,13 @@ export default SimuladoDetalhes = ({ route, navigation }) => {
 
   const { acertadas, totais } = calcularAcertos(simulado.conteudos);
 
+  function calcularPorcentagem(acertos, totais) {
+    if (totais === 0) {
+        return 0;
+    }
+    return (acertos / totais) * 100;
+  } 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -98,28 +113,31 @@ export default SimuladoDetalhes = ({ route, navigation }) => {
   console.log("reload")
 
   return (
-    <ScrollView>
-      <Container>
-        <View style={styles.header}>
-          <View style={styles.headerContent}>
-            <Title>{simulado?.nome}</Title>
-            <Text style={styles.subTitle}>
-              {simulado?.fase}ª fase / dia
-            </Text>
-          </View>
-
-          <TouchableOpacity 
-            style={styles.editButton}
-            onPress={() => navigation.navigate(
-              'SimuladoAlterar',
-              { id: simulado.id }
-            )}
-          >
-            <MaterialIcons name="edit" size={26} color="#505050" />
-          </TouchableOpacity>
+    <Container>
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
+          <Title>{simulado?.nome}</Title>
+          <Text style={styles.subTitle}>
+            {simulado?.fase}ª fase / dia
+          </Text>
         </View>
-        
-        { totais > 0 && (
+
+        <TouchableOpacity 
+          style={styles.editButton}
+          onPress={() => navigation.navigate(
+            'SimuladoAlterar',
+            { id: simulado.id }
+          )}
+        >
+          <MaterialIcons name="edit" size={26} color="#505050" />
+        </TouchableOpacity>
+      </View>
+
+      { totais > 0 && (
+        <View style={styles.notaContainer}>
+          <Text style={styles.desempenhoTitle}>
+            Desempenho
+          </Text>
           <Progress.Bar 
             progress={acertadas / totais} 
             width={null}
@@ -128,25 +146,51 @@ export default SimuladoDetalhes = ({ route, navigation }) => {
             unfilledColor={'rgba(217, 217, 217, 1)'}
             borderWidth={0}
           />
-        )}
-      </Container>
 
-      <Info 
-        title="Data realizada"
-        info={simulado?.data}
-      />
+          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 14 , flexDirection: 'row'}}>
+            <Text style={{ fontSize: 18 }}>
+              Você acertou
+            </Text>
 
-      
-      <Container>
-        <View style={{ marginTop: -34 }}>
-          <Text style={{ fontSize: 22, fontWeight: '600' }}>
-            Acertos por conteúdo
-          </Text>
+            <View style={{ paddingHorizontal: 8 }}>
+              <Text style={{ fontWeight: '700', fontSize: 24 }}>
+                {calcularPorcentagem(acertadas, totais).toFixed()}%
+              </Text>
+            </View>
+
+            <Text style={{ fontSize: 18 }}>
+              do simulado.
+            </Text>
+          </View>
         </View>
-        
-        {RenderConteudos(simulado)}
-      </Container>
-    </ScrollView> 
+      )} 
+    
+      <View style={{ marginHorizontal: -20 }}>
+        <Info 
+          title="Acertos"
+          info={`${acertadas} questões`}
+          />
+
+        <Info 
+          title="Total"
+          info={`${totais} questões`}
+          />
+
+        <Info 
+          title="Data realizada"
+          info={simulado?.data}
+          />
+      </View>
+
+    
+      <View>
+        <Text style={{ fontSize: 22, fontWeight: '600' }}>
+          Acertos por conteúdo
+        </Text>
+      </View>
+      
+      {RenderConteudos(simulado)}
+    </Container>
   );
 };
 
@@ -154,7 +198,6 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,
   },
   headerContent: {
     gap: 4,
@@ -177,5 +220,18 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 18,
     fontWeight: '600',
+  },
+  notaContainer: {
+    backgroundColor: 'white', padding: 20, marginHorizontal: -20,
+    borderTopColor: "#ccc",
+    borderTopWidth: 1,
+    marginBottom: -20
+  },
+  desempenhoTitle: {
+    fontSize: 18,
+    textTransform: 'uppercase',
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 10
   },
 });

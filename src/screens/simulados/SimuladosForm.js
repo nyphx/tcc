@@ -17,8 +17,6 @@ const SimuladoForm = ({ navigation }) => {
     nome: '',
     fase: '',
     data: '',
-    notaFinal: '',
-    notaMaxima: '',
     conteudos: []
   });
 
@@ -115,26 +113,6 @@ const SimuladoForm = ({ navigation }) => {
             value={simulado.data}
             onChangeText={text => handleSimuladoChange('data', text)}
             keyboardType="default"
-            twoColumn={true}
-          />
-        </View>
-
-        <View style={{ flexDirection: 'row', gap: 20 }}>
-          <TextInputWithLabel
-            label="Nota Final"
-            placeholder="Ex: 70"
-            value={simulado.notaFinal}
-            onChangeText={text => handleSimuladoChange('notaFinal', text)}
-            keyboardType="numeric"
-            twoColumn={true}
-          />
-
-          <TextInputWithLabel
-            label="Nota Máxima"
-            placeholder="Ex: 90"
-            value={simulado.notaMaxima}
-            onChangeText={text => handleSimuladoChange('notaMaxima', text)}
-            keyboardType="numeric"
             twoColumn={true}
           />
         </View>
