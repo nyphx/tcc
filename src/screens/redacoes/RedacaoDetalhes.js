@@ -126,29 +126,38 @@ const RedacaoDetalhes = ({ route, navigation }) => {
         navigation={navigation}
       />
 
-      <Text>Nota da redação</Text>
+      <View style={{ marginHorizontal: -20 }}>
+        <View style={styles.notasContainer}>
+          <Text style={styles.notaTitle}>
+            Nota da redação
+          </Text>
 
-      { redacao &&
-        <Progress.Bar 
-          progress={Number(redacao.notaFinal) / Number(redacao.notaMaxima)} 
-          width={null}
-          height={24}
-          color={'rgba(88, 94, 255, 1)'}
-          unfilledColor={'rgba(217, 217, 217, 1)'}
-          borderWidth={0}
+          { redacao &&
+            <Progress.Bar 
+            progress={Number(redacao.notaFinal) / Number(redacao.notaMaxima)} 
+            width={null}
+            height={24}
+            color={'rgba(88, 94, 255, 1)'}
+            unfilledColor={'rgba(217, 217, 217, 1)'}
+            borderWidth={0}
+            />
+          }
+        </View>
+
+        <Info 
+          title={"Nota final"}
+          info={redacao?.notaFinal}
         />
-      }
 
-      <View style={{ flexDirection: 'row', gap: 30 }}>
-        <View>
-          <Text>Nota final</Text>
-          <Text>{redacao?.notaFinal}</Text>
-        </View>
-
-        <View>
-          <Text>Nota máxima</Text>
-          <Text>{redacao?.notaMaxima}</Text>
-        </View>
+        <Info 
+          title={"Nota máxima"}
+          info={redacao?.notaMaxima}
+        />
+        
+        <Info 
+          title={"Data realizada"}
+          info={redacao?.data}
+        />
       </View>
 
       <View>
@@ -213,6 +222,21 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'space-between',
   },
+  notaTitle: {
+    fontSize: 18,
+    color: 'rgb(107 114 128)',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    marginBottom: 10
+  },
+  notasContainer: {
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderTopColor: "#ccc",
+  }
 });
 
 export default RedacaoDetalhes;

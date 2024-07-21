@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native'
 
-const Item = ({ title, info }) => {
+export default Info = ({ title, info }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
@@ -10,32 +10,6 @@ const Item = ({ title, info }) => {
       <Text style={styles.data}>
         {info}
       </Text>
-    </View>
-  )
-}
-
-export default Info = ({ livro }) => {
-  return (
-    <View>
-      <Item 
-        title="Autor"
-        info={livro.autor}
-      />
-
-      <Item 
-        title="Vestibular"
-        info={livro.vestibular}
-      />
-      
-      <Item 
-        title="Início"
-        info={livro.dataInicio}
-      />
-
-      <Item 
-        title="Termínio"
-        info={livro.dataTerminio}
-      />
     </View>
   )
 }
@@ -53,10 +27,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    width: 100,
+    width: 120,
     color: 'rgb(107 114 128)',
-    fontWeight: 'bold',
-    marginRight: 20
+    fontWeight: '700',
+    marginRight: 20,
+    textTransform: 'uppercase'
   },
   data: {
     fontSize: 16,

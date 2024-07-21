@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
   title: { 
     fontSize: 16,
-    width: 120,
+    width: 135,
     color: 'rgb(107 114 128)',
     fontWeight: 'bold',
     marginRight: 20,
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   data: {
-    fontSize: 16,
+    fontSize: 18,
     flex: 2
   }
 })
