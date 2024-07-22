@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
 import * as Progress from 'react-native-progress';
+
 import { MaterialIcons } from '@expo/vector-icons';
+
 import Container from '../../components/Container'
+
 import {
   TouchableOpacity,
   View,
@@ -17,22 +20,37 @@ import {
 } from "../../firebase/firebaseConfig";
 
 const Disciplina = ({ disciplina, dados }) => {
+  function calcularPorcentagem(acertos, totais) {
+    if (totais === 0) {
+        return 0;
+    }
+    return (acertos / totais) * 100;
+  } 
+
   return (
     <View key={disciplina}>
-      <Text style={{ fontSize: 20, textTransform: 'uppercase', marginBottom: 8 }}>
+      <Text style={styles.conteudoTitulo}>
         {disciplina}
       </Text>
 
-      <Progress.Bar 
-        progress={dados.acertadas / dados.totais} 
-        width={null}
-        height={24}
-        color={'rgba(88, 94, 255, 1)'}
-        unfilledColor={'rgba(217, 217, 217, 1)'}
-        borderWidth={0}
-      />
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+        <View style={{ flex: 1, marginBottom: 20 }}>
+          <Progress.Bar 
+            progress={dados.acertadas / dados.totais} 
+            width={null}
+            height={24}
+            color={'rgba(88, 94, 255, 1)'}
+            unfilledColor={'rgba(217, 217, 217, 1)'}
+            borderWidth={0}
+          />
+        </View>
 
-      <View style={{ marginHorizontal: -20, marginTop: 20 }}>
+        <Text style={{ fontWeight: '700', fontSize: 20 }}>
+          {calcularPorcentagem(dados.acertadas, dados.totais).toFixed()}%
+        </Text>
+      </View>
+
+      <View style={{ marginHorizontal: -20 }}>
         <Info 
           title="Acertos"
           info={`${dados.acertadas} questões`}
@@ -233,5 +251,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: 10
-  },
+  }, 
+  conteudoTitulo: {
+    fontSize: 20,
+    textTransform: 'uppercase',
+    fontWeight: '600',
+    marginBottom: 8
+  }
 });

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { View, Text, Pressable, StyleSheet, TextInput, Modal, TouchableOpacity } from 'react-native'
 import { db, doc, updateDoc } from "../../../firebase/firebaseConfig";
 
-import { Entypo } from '@expo/vector-icons';
+import { Entypo, MaterialIcons } from '@expo/vector-icons';
 
 import ButtonPrimary from '../../../components/ButtonPrimary'
 import ButtonCancel from '../../../components/ButtonCancel'
@@ -51,23 +51,12 @@ export default ProcessoCapitulos = ({ leitura, atual, total }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Pressable 
-        style={styles.container}
-        onPress={() => setModalVisible(true)}
-      >
-        <Text style={styles.title}>
-          Capítulos
-        </Text>
-
-        <View style={{ flexDirection: 'row', gap: 6 }}>
-          <Text style={styles.textAtual}>
-            {atual}
-          </Text>
-          <Text style={styles.textTotal}>
-            / {total}
-          </Text>
-        </View>
-      </Pressable>
+      <TouchableOpacity 
+        style={styles.editButton}
+        onPress={() => setModalVisible(!modalVisible)}
+        >
+        <MaterialIcons name="edit" size={26} color="#505050" />
+      </TouchableOpacity>
 
       <Modal
         animationType="none"

@@ -1,13 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native'
 
-export default Info = ({ title, info }) => {
+export default Info = ({ title, info, center=false }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
         {title}
       </Text>
       
-      <Text style={styles.data}>
+      <Text style={[styles.data, center && { textAlign: 'center'} ]}>
         {info}
       </Text>
     </View>
@@ -27,13 +27,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    width: 120,
+    width: 130,
     color: 'rgb(107 114 128)',
     fontWeight: '700',
     marginRight: 20,
     textTransform: 'uppercase'
   },
   data: {
-    fontSize: 16,
+    fontSize: 18,
+    flex: 1,
   }
 })

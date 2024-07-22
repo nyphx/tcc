@@ -47,7 +47,7 @@ export default LeituraDetalhes = ({ route, navigation }) => {
         return 0;
     }
     return (paginasLidas / paginasTotais) * 100;
-}
+  }
 
   return (
     <Container>
@@ -69,7 +69,7 @@ export default LeituraDetalhes = ({ route, navigation }) => {
         <Estado estado={leitura.estado} />
       </View>
 
-      <View style={{ marginHorizontal: -20 }}>
+      <View style={{ marginHorizontal: -20, marginBottom: 10 }}>
         <Info 
           title="Autor"
           info={leitura.autor}
@@ -92,20 +92,30 @@ export default LeituraDetalhes = ({ route, navigation }) => {
       </View>
 
       { leitura.id && ( // verifica se o id da leitura está definido
-        <View marginTop={false}>
-            <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 18 }}>
+        <View>
+            <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 20 }}>
               Processo de leitura
             </Text>
 
-            <View>
-              <View style={{ flexDirection: 'row', gap: 10, marginBottom: 10 }}>
-                <FontAwesome name="book" size={24} color="black" />
-                <Text style={{ fontSize: 18, fontWeight: '600', textTransform: 'uppercase' }}>
-                  Páginas
-                </Text>
+            <View style={{ marginBottom: 20 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 14 }}>
+                <View style={{ flexDirection: 'row', gap: 10 }}>
+                  <FontAwesome name="book" size={24} color="black" />
+                  <Text style={{ fontSize: 18, fontWeight: '600', textTransform: 'uppercase' }}>
+                    Páginas
+                  </Text>
+                </View>
+
+                <View>
+                  <ProcessoPaginas
+                    leitura={leitura}
+                    atual={leitura.atualPaginas}
+                    total={leitura.totalPaginas}
+                  />
+                </View>
               </View>
 
-              <View style={{ flexDirection: 'row' }}>
+              <View style={{ flexDirection: 'row', marginBottom: 18 }}>
                 <View style={{ flex: 1 }}>
                   <Progress.Bar 
                     progress={Number(leitura.atualPaginas) / Number(leitura.totalPaginas)} 
@@ -123,30 +133,39 @@ export default LeituraDetalhes = ({ route, navigation }) => {
               </View>
 
               <View style={{ marginHorizontal: -20 }}>
-                <View>
-                  
-                </View>
                 <Info 
                   title={"Leitura atual"}
                   info={leitura.atualPaginas}
+                  center={true}
                 />
 
                 <Info 
                   title={"Total"}
-                  info={leitura.atualPaginas}
+                  info={leitura.totalPaginas}
+                  center={true}
                 />
               </View>
             </View>
 
-            <View>
-              <View style={{ flexDirection: 'row', gap: 10, marginBottom: 10 }}>
-                <FontAwesome name="book" size={24} color="black" />
-                <Text style={{ fontSize: 18, fontWeight: '600', textTransform: 'uppercase' }}>
-                  Capítulos
-                </Text>
+            <View style={{ marginTop: 10 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 14  }}>
+                <View style={{ flexDirection: 'row', gap: 10 }}>
+                  <FontAwesome name="book" size={24} color="black" />
+                  <Text style={{ fontSize: 18, fontWeight: '600', textTransform: 'uppercase' }}>
+                    Capítulos
+                  </Text>
+                </View>
+
+                <View>
+                  <ProcessoCapitulos
+                    leitura={leitura}
+                    atual={leitura.atualCapitulos}
+                    total={leitura.totalCapitulos}
+                  />
+                </View>
               </View>
 
-              <View style={{ flexDirection: 'row' }}>
+              <View style={{ flexDirection: 'row', marginBottom: 18 }}>
                 <View style={{ flex: 1 }}>
                   <Progress.Bar 
                     progress={Number(leitura.atualCapitulos) / Number(leitura.totalCapitulos)} 
@@ -163,11 +182,19 @@ export default LeituraDetalhes = ({ route, navigation }) => {
                 </Text>
               </View>
 
-              <ProcessoCapitulos
-                leitura={leitura}
-                atual={leitura.atualCapitulos}
-                total={leitura.totalCapitulos}
-              />
+              <View style={{ marginHorizontal: -20 }}>
+                <Info 
+                  title={"Capítulo atual"}
+                  info={leitura.atualCapitulos}
+                  center={true}
+                />
+
+                <Info 
+                  title={"Total"}
+                  info={leitura.totalCapitulos}
+                  center={true}
+                />
+              </View>
           </View>
         </View>
       )}
