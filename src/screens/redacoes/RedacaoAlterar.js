@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { db, doc, getDoc, updateDoc, deleteDoc } from "../../firebase/firebaseConfig";
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 
-import Container from '../../components/Container'
-import Title from '../../components/Title'
-import TextInputWithLabel from '../../components/TextInputWithLabel'
-import ButtonPrimary from '../../components/ButtonPrimary'
-import ButtonDelete from '../../components/ButtonDelete'
+import {
+  Container,
+  Title,
+  TextInputWithLabel,
+  ButtonPrimary,
+  ButtonDelete
+} from '../components';
 
 const RedacaoAlterar = ({ navigation, route }) => {
   const { id } = route.params

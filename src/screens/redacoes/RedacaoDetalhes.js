@@ -18,9 +18,11 @@ import {
 
 import { MaterialIcons } from '@expo/vector-icons';
 
-import Container from '../../components/Container'
-import ButtonPrimary from '../../components/ButtonPrimary'
-import TextPrimary from '../../components/TextPrimary'
+import {
+  Container,
+  ButtonPrimary,
+} from '../components';
+
 import Info from './components/Info'
 
 const Header = ({ redacao, navigation }) => {

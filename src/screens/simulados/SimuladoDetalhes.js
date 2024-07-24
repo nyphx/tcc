@@ -3,7 +3,10 @@ import * as Progress from 'react-native-progress';
 
 import { MaterialIcons } from '@expo/vector-icons';
 
-import Container from '../../components/Container'
+import {
+  Container,
+  Title,
+} from '../components';
 
 import {
   TouchableOpacity,

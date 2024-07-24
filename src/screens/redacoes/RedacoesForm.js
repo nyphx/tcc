@@ -11,10 +11,13 @@ import {
 } from 'react-native';
 
 import { Feather } from '@expo/vector-icons';
-import Container from '../../components/Container'
-import Title from '../../components/Title'
-import TextInputWithLabel from '../../components/TextInputWithLabel'
-import ButtonPrimary from '../../components/ButtonPrimary'
+
+import {
+  Container,
+  Title,
+  TextInputWithLabel,
+  ButtonPrimary
+} from '../components';
 
 const RedacoesForm = ({ navigation }) => {
   const [redacao, setRedacao] = useState({

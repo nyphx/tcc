@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, db } from '../../firebase/firebaseConfig';
 
-import Container from '../../components/Container';
-import Header from '../../components/Header';
-import Title from '../../components/Title';
-import RedirectButton from '../../components/RedirectButton';
+import {
+  Container,
+  Header,
+  Title,
+  RedirectButton
+} from '../components';
 
 import Card from './components/Card';
 

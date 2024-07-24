@@ -5,7 +5,7 @@ import {
   StyleSheet 
 } from 'react-native';
 
-import Title from './Title'
+import Title from '../Typography/Title'
 
 export default CountTitle = ({ count, title, bgColor, textColor}) => {
   return (

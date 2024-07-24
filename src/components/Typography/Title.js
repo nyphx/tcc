@@ -1,6 +1,4 @@
 import { 
-  TouchableOpacity, 
-  View, 
   Text, 
   StyleSheet 
 } from 'react-native';

@@ -3,10 +3,13 @@ import { db, doc, getDoc, updateDoc, deleteDoc } from "../../firebase/firebaseCo
 import { v4 as uuidv4 } from 'uuid';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-import Container from '../../components/Container'
-import Title from '../../components/Title'
-import TextInputWithLabel from '../../components/TextInputWithLabel'
-import ButtonPrimary from '../../components/ButtonPrimary'
+
+import {
+  Container,
+  TextInputWithLabel,
+  Title,
+  ButtonPrimary
+} from '../components';
 
 import { AntDesign } from '@expo/vector-icons';
 

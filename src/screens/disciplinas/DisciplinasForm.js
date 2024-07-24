@@ -1,23 +1,14 @@
-import { 
-  useState 
-} from 'react'
+import { useState } from 'react'
+import { View } from 'react-native';
+import { db, collection, addDoc } from "../../firebase/firebaseConfig";
 
-import { 
-  StyleSheet, 
-  Text, 
-  View,
-  TextInput,
-  Pressable
-} from 'react-native';
+import Container from '../../components/Container'
+import Title from '../../components/Title'
+import TextInputWithLabel from '../../components/TextInputWithLabel'
+import ButtonPrimary from '../../components/ButtonPrimary'
+import RadioForm from '../../components/RadioForm'
 
-import { 
-  Typography, 
-  Buttons,
-  General,
-  Form
-} from '../../styles/index.js';
-
-export default function App({ navigation, route }) {
+export default function App({ navigation }) {
   const [nome, setNome] = useState("")
   const [estado, setEstado] = useState("")
 
@@ -28,95 +19,46 @@ export default function App({ navigation, route }) {
     { id: 3, value: 'Futuro' },
   ]
 
+  const handleSubmit = async () => {
+    try {
+      const disciplinasRef = collection(db, "disciplinas")
+
+      await addDoc(
+        disciplinasRef, 
+        { nome: nome, estado: estado }
+      );
+
+      navigation.goBack();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <Container>
+      <Title>
+        Adicionar disciplina
+      </Title>
+
       <View>
-        <Text style={styles.titulo}>
-          Adicionar disciplina
-        </Text>
+        <TextInputWithLabel
+          label="Nome da disciplinas"
+          placeholder="Ex: Biologia"
+          value={nome}
+          onChangeText={(text) => setNome(text)}
+          keyboardType="default"
+        />
 
-        <View style={styles.itemContainerForm}>
-          <Text style={styles.label}>
-            Nome da disciplina
-          </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ex: Biologia"
-            onChangeText={(text) => setNome(text)}
-            value={nome}
-          />
-        </View>
-
-        <View style={styles.itemContainerForm}>
-          <Text style={styles.label}>
-            Estado
-          </Text>
-          {radioButtonsEstados.map((item) => {
-            return (
-              <Pressable 
-                onPress={() => setEstado(item.value)}
-                key={item.id}
-                style={
-                  [ 
-                    styles.radioButtons,
-                    item.value === estado ? 
-                    styles.selected : 
-                    styles.unselected,
-                  ]
-              }>
-                <Text 
-                  style={
-                    [ 
-                      styles.radioLabels,
-                      item.value === estado ? 
-                      styles.selectedLabel : 
-                      styles.unselectedLabel
-                    ]
-                  }
-                >
-                  {item.value}
-                </Text>
-              </Pressable>
-            )
-          })}
-
-          <Text> User option: {estado}</Text>
-        </View>
+        <RadioForm 
+          options={radioButtonsEstados}
+          selectedValue={estado}
+          onValueChange={setEstado}
+        />
       </View>
-
-      <Pressable
-        style={styles.buttonPrimary}
-        onPress={() => {
-          navigation.navigate({
-            name: 'Disciplinas',
-            params: { 
-              nome: nome,
-              estado: estado
-            },
-            merge: true,
-          });
-        }}
-      >
-        <Text style={styles.buttonText}>
-          Adicionar disciplina
-        </Text>
-      </Pressable> 
-    </View>
+      
+      <ButtonPrimary handlePress={handleSubmit}>
+        Adicionar disciplina
+      </ButtonPrimary>
+    </Container>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { ...General.containerForm },
-  titulo: { ...Typography.tituloForm },
-  buttonPrimary: { ...Buttons.primary },
-  buttonText: { ...Buttons.text },
-  label: { ...Form.label },
-  input: { ...Form.input },
-  itemContainerForm: { ...Form.itemContainerForm },
-  radioButtons: { ...Form.radioButtons },
-  radioLabels: { ...Form.radioLabels },
-  selected: { ...Form.radioSelected },
-  unselected: { ...Form.radioUnselected },
-  selectedLabel: { ...Form.radioSelectedLabel },
-  unselectedLabel: { ...Form.radioUnselectedLabel },
-});

@@ -1,20 +1,19 @@
 import { useState } from 'react'
 import { db, collection, addDoc } from "../../firebase/firebaseConfig";
-import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid'; 
 
 import {
   View,
-  Text,
   StyleSheet,
-  TouchableOpacity
 } from 'react-native';
 
 import { Feather } from '@expo/vector-icons';
-import Container from '../../components/Container'
-import Title from '../../components/Title'
-import TextInputWithLabel from '../../components/TextInputWithLabel'
-import ButtonPrimary from '../../components/ButtonPrimary'
+
+import {
+  Container,
+  Title,
+  TextInputWithLabel,
+  ButtonPrimary
+} from '../components';
 
 const CompetenciaForm = ({ navigation, route }) => {
   const { id } = route.params

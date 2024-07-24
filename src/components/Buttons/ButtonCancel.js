@@ -1,10 +1,6 @@
-import { 
-  TouchableOpacity, 
-  Text, 
-  StyleSheet 
-} from 'react-native';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-export default Button = ({ handlePress, children }) => {
+export default ButtonCancel = ({ handlePress, children }) => {
   return (
     <TouchableOpacity 
       style={styles.button}

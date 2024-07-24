@@ -1,9 +1,11 @@
 import { db, collection, addDoc } from "../../firebase/firebaseConfig";
 
-import Container from '../../components/Container'
-import Title from '../../components/Title'
-import TextInputWithLabel from '../../components/TextInputWithLabel'
-import ButtonPrimary from '../../components/ButtonPrimary'
+import {
+  Container,
+  Title,
+  TextInputWithLabel,
+  ButtonPrimary
+} from '../components';
 
 import { AntDesign } from '@expo/vector-icons';
 import { v4 as uuidv4 } from 'uuid';
