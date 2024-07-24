@@ -4,8 +4,10 @@ import { db, doc, updateDoc } from "../../../firebase/firebaseConfig";
 
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 
-import ButtonPrimary from '../../../components/ButtonPrimary'
-import ButtonCancel from '../../../components/ButtonCancel'
+import {
+  ButtonCancel,
+  ButtonPrimary
+} from '../../../components';
 
 export default ProcessoPaginas = ({ leitura, atual, total }) => {
   const [modalVisible, setModalVisible] = useState(false);

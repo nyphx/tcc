@@ -21,7 +21,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import {
   Container,
   ButtonPrimary,
-} from '../components';
+} from '../../components';
 
 import Info from './components/Info'
 

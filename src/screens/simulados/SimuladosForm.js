@@ -5,7 +5,7 @@ import {
   Title,
   TextInputWithLabel,
   ButtonPrimary
-} from '../components';
+} from '../../components';
 
 import { AntDesign } from '@expo/vector-icons';
 import { v4 as uuidv4 } from 'uuid';

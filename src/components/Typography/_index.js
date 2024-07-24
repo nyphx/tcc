@@ -1,7 +1,2 @@
-import TextPrimary from './TextPrimary';
-import Title from './Title';
-
-export {
-  TextPrimary,
-  Title,
-};
+export { default as TextPrimary } from './TextPrimary';
+export { default as Title } from './Title';

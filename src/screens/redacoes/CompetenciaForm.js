@@ -13,7 +13,7 @@ import {
   Title,
   TextInputWithLabel,
   ButtonPrimary
-} from '../components';
+} from '../../components';
 
 const CompetenciaForm = ({ navigation, route }) => {
   const { id } = route.params

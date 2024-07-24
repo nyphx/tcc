@@ -6,7 +6,7 @@ import {
   Header,
   Title,
   RedirectButton
-} from '../components';
+} from '../../components';
 
 import Card from './components/Card';
 

@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { View, Text, Pressable, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { db, doc, updateDoc, deleteDoc } from "../../firebase/firebaseConfig";
 
-import Container from '../../components/Container'
-import Title from '../../components/Title'
-import TextInputWithLabel from '../../components/TextInputWithLabel'
-import ButtonPrimary from '../../components/ButtonPrimary'
-import ButtonDelete from '../../components/ButtonDelete'
+import {
+  Container,
+  Title,
+  TextInputWithLabel,
+  ButtonPrimary,
+  ButtonDelete
+} from '../../components';
 
 import { StyleModal } from '../../styles/modal'
 

@@ -17,7 +17,7 @@ import {
   Title,
   TextInputWithLabel,
   ButtonPrimary
-} from '../components';
+} from '../../components';
 
 const RedacoesForm = ({ navigation }) => {
   const [redacao, setRedacao] = useState({

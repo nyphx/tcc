@@ -6,7 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import {
   Container,
   Title,
-} from '../components';
+} from '../../components';
 
 import {
   TouchableOpacity,

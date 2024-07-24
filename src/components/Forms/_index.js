@@ -1,7 +1,2 @@
-import RadioForm from './RadioForm';
-import TextInputWithLabel from './TextInputWithLabel';
-
-export {
-  RadioForm,
-  TextInputWithLabel,
-};
+export { default as RadioForm } from './RadioForm';
+export { default as TextInputWithLabel } from './TextInputWithLabel';

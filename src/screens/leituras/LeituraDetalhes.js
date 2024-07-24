@@ -17,8 +17,11 @@ import {
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import * as Progress from 'react-native-progress';
 
-import Container from '../../components/Container'
-import Title from '../../components/Title'
+import {
+  Container,
+  Title,
+} from '../../components';
+
 import Estado from './components/Estado'
 import Info from './components/Info'
 import ProcessoPaginas from './components/ProcessoPaginas'

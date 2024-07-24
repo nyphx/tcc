@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { View } from 'react-native';
 import { db, collection, addDoc } from "../../firebase/firebaseConfig";
 
-import Container from '../../components/Container'
-import Title from '../../components/Title'
-import TextInputWithLabel from '../../components/TextInputWithLabel'
-import ButtonPrimary from '../../components/ButtonPrimary'
-import RadioForm from '../../components/RadioForm'
+import {
+  Container,
+  Title,
+  TextInputWithLabel,
+  ButtonPrimary,
+  RadioForm
+} from '../../components';
 
 export default function App({ navigation }) {
   const [nome, setNome] = useState("")

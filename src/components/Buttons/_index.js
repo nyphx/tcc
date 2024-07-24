@@ -1,11 +1,4 @@
-import ButtonCancel from './ButtonCancel';
-import ButtonDelete from './ButtonDelete';
-import ButtonPrimary from './ButtonPrimary';
-import RedirectButton from './RedirectButton';
-
-export {
-  ButtonCancel,
-  ButtonDelete,
-  ButtonPrimary,
-  RedirectButton,
-};
+export { default as ButtonCancel } from './ButtonCancel';
+export { default as ButtonDelete } from './ButtonDelete';
+export { default as ButtonPrimary } from './ButtonPrimary';
+export { default as RedirectButton } from './RedirectButton';

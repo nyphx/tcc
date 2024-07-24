@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { View, Text, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
 import { db, collection, addDoc } from "../../firebase/firebaseConfig";
 
-import Container from '../../components/Container'
-import Title from '../../components/Title'
-import TextInputWithLabel from '../../components/TextInputWithLabel'
-import ButtonPrimary from '../../components/ButtonPrimary'
+import {
+  Container,
+  Title,
+  TextInputWithLabel,
+  ButtonPrimary
+} from '../../components';
 
 export default LeiturasForm = ({ navigation }) => {
   const [leitura, setLeitura] = useState({

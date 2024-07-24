@@ -1,9 +1,3 @@
-import Container from './Container';
-import CountTitle from './CountTitle';
-import Header from './Header';
-
-export {
-  Container,
-  CountTitle,
-  Header,
-};
+export { default as Container } from './Container';
+export { default as CountTitle } from './CountTitle';
+export { default as Header } from './Header';

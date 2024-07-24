@@ -8,7 +8,7 @@ import {
   TextInputWithLabel,
   ButtonPrimary,
   ButtonDelete
-} from '../components';
+} from '../../components';
 
 const CompetenciaAlterar = ({ navigation, route }) => {
   const { redacaoId, data } = route.params
