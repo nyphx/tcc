@@ -36,8 +36,8 @@ const Disciplina = ({ disciplina, dados }) => {
         {disciplina}
       </Text>
 
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-        <View style={{ flex: 1, marginBottom: 20 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 20 }}>
+        <View style={{ flex: 1 }}>
           <Progress.Bar 
             progress={dados.acertadas / dados.totais} 
             width={null}

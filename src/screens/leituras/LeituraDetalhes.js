@@ -138,13 +138,13 @@ export default LeituraDetalhes = ({ route, navigation }) => {
               <View style={{ marginHorizontal: -20 }}>
                 <Info 
                   title={"Leitura atual"}
-                  info={leitura.atualPaginas}
+                  info={`${leitura.atualPaginas} páginas`}
                   center={true}
                 />
 
                 <Info 
                   title={"Total"}
-                  info={leitura.totalPaginas}
+                  info={`${leitura.totalPaginas} páginas`}
                   center={true}
                 />
               </View>
@@ -188,13 +188,13 @@ export default LeituraDetalhes = ({ route, navigation }) => {
               <View style={{ marginHorizontal: -20 }}>
                 <Info 
                   title={"Capítulo atual"}
-                  info={leitura.atualCapitulos}
+                  info={`${leitura.atualCapitulos} capítulos`}
                   center={true}
                 />
 
                 <Info 
                   title={"Total"}
-                  info={leitura.totalCapitulos}
+                  info={`${leitura.totalCapitulos} capítulos`}
                   center={true}
                 />
               </View>
