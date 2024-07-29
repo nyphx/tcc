@@ -1,12 +1,5 @@
 import { useEffect, useState } from 'react'
-
-import { 
-  StyleSheet, 
-  Text, 
-  View,
-  Pressable
-} from 'react-native';
-
+import { Text, View, Pressable } from 'react-native';
 import { 
   db, 
   collection, 
@@ -17,21 +10,11 @@ import {
   query,
   where
 } from "../../firebase/firebaseConfig";
-
-import { 
-  Typography, 
-  Buttons, 
-  Count,
-  General,
-  Card
-} from '../../styles/index.js';
-
 import { AntDesign } from '@expo/vector-icons';
 
 const Assunto = ({ navigation, assunto, disciplinaId }) => {
   return (
     <Pressable 
-      style={styles.assuntosItem}
       onPress={() => navigation.navigate(
         'AssuntoAlterar', 
         { 
@@ -40,7 +23,7 @@ const Assunto = ({ navigation, assunto, disciplinaId }) => {
         }
       )}
     >
-      <Text style={styles.assuntosItemText}>
+      <Text>
         {assunto.nome}
       </Text>
     </Pressable>
@@ -51,13 +34,13 @@ const Estado = ({ children, estado }) => {
   let background; 
   let text;
 
-  if (estado == "Estudando") {
+  if (estado === "Estudando") {
     background = "#B5E08A"
     text = "rgb(2 44 34)"
-  } else if (estado == "Parado") {
+  } else if (estado === "Parado") {
     background = "#E09A8A"
     text = "rgb(69 10 10)"
-  } else if (estado == "Finalizado") {
+  } else if (estado === "Finalizado") {
     background = "#A2B5E6"
     text = "rgb(8 47 73)"
   } else {
@@ -66,13 +49,15 @@ const Estado = ({ children, estado }) => {
   }
 
   return (
-    <Text style={[
-      styles.estado, 
-      { 
-        backgroundColor: background,
-        color: text
-      }
-    ]}>
+    <Text style={{
+      textAlign: 'center',
+      backgroundColor: background,
+      padding: 10,
+      borderRadius: 6,
+      fontSize: 18,
+      fontWeight: "500",
+      color: text
+    }}>
       { children }
     </Text>
   )
@@ -102,12 +87,9 @@ export default function App({ navigation, route }) {
       const futuroQuery = query(assuntosRef, where("estado", "==", "Futuro"));
 
       const getDisciplina = async () => {
-        // obtem disciplina do banco de dados
         const disciplinaSnap = await getDoc(disciplinaRef);
         setDetalhes(disciplinaSnap.data())
         
-        // obtem os assuntos da disciplina do banco de dados
-
         const estudandoSnapshot = await getDocs(estudandoQuery);
         const finalizadoSnapshot = await getDocs(finalizadoQuery);
         const futuroSnapshot = await getDocs(futuroQuery);
@@ -123,7 +105,6 @@ export default function App({ navigation, route }) {
     return home;
   }, [navigation]);
 
-  // adiciona uma novo assunto
   useEffect(() => {
     const adicionarAssunto = async () => {
       if (route.params?.assunto) {
@@ -144,7 +125,7 @@ export default function App({ navigation, route }) {
   }, [route.params?.assunto]);
 
   return (
-    <View style={styles.container}>
+    <View>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Pressable
           onPress={() => navigation.goBack()}
@@ -153,17 +134,16 @@ export default function App({ navigation, route }) {
         </Pressable>
 
         <Pressable 
-          style={[styles.buttonPrimary, { alignSelf: "flex-end" } ]}
           onPress={() => navigation.navigate('DisciplinaAlterar', { id: id })}
         >
-          <Text style={styles.buttonText}>
+          <Text>
             Alterar
           </Text>
         </Pressable>
       </View>
 
-      <View style={styles.infoContainer}>
-        <Text style={styles.titulo}>
+      <View>
+        <Text>
           {detalhes.nome}
         </Text>
 
@@ -173,30 +153,29 @@ export default function App({ navigation, route }) {
       </View>
 
       <View style={{ gap: 20 }}>
-        <View style={styles.assuntosTitulo}>
-          <Text style={styles.subtitulo}>
+        <View style={{ flexDirection: 'row', justifyContent: "space-between", alignItems: "center", marginBottom: -10 }}>
+          <Text>
             Assuntos
           </Text>
 
           <Pressable 
-            style={styles.buttonPrimary}
             onPress={() => navigation.navigate('AssuntoForm', { id: id })}
-            >
-            <Text style={styles.buttonText}>
+          >
+            <Text>
               Adicionar
             </Text>
           </Pressable>
         </View>
 
         <View>
-          <View style={styles.tituloFlex}>
-            <View style={[styles.countContainer, { backgroundColor: "#B5E08A" }]}>
-              <Text style={[styles.countText, { color: "rgb(2 44 34)" }]}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ backgroundColor: "#B5E08A", padding: 5, borderRadius: 4 }}>
+              <Text style={{ color: "rgb(2 44 34)" }}>
                 {quantidadeEstudando}
               </Text>
             </View>
             
-            <Text style={styles.subtitulo}>
+            <Text>
               Estudando
             </Text>
           </View>
@@ -211,21 +190,21 @@ export default function App({ navigation, route }) {
                 assunto={item}
               />
             ) :
-            <Text style={styles.estadoText}>
+            <Text>
               Não há disciplinas sendo estudadas.
             </Text>
           }
         </View>
         
         <View>
-          <View style={styles.tituloFlex}>
-            <View style={[styles.countContainer, { backgroundColor: "#ccc" }]}>
-              <Text style={[styles.countText, { color: "rgb(8 47 73)" }]}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ backgroundColor: "#ccc", padding: 5, borderRadius: 4 }}>
+              <Text style={{ color: "rgb(8 47 73)" }}>
                 {quantidadeFuturo}
               </Text>
             </View>
             
-            <Text style={styles.subtitulo}>
+            <Text>
               Futuro
             </Text>
           </View>
@@ -240,21 +219,21 @@ export default function App({ navigation, route }) {
                 assunto={item}
               />
             ) :
-            <Text style={styles.estadoText}>
-              Não há disciplinas finalizadas.
+            <Text>
+              Não há disciplinas futuras.
             </Text>
           }
         </View>
 
         <View>
-          <View style={styles.tituloFlex}>
-            <View style={[styles.countContainer, { backgroundColor: "#A2B5E6" }]}>
-              <Text style={[styles.countText, { color: "rgb(30 41 59)" }]}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ backgroundColor: "#A2B5E6", padding: 5, borderRadius: 4 }}>
+              <Text style={{ color: "rgb(30 41 59)" }}>
                 {quantidadeFinalizado}
               </Text>
             </View>
             
-            <Text style={styles.subtitulo}>
+            <Text>
               Finalizado
             </Text>
           </View>
@@ -269,7 +248,7 @@ export default function App({ navigation, route }) {
                 assunto={item}
               />
             ) :
-            <Text style={styles.estadoText}>
+            <Text>
               Não há disciplinas finalizadas.
             </Text>
           }
@@ -278,36 +257,3 @@ export default function App({ navigation, route }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { ...General.container },
-  assuntosItem: { ...Card.container },
-  assuntosItemText: { ...Card.text },
-  assuntosTitulo: {
-    flexDirection: 'row', 
-    justifyContent: "space-between", 
-    alignItems: "center",
-    marginBottom: -10,
-  },
-  infoContainer: {
-    gap: 10,
-    marginBottom: 10,
-    marginTop: -6,
-  },
-  estado: {
-    textAlign: 'center',
-    backgroundColor: '#ccc',
-    padding: 10,
-    borderRadius: 6,
-    fontSize: 18,
-    fontWeight: "500"
-  },
-  estadoText: { ...Count.estadoText },
-  countContainer: { ...Count.container},
-  countText: { ...Count.text},
-  tituloFlex: { ...Count.flex },
-  titulo: { ...Typography.titulo },
-  subtitulo: { ...Typography.subtitulo },
-  buttonPrimary: { ...Buttons.primary },
-  buttonText: { ...Buttons.text },
-});

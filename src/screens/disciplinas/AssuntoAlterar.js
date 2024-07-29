@@ -1,28 +1,6 @@
 import { useState, useEffect } from 'react'
-
-import { 
-  StyleSheet, 
-  Text, 
-  View,
-  Button,
-  TextInput,
-  Pressable
-} from 'react-native';
-
-import { 
-  db, 
-  getDoc,
-  doc,
-  deleteDoc,
-  updateDoc 
-} from "../../firebase/firebaseConfig"
-
-import { 
-  Typography, 
-  Buttons,
-  General,
-  Form
-} from '../../styles/index.js';
+import { Text, View, TextInput, Pressable } from 'react-native';
+import { db, getDoc, doc, deleteDoc, updateDoc } from "../../firebase/firebaseConfig"
 
 export default function App({ navigation, route }) {
   const { assuntoId, disciplinaId } = route.params
@@ -38,54 +16,54 @@ export default function App({ navigation, route }) {
   ]
 
   const radioButtonsEstados = [
-      { id: 0, value: 'Estudando' },
-      { id: 1, value: 'Finalizado' },
-      { id: 2, value: 'Futuro' },
+    { id: 0, value: 'Estudando' },
+    { id: 1, value: 'Finalizado' },
+    { id: 2, value: 'Futuro' },
   ]
 
-  // obtem disciplina do banco de dados
+  // obtem assunto do banco de dados
   useEffect(() => {
     const getAssunto = async () => {
       // obtem referencia da disciplina do banco de dados
       const disciplinaRef = doc(db, "disciplinas", disciplinaId);
       // obtem referencia do assunto da disciplina do banco de dados
-      const assuntosRef = doc(disciplinaRef, "assunto", assuntoId);
+      const assuntoRef = doc(disciplinaRef, "assunto", assuntoId);
 
       // obtem os dados do banco de dados
-      const assuntosSnap = await getDoc(assuntosRef)
+      const assuntoSnap = await getDoc(assuntoRef)
       
-      setNome(assuntosSnap.data().nome);
-      setDificuldade(assuntosSnap.data().dificuldade);
-      setEstado(assuntosSnap.data().estado);
+      setNome(assuntoSnap.data().nome);
+      setDificuldade(assuntoSnap.data().dificuldade);
+      setEstado(assuntoSnap.data().estado);
     }
 
     getAssunto();  
   }, [])
 
-  // exclui a disciplina do banco de dados
+  // exclui o assunto do banco de dados
   const deleteAssunto = () => {
     const deletar = async () => {
-     // obtem referencia da disciplina do banco de dados
-     const disciplinaRef = doc(db, "disciplinas", disciplinaId);
-     // obtem referencia do assunto da disciplina do banco de dados
-     const assuntosRef = doc(disciplinaRef, "assunto", assuntoId);
+      // obtem referencia da disciplina do banco de dados
+      const disciplinaRef = doc(db, "disciplinas", disciplinaId);
+      // obtem referencia do assunto da disciplina do banco de dados
+      const assuntoRef = doc(disciplinaRef, "assunto", assuntoId);
 
-      await deleteDoc(assuntosRef);
+      await deleteDoc(assuntoRef);
     }
     
     deletar(); 
     navigation.goBack()
   }
 
-  // altera a disciplina
+  // altera o assunto
   const updateAssunto = () => {
     const alterar = async () => {
       // obtem referencia da disciplina do banco de dados
       const disciplinaRef = doc(db, "disciplinas", disciplinaId);
       // obtem referencia do assunto da disciplina do banco de dados
-      const assuntosRef = doc(disciplinaRef, "assunto", assuntoId);
+      const assuntoRef = doc(disciplinaRef, "assunto", assuntoId);
 
-      await updateDoc(assuntosRef, {
+      await updateDoc(assuntoRef, {
         "nome": nome,
         "dificuldade": dificuldade,
         "estado": estado
@@ -97,113 +75,115 @@ export default function App({ navigation, route }) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1, padding: 20 }}>
       <View>
-        <Text style={styles.titulo}>
-          Alterar disciplina
+        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>
+          Alterar assunto
         </Text>
 
-        <View style={styles.itemContainerForm}>
-          <Text style={styles.label}>
-            Nome da disciplina
+        <View style={{ marginBottom: 20 }}>
+          <Text style={{ fontSize: 16, marginBottom: 5 }}>
+            Nome do assunto
           </Text>
           <TextInput
-            style={styles.input}
+            style={{ borderWidth: 1, borderColor: '#ccc', padding: 10, borderRadius: 5 }}
             onChangeText={(text) => setNome(text)}
             value={nome}
           />
         </View>
-          
-        <View style={styles.itemContainerForm}>
-          <Text style={styles.label}>
+
+        <View style={{ marginBottom: 20 }}>
+          <Text style={{ fontSize: 16, marginBottom: 5 }}>
             Dificuldade
           </Text>
-
           {radioButtonsDificuldades.map((item) => {
             return (
               <Pressable 
                 onPress={() => setDificuldade(item.value)}
                 key={item.id}
-                style={
-                  [ 
-                    styles.radioButtons,
-                    item.value === dificuldade ? 
-                    styles.selected : 
-                    styles.unselected,
-                  ]
-                }
+                style={{
+                  padding: 10,
+                  marginVertical: 5,
+                  borderRadius: 5,
+                  backgroundColor: item.value === dificuldade ? '#ddd' : '#fff',
+                  borderWidth: 1,
+                  borderColor: '#ccc'
+                }}
               >
                 <Text 
-                  style={
-                    [ 
-                      styles.radioLabels,
-                      item.value === dificuldade ? 
-                      styles.selectedLabel : 
-                      styles.unselectedLabel
-                    ]
-                  }
-                  >
+                  style={{
+                    color: item.value === dificuldade ? '#000' : '#888',
+                    fontSize: 16
+                  }}
+                >
                   {item.value}
                 </Text>
               </Pressable>
             )
           })}
 
-          <Text> User option: {dificuldade}</Text>
+          <Text>User option: {dificuldade}</Text>
         </View>
 
-        <View style={styles.itemContainerForm}>
-          <Text style={styles.label}>
+        <View style={{ marginBottom: 20 }}>
+          <Text style={{ fontSize: 16, marginBottom: 5 }}>
             Estado
           </Text>
           {radioButtonsEstados.map((item) => {
             return (
               <Pressable 
-              onPress={() => setEstado(item.value)}
-              key={item.id}
-              style={
-                [ 
-                  styles.radioButtons,
-                  item.value === estado ? 
-                  styles.selected : 
-                  styles.unselected,
-                ]
-              }>
+                onPress={() => setEstado(item.value)}
+                key={item.id}
+                style={{
+                  padding: 10,
+                  marginVertical: 5,
+                  borderRadius: 5,
+                  backgroundColor: item.value === estado ? '#ddd' : '#fff',
+                  borderWidth: 1,
+                  borderColor: '#ccc'
+                }}
+              >
                 <Text 
-                  style={
-                    [ 
-                      styles.radioLabels,
-                      item.value === estado ? 
-                      styles.selectedLabel : 
-                      styles.unselectedLabel
-                    ]
-                  }
-                  >
+                  style={{
+                    color: item.value === estado ? '#000' : '#888',
+                    fontSize: 16
+                  }}
+                >
                   {item.value}
                 </Text>
               </Pressable>
             )
           })}
 
-          <Text> User option: {estado}</Text>
+          <Text>User option: {estado}</Text>
         </View>
       </View>
       
       <View style={{ gap: 10 }}>
         <Pressable 
-          style={styles.buttonPrimary}
+          style={{
+            backgroundColor: '#007BFF',
+            padding: 15,
+            borderRadius: 5,
+            alignItems: 'center'
+          }}
           onPress={() => updateAssunto()}
         >
-          <Text style={styles.buttonText}>
+          <Text style={{ color: '#fff', fontSize: 16 }}>
             Alterar assunto
           </Text>
         </Pressable>
 
         <Pressable 
-          style={styles.buttonDelete}
+          style={{
+            backgroundColor: '#dc3545',
+            padding: 15,
+            borderRadius: 5,
+            alignItems: 'center'
+          }}
           onPress={() => deleteAssunto()}
         >
-          <Text style={styles.buttonDeleteText}>
+          <Text style={{ color: '#fff', fontSize: 16 }}>
             Excluir assunto
           </Text>  
         </Pressable>
@@ -211,21 +191,3 @@ export default function App({ navigation, route }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { ...General.containerForm },
-  titulo: { ...Typography.tituloForm },
-  buttonPrimary: { ...Buttons.primary },
-  buttonText: { ...Buttons.text },
-  buttonDelete: { ...Buttons.secondary },
-  buttonDeleteText: { ...Buttons.secondaryText },
-  label: { ...Form.label },
-  input: { ...Form.input },
-  itemContainerForm: { ...Form.itemContainerForm },
-  radioButtons: { ...Form.radioButtons },
-  radioLabels: { ...Form.radioLabels },
-  selected: { ...Form.radioSelected },
-  unselected: { ...Form.radioUnselected },
-  selectedLabel: { ...Form.radioSelectedLabel },
-  unselectedLabel: { ...Form.radioUnselectedLabel },
-});

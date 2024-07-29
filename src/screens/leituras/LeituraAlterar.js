@@ -10,10 +10,8 @@ import {
   ButtonDelete
 } from '../../components';
 
-import { StyleModal } from '../../styles/modal'
-
-export default LeiturasAlterar = ({ route, navigation }) => {
-  const { data } = route.params
+export default function LeiturasAlterar({ route, navigation }) {
+  const { data } = route.params;
   const [leitura, setLeitura] = useState(data);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -22,7 +20,7 @@ export default LeiturasAlterar = ({ route, navigation }) => {
     { id: 1, value: 'Parado' },
     { id: 2, value: 'Finalizado' },
     { id: 3, value: 'Futuro' },
-  ]
+  ];
 
   const handleInputChange = (name, value) => {
     setLeitura(prevState => ({
@@ -35,7 +33,6 @@ export default LeiturasAlterar = ({ route, navigation }) => {
     try {
       const docRef = doc(db, "leituras", data.id);
       await updateDoc(docRef, leitura);
-      
       navigation.goBack();
     } catch (error) {
       console.error(error);
@@ -97,7 +94,7 @@ export default LeiturasAlterar = ({ route, navigation }) => {
           />
 
           <TextInputWithLabel
-            label="Data do términio"
+            label="Data do término"
             placeholder="Ex: 03/04/2023"
             value={leitura.dataTerminio}
             onChangeText={text => handleInputChange('dataTerminio', text)}
@@ -127,32 +124,23 @@ export default LeiturasAlterar = ({ route, navigation }) => {
         </View>
 
         <View style={styles.itemContainerForm}>
-          <Text style={styles.label}>
-            Estado
-          </Text>
+          <Text style={styles.label}>Estado</Text>
 
           {radioButtons.map((item) => {
             return (
               <Pressable 
-                onPress={() => setLeitura({...leitura, estado: item.value})}
+                onPress={() => setLeitura({ ...leitura, estado: item.value })}
                 key={item.id}
-                style={
-                  [ 
-                    styles.radioButtons,
-                    item.value === leitura.estado ? 
-                    styles.radioSelected : 
-                    styles.radioUnselected,
-                  ]
-              }>
+                style={[
+                  styles.radioButtons,
+                  item.value === leitura.estado ? styles.radioSelected : styles.radioUnselected,
+                ]}
+              >
                 <Text 
-                  style={
-                    [ 
-                      styles.radioLabels,
-                      item.value === leitura.estado ? 
-                      styles.radioSelectedLabel : 
-                      styles.radioUnselectedLabel
-                    ]
-                  }
+                  style={[
+                    styles.radioLabels,
+                    item.value === leitura.estado ? styles.radioSelectedLabel : styles.radioUnselectedLabel
+                  ]}
                 >
                   {item.value}
                 </Text>
@@ -163,7 +151,7 @@ export default LeiturasAlterar = ({ route, navigation }) => {
           <Text> User option: {leitura.estado}</Text>
         </View>
       </View>
-      
+
       <View style={{ gap: 10, marginTop: 4 }}>
         <ButtonPrimary handlePress={handleSubmit}>
           Alterar leitura
@@ -182,17 +170,11 @@ export default LeiturasAlterar = ({ route, navigation }) => {
       >
         <View style={styles.modalContainer}>
           <View style={[styles.modalContent, { alignItems: 'center' }]}>
-            <Text style={styles.modalTitle}>
-              Deletar leitura
-            </Text>
+            <Text style={styles.modalTitle}>Deletar leitura</Text>
 
             <View style={{ width: '70%' }}>
-              <Text style={styles.modalText}>
-                Você tem certeza que deseja excluir esta leitura? 
-              </Text>
-              <Text style={styles.modalText}>
-                Esta ação é irreversível.
-              </Text>
+              <Text style={styles.modalText}>Você tem certeza que deseja excluir esta leitura?</Text>
+              <Text style={styles.modalText}>Esta ação é irreversível.</Text>
             </View>
             <View style={{ flexDirection: 'row', marginTop: 26 }}>
               <TouchableOpacity
@@ -205,9 +187,7 @@ export default LeiturasAlterar = ({ route, navigation }) => {
                 style={[styles.modalButton, { backgroundColor: '#e1e1e1', flex: 1 }]}
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={[styles.modalButtonText, { color: "#505050" }]}>
-                  Cancelar
-                </Text>
+                <Text style={[styles.modalButtonText, { color: "#505050" }]}>Cancelar</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -215,11 +195,10 @@ export default LeiturasAlterar = ({ route, navigation }) => {
       </Modal>
     </Container>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  ...StyleModal,
-  label : {
+  label: {
     fontSize: 18,
     marginBottom: 8,
     fontWeight: "500"
@@ -231,9 +210,9 @@ const styles = StyleSheet.create({
   },
   radioLabels: {
     textAlign: 'center',
-    fontWeight: 600,
+    fontWeight: '600',
     fontSize: 16
-  }, 
+  },
   radioSelected: {
     backgroundColor: 'rgb(219 234 254)',
     borderWidth: 2,
@@ -249,5 +228,37 @@ const styles = StyleSheet.create({
   },
   radioUnselectedLabel: {
     color: 'rgb(100 116 139)'
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10
+  },
+  modalButton: {
+    padding: 10,
+    borderRadius: 5,
+    margin: 5,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: 'white',
+    fontSize: 16
   },
 });

@@ -1,13 +1,5 @@
 import { useState, useEffect } from 'react'
-
-import { 
-  StyleSheet, 
-  Text, 
-  View,
-  TextInput,
-  Pressable
-} from 'react-native';
-
+import { Text, View, TextInput, Pressable } from 'react-native';
 import { 
   db, 
   getDoc,
@@ -15,13 +7,6 @@ import {
   deleteDoc,
   updateDoc 
 } from "../../firebase/firebaseConfig";
-
-import { 
-  Typography, 
-  Buttons,
-  General,
-  Form
-} from '../../styles/index.js';
 
 export default function App({ navigation, route }) {
   const { id } = route.params
@@ -74,76 +59,83 @@ export default function App({ navigation, route }) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1, padding: 20 }}>
       <View>
-        <Text style={styles.titulo}>
+        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>
           Alterar disciplina
         </Text>
 
-        <View style={styles.itemContainerForm}>
-          <Text style={styles.label}>
+        <View style={{ marginBottom: 20 }}>
+          <Text style={{ fontSize: 16, marginBottom: 5 }}>
             Nome da disciplina
           </Text>
           <TextInput
-            style={styles.input}
+            style={{ borderWidth: 1, borderColor: '#ccc', padding: 10, borderRadius: 5 }}
             placeholder="Ex: Biologia"
             onChangeText={(text) => setNome(text)}
             value={nome}
           />
         </View>
 
-        <View style={styles.itemContainerForm}>
-          <Text style={styles.label}>
+        <View style={{ marginBottom: 20 }}>
+          <Text style={{ fontSize: 16, marginBottom: 5 }}>
             Estado
           </Text>
           {radioButtonsEstados.map((item) => {
             return (
               <Pressable 
-              onPress={() => setEstado(item.value)}
-              key={item.id}
-              style={
-                [ 
-                  styles.radioButtons,
-                  item.value === estado ? 
-                  styles.selected : 
-                  styles.unselected,
-                ]
-              }>
+                onPress={() => setEstado(item.value)}
+                key={item.id}
+                style={{
+                  padding: 10,
+                  marginVertical: 5,
+                  borderRadius: 5,
+                  backgroundColor: item.value === estado ? '#ddd' : '#fff',
+                  borderWidth: 1,
+                  borderColor: '#ccc'
+                }}
+              >
                 <Text 
-                  style={
-                    [ 
-                      styles.radioLabels,
-                      item.value === estado ? 
-                      styles.selectedLabel : 
-                      styles.unselectedLabel
-                    ]
-                  }
-                  >
+                  style={{
+                    color: item.value === estado ? '#000' : '#888',
+                    fontSize: 16
+                  }}
+                >
                   {item.value}
                 </Text>
               </Pressable>
             )
           })}
 
-          <Text> User option: {estado}</Text>
+          <Text>User option: {estado}</Text>
         </View>
       </View>
       
       <View style={{ gap: 10 }}>
         <Pressable 
-          style={styles.buttonPrimary}
+          style={{
+            backgroundColor: '#007BFF',
+            padding: 15,
+            borderRadius: 5,
+            alignItems: 'center'
+          }}
           onPress={() => updateDisciplina()}
         >
-          <Text style={styles.buttonText}>
-            Alterar disciplinas
+          <Text style={{ color: '#fff', fontSize: 16 }}>
+            Alterar disciplina
           </Text>
         </Pressable>
 
         <Pressable 
-          style={styles.buttonDelete}
+          style={{
+            backgroundColor: '#dc3545',
+            padding: 15,
+            borderRadius: 5,
+            alignItems: 'center'
+          }}
           onPress={() => deleteDisciplina()}
         >
-          <Text style={styles.buttonDeleteText}>
+          <Text style={{ color: '#fff', fontSize: 16 }}>
             Excluir disciplina
           </Text>
         </Pressable>
@@ -151,21 +143,3 @@ export default function App({ navigation, route }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { ...General.containerForm },
-  titulo: { ...Typography.tituloForm },
-  buttonPrimary: { ...Buttons.primary },
-  buttonText: { ...Buttons.text },
-  buttonDelete: { ...Buttons.secondary },
-  buttonDeleteText: { ...Buttons.secondaryText },
-  label: { ...Form.label },
-  input: { ...Form.input },
-  itemContainerForm: { ...Form.itemContainerForm },
-  radioButtons: { ...Form.radioButtons },
-  radioLabels: { ...Form.radioLabels },
-  selected: { ...Form.radioSelected },
-  unselected: { ...Form.radioUnselected },
-  selectedLabel: { ...Form.radioSelectedLabel },
-  unselectedLabel: { ...Form.radioUnselectedLabel },
-});

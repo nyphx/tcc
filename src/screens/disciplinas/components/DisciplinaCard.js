@@ -1,60 +1,60 @@
-import { useEffect, useState } from 'react';
-import { Text, View, Pressable } from 'react-native';
-import { db, collection, getDocs } from "../../../firebase/firebaseConfig";
+import React, { useState } from 'react';
+import { Text, View, Pressable, StyleSheet } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { calculatePercentage } from '../../../components';
+import { useFocusEffect } from '@react-navigation/native';
+import { getAssuntosByDisciplinaId } from '../../../services/disciplinasService';
 
-const DisciplinaCard = ({ navigation, disciplina }) => {
+const DisciplinaCard = React.memo(({ navigation, disciplina }) => {
   const [assuntosTotais, setAssuntosTotais] = useState(0);
   const [assuntosCompletos, setAssuntosCompletos] = useState(0);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const assuntoRef = collection(db, 'disciplinas', disciplina.id, 'assunto');
-        const assuntoSnap = await getDocs(assuntoRef);
+  const fetchData = async () => {
+    try {
+      const assuntos = await getAssuntosByDisciplinaId(disciplina.id);
 
-        let total = 0;
-        let completos = 0;
+      let total = 0;
+      let completos = 0;
 
-        assuntoSnap.forEach(doc => {
-          total += 1;
+      assuntos.forEach(doc => {
+        total += 1;
+        if (doc.estado === 'Finalizado') {
+          completos += 1;
+        }
+      });
 
-          if (doc.data()["estado"] === 'Finalizado') {
-            completos += 1;
-          }
-        });
+      setAssuntosTotais(total);
+      setAssuntosCompletos(completos);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-        setAssuntosTotais(total);
-        setAssuntosCompletos(completos);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    return navigation.addListener('focus', fetchData);
-  }, [navigation]);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, [disciplina.id])
+  );
 
   return (
-    <View>
+    <View style={styles.container}>
       <Pressable
         onPress={() => navigation.navigate(
-            'DisciplinaDetalhes', 
-            { id: disciplina.id }
-          )
-        }
-      > 
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text>
+          'DisciplinaDetalhes', 
+          { id: disciplina.id }
+        )}
+      >
+        <View style={styles.header}>
+          <Text style={styles.disciplinaNome}>
             {disciplina.nome}
           </Text>
 
-          <Text style={{ fontSize: 20 }}>
-            {calculatePercentage(assuntosCompletos, assuntosTotais)}%
+          <Text style={styles.percentage}>
+            {calculatePercentage(assuntosTotais, assuntosCompletos)}%
           </Text>
         </View>
 
-        <View style={{ marginVertical: 8 }}>
+        <View style={styles.progressContainer}>
           <Progress.Bar 
             progress={assuntosTotais ? assuntosCompletos / assuntosTotais : 0} 
             width={null}
@@ -65,12 +65,48 @@ const DisciplinaCard = ({ navigation, disciplina }) => {
           />
         </View>
 
-        <Text style={{ fontSize: 18, color: '#505050' }}>
+        <Text style={styles.statusText}>
           {assuntosCompletos} de {assuntosTotais} assuntos foram estudados
         </Text>
       </Pressable>
     </View>
-  )
-};
+  );
+});
+
+const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    marginVertical: 8,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#f1f1f1'
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  disciplinaNome: {
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  percentage: {
+    fontSize: 20,
+  },
+  progressContainer: {
+    marginVertical: 8,
+  },
+  statusText: {
+    fontSize: 18,
+    color: '#505050',
+  },
+});
 
 export default DisciplinaCard;
