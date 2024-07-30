@@ -1,7 +1,14 @@
-import { useState, useEffect } from 'react'
-import { db, doc, getDoc, updateDoc, deleteDoc } from "../../firebase/firebaseConfig";
-import { v4 as uuidv4 } from 'uuid';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { v4 as uuidv4 } from 'uuid';
+import { AntDesign } from '@expo/vector-icons';
+
+import { 
+  getSimuladoWithConteudos, 
+  updateSimuladoById, 
+  deleteSimuladoById 
+} from './../../services/simuladosService';
 
 import {
   Container,
@@ -10,43 +17,30 @@ import {
   ButtonPrimary
 } from '../../components';
 
-import { AntDesign } from '@expo/vector-icons';
 
 const SimuladoForm = ({ navigation, route }) => {
   const { id } = route.params;
-
   const [simulado, setSimulado] = useState({});
 
   const [conteudoFields, setConteudoFields] = useState([
     { id: uuidv4(), nome: '', acertadas: '', totais: '' }
   ]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const simuladoRef = doc(db, 'simulados', id);
-        const simuladoSnap = await getDoc(simuladoRef);
+  const fetchData = useCallback(async () => {
+    try {
+      const { simulado, conteudos } = await getSimuladoWithConteudos(id);
+      setSimulado(simulado);
+      setConteudoFields(conteudos);
+    } catch (error) {
+      console.error('Error fetching simulado: ', error);
+    }
+  }, [id]);
 
-        setSimulado({...simuladoSnap.data()});
-
-        const conteudosArray = Object
-          .keys(simuladoSnap.data().conteudos || {})
-          .map(key => ({
-            id: uuidv4(),
-            nome: key,
-            acertadas: simuladoSnap.data().conteudos[key].acertadas,
-            totais: simuladoSnap.data().conteudos[key].totais
-          }));
-
-        setConteudoFields(conteudosArray);
-
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    return navigation.addListener('focus', fetchData);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [fetchData])
+  );
 
   const addConteudoField = () => {
     setConteudoFields([...conteudoFields, { id: uuidv4(), nome: '', acertadas: '', totais: '' }]);
@@ -70,38 +64,21 @@ const SimuladoForm = ({ navigation, route }) => {
     setConteudoFields(newFields);
   };
 
-  const updateSimulado = async () => {
+  const handleUpdateSimulado = async () => {
     try {
-      const simuladoRef = doc(db, 'simulados', id);
-
-      const conteudos = conteudoFields.reduce((acc, field) => {
-        acc[field.nome] = {
-          acertadas: field.acertadas,
-          totais: field.totais
-        };
-        return acc;
-      }, {});
-
-      const simuladoData = {
-        ...simulado,
-        conteudos
-      };
-
-      await updateDoc(simuladoRef, simuladoData);
-
+      await updateSimuladoById(id, simulado, conteudoFields);
       navigation.goBack();
     } catch (error) {
-      console.error(error);
+      console.error('Error updating simulado: ', error);
     }
   };
 
-  const deleteSimulado = async () => {
+  const handleDeleteSimulado = async () => {
     try {
-      const simuladoRef = doc(db, 'simulado', id);
-      await deleteDoc(simuladoRef);
+      await deleteSimuladoById(id);
       navigation.navigate('Simulados');
     } catch (error) {
-      console.error(error);
+      console.error('Error deleting simulado: ', error);
     }
   };
 
@@ -191,9 +168,9 @@ const SimuladoForm = ({ navigation, route }) => {
         </View>
       ))}
 
-      <ButtonPrimary handlePress={updateSimulado}>Alterar</ButtonPrimary>
+      <ButtonPrimary handlePress={handleUpdateSimulado}>Alterar</ButtonPrimary>
 
-      <ButtonDelete handlePress={deleteSimulado}>Excluir</ButtonDelete>
+      <ButtonDelete handlePress={handleDeleteSimulado}>Excluir</ButtonDelete>
     </Container>
   );
 };

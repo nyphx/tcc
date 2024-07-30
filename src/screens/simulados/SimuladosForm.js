@@ -1,5 +1,3 @@
-import { db, collection, addDoc } from "../../firebase/firebaseConfig";
-
 import {
   Container,
   Title,
@@ -11,7 +9,9 @@ import { AntDesign } from '@expo/vector-icons';
 import { v4 as uuidv4 } from 'uuid';
 
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Button, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+
+import { addSimulado } from './../../services/simuladosService';
 
 const SimuladoForm = ({ navigation }) => {
   // contém as informações principais do simulado
@@ -73,17 +73,12 @@ const SimuladoForm = ({ navigation }) => {
         ...simulado,
         conteudos
       };
-
-      const simuladosRef = collection(db, "simulados")
-
-      await addDoc(
-        simuladosRef, 
-        { ...simuladoData }
-      );
-
+  
+      await addSimulado(simuladoData);
+  
       navigation.goBack();
     } catch (error) {
-      console.error(error);
+      console.error('Error adding simulado: ', error);
     }
   };
 

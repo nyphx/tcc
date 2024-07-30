@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useCallback } from 'react';
+import { getSimuladoById  } from './../../services/simuladosService';
+import { useFocusEffect } from '@react-navigation/native';
 import * as Progress from 'react-native-progress';
-
 import { MaterialIcons } from '@expo/vector-icons';
 
 import {
   Container,
   Title,
-  ButtonEdit
+  calculatePercentage
 } from '../../components';
 
 import {
@@ -14,23 +15,9 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView
 } from 'react-native';
 
-import {
-  db,
-  getDoc,
-  doc,
-} from "../../firebase/firebaseConfig";
-
 const Disciplina = ({ disciplina, dados }) => {
-  function calcularPorcentagem(acertos, totais) {
-    if (totais === 0) {
-        return 0;
-    }
-    return (acertos / totais) * 100;
-  } 
-
   return (
     <View key={disciplina}>
       <Text style={styles.conteudoTitulo}>
@@ -50,7 +37,7 @@ const Disciplina = ({ disciplina, dados }) => {
         </View>
 
         <Text style={{ fontWeight: '700', fontSize: 20 }}>
-          {calcularPorcentagem(dados.acertadas, dados.totais).toFixed()}%
+          {calculatePercentage(dados.totais, dados.acertadas)}%
         </Text>
       </View>
 
@@ -88,9 +75,24 @@ const RenderConteudos = (simulado) => {
   return elementos;
 };
 
-export default SimuladoDetalhes = ({ route, navigation }) => {
+const SimuladoDetalhes = ({ route, navigation }) => {
   const { id } = route.params
   const [simulado, setSimulado] = useState({});
+
+  const fetchData = useCallback(async () => {
+    try {
+      const simuladoData = await getSimuladoById(id);
+      setSimulado(simuladoData);
+    } catch (error) {
+      console.error('Error fetching simulado: ', error);
+    }
+  }, [id]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [fetchData])
+  );
 
   const calcularAcertos = (conteudos) => {
     let acertadas = 0;
@@ -110,27 +112,6 @@ export default SimuladoDetalhes = ({ route, navigation }) => {
   };
 
   const { acertadas, totais } = calcularAcertos(simulado.conteudos);
-
-  function calcularPorcentagem(acertos, totais) {
-    if (totais === 0) {
-        return 0;
-    }
-    return (acertos / totais) * 100;
-  } 
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const docRef = doc(db, "simulados", id);
-        const docSnap = await getDoc(docRef);
-        setSimulado({ ...docSnap.data(), id: docSnap.id });
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    return navigation.addListener('focus', fetchData);
-  }, [navigation, id]);
 
   console.log("reload")
 
@@ -176,7 +157,7 @@ export default SimuladoDetalhes = ({ route, navigation }) => {
 
             <View style={{ paddingHorizontal: 8 }}>
               <Text style={{ fontWeight: '700', fontSize: 24 }}>
-                {calcularPorcentagem(acertadas, totais).toFixed()}%
+                {calculatePercentage(totais, acertadas)}%
               </Text>
             </View>
 
@@ -263,3 +244,5 @@ const styles = StyleSheet.create({
     marginBottom: 8
   }
 });
+
+export default SimuladoDetalhes;

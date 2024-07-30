@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { collection, getDocs, db } from '../../firebase/firebaseConfig';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { getSimulados } from './../../services/simuladosService';
 
 import {
   Container,
@@ -13,19 +14,20 @@ import Card from './components/Card';
 const Simulados = ({ navigation }) => {
   const [simulados, setSimulados] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const docRef = collection(db, 'simulados');
-        const docSnap = await getDocs(docRef);
-        setSimulados(docSnap.docs.map(doc => ({ ...doc.data(), id: doc.id })));
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  const fetchData = useCallback(async () => {
+    try {
+      const simuladosData = await getSimulados();
+      setSimulados(simuladosData);
+    } catch (error) {
+      console.error('Error fetching simulados: ', error);
+    }
+  }, []);
 
-    return navigation.addListener('focus', fetchData);
-  }, [navigation]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [fetchData])
+  );
 
   console.log("reload")
 
