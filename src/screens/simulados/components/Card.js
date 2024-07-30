@@ -1,22 +1,25 @@
 import React from 'react';
-import { Text, View, Pressable, StyleSheet } from 'react-native';
-
+import { View, Pressable, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { TextPrimary } from '../../../components';
 
-const Card = ({ simulado, onPress }) => {
-  const { navigation } = onPress;
+const Card = ({ simulado }) => {
+  // Hook para acessar a navegação
+  const navigation = useNavigation();
+
+  // Função para lidar com o clique no card e navegar para detalhes
+  const handlePress = () => {
+    navigation.navigate('SimuladoDetalhes', { id: simulado.id });
+  };
 
   return (
     <Pressable
       style={styles.card}
-      onPress={() => navigation.navigate(
-        'SimuladoDetalhes', 
-        { id: simulado.id }
-      )}
+      onPress={handlePress} // Chama handlePress ao clicar no card
     >
       <View>
         <TextPrimary>{simulado.nome}</TextPrimary>
-        <TextPrimary>{simulado.fase}ª fase / dia</TextPrimary>
+        <TextPrimary>{`${simulado.fase}ª fase / dia`}</TextPrimary>
       </View>
     </Pressable>
   );
@@ -32,14 +35,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  notas: {
-    fontSize: 20,
-    backgroundColor: '#ddd',
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 6,
+    justifyContent: 'space-between'
   },
 });
 

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Pressable } from 'react-native';
 import { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,15 +17,20 @@ import {
   ButtonPrimary
 } from '../../components';
 
-
+// Componente principal para editar um simulado
 const SimuladoForm = ({ navigation, route }) => {
+  // Obtém o ID do simulado a partir dos parâmetros da rota
   const { id } = route.params;
+  
+  // Estado para armazenar as informações do simulado
   const [simulado, setSimulado] = useState({});
 
+  // Estado para armazenar os campos de conteúdo do simulado
   const [conteudoFields, setConteudoFields] = useState([
     { id: uuidv4(), nome: '', acertadas: '', totais: '' }
   ]);
 
+  // Função para buscar os dados do simulado e seus conteúdos
   const fetchData = useCallback(async () => {
     try {
       const { simulado, conteudos } = await getSimuladoWithConteudos(id);
@@ -36,24 +41,31 @@ const SimuladoForm = ({ navigation, route }) => {
     }
   }, [id]);
 
+  // Hook que chama a função fetchData quando a tela ganha o foco
   useFocusEffect(
     useCallback(() => {
       fetchData();
     }, [fetchData])
   );
 
+  // Função para adicionar um novo campo de conteúdo
   const addConteudoField = () => {
     setConteudoFields([...conteudoFields, { id: uuidv4(), nome: '', acertadas: '', totais: '' }]);
   };
 
+  // Função para remover um campo de conteúdo com base no seu ID
   const removeConteudoField = id => {
     setConteudoFields(conteudoFields.filter(field => field.id !== id));
   };
 
+  // Função para atualizar o estado do simulado
+  // com base no campo e valor fornecidos
   const handleSimuladoChange = (name, value) => {
     setSimulado({ ...simulado, [name]: value });
   };
 
+  // Função para atualizar o estado dos camposde
+  // conteúdo com base no ID do campo, nome e valor
   const handleConteudoChange = (id, name, value) => {
     const newFields = conteudoFields.map(field => {
       if (field.id === id) {
@@ -64,19 +76,21 @@ const SimuladoForm = ({ navigation, route }) => {
     setConteudoFields(newFields);
   };
 
+  // Função para atualizar o simulado no backend
   const handleUpdateSimulado = async () => {
     try {
       await updateSimuladoById(id, simulado, conteudoFields);
-      navigation.goBack();
+      navigation.goBack(); // Volta para a tela anterior após a atualização
     } catch (error) {
       console.error('Error updating simulado: ', error);
     }
   };
 
+  // Função para excluir o simulado do backend
   const handleDeleteSimulado = async () => {
     try {
       await deleteSimuladoById(id);
-      navigation.navigate('Simulados');
+      navigation.navigate('Simulados'); // Navega para a tela de simulados após a exclusão
     } catch (error) {
       console.error('Error deleting simulado: ', error);
     }
@@ -86,6 +100,7 @@ const SimuladoForm = ({ navigation, route }) => {
     <Container>
       <Title>Alterar simulado</Title>
       <View>
+        {/* Campo para editar o nome do simulado */}
         <TextInputWithLabel
           label="Nome"
           placeholder="Ex: UNESP 2018"
@@ -95,6 +110,7 @@ const SimuladoForm = ({ navigation, route }) => {
         />
 
         <View style={{ flexDirection: 'row', gap: 20 }}>
+          {/* Campo para editar a fase do simulado */}
           <TextInputWithLabel
             label="Fase"
             placeholder="Ex: 1"
@@ -104,6 +120,7 @@ const SimuladoForm = ({ navigation, route }) => {
             twoColumn={true}
           />
 
+          {/* Campo para editar a data do simulado */}
           <TextInputWithLabel
             label="Data Realizada"
             placeholder="Ex: 23/03/2023"
@@ -115,28 +132,36 @@ const SimuladoForm = ({ navigation, route }) => {
         </View>
       </View>
 
+      {/* Header para adicionar um novo campo de conteúdo */}
       <View style={[styles.flexSpaceBetween, { marginBottom: -20 }]}>
         <Text style={{ fontSize: 22, fontWeight: '600' }}>
           Conteúdos
         </Text>
 
+        {/* Botão para adicionar um novo campo de conteúdo */}
         <ButtonPrimary handlePress={addConteudoField}>
           Adicionar
         </ButtonPrimary>
       </View>
 
+      {/* Renderiza os campos de conteúdo */}
       {conteudoFields.map((field, index) => (
         <View key={field.id}>
+          {/* Borda para separar os campos de cada conteúdo*/}
           {index !== 0 && <View style={styles.separator} />}
 
-          <View style={{ marginTop: 26 }}>
-            <TouchableOpacity
+          {/* Botão para remover um campo de conteúdo */}
+          <View style={styles.removeButtonContainer}>
+            <Pressable 
               style={styles.removeButton}
               onPress={() => removeConteudoField(field.id)}
             >
               <AntDesign name="delete" size={24} color="black" />
-            </TouchableOpacity>
+            </Pressable>
+          </View>
 
+          <View style={{ marginTop: -20, zIndex: 0 }}>
+            {/* Campo para editar o nome do conteúdo */}
             <TextInputWithLabel
               label="Nome"
               placeholder="Ex: Biologia"
@@ -146,6 +171,7 @@ const SimuladoForm = ({ navigation, route }) => {
             />
 
             <View style={{ flexDirection: 'row', gap: 20 }}>
+              {/* Campo para editar a quantidade de questões acertadas */}
               <TextInputWithLabel
                 label="Questões acertadas"
                 placeholder="Ex: 10"
@@ -155,6 +181,7 @@ const SimuladoForm = ({ navigation, route }) => {
                 twoColumn={true}
               />
 
+              {/* Campo para editar a quantidade total de questões */}
               <TextInputWithLabel
                 label="Questões totais"
                 placeholder="Ex: 15"
@@ -168,8 +195,10 @@ const SimuladoForm = ({ navigation, route }) => {
         </View>
       ))}
 
+      {/* Botão para atualizar o simulado */}
       <ButtonPrimary handlePress={handleUpdateSimulado}>Alterar</ButtonPrimary>
 
+      {/* Botão para excluir o simulado */}
       <ButtonDelete handlePress={handleDeleteSimulado}>Excluir</ButtonDelete>
     </Container>
   );
@@ -186,11 +215,11 @@ const styles = StyleSheet.create({
     height: 1, 
     width: '100%',
   },
-  removeButton: {
-    position: 'absolute',
-    right: 0,
-    top: -6
-  }
+  removeButtonContainer: {
+    alignItems: 'flex-end',
+    zIndex: 9999,
+    marginTop: 22,
+  },
 });
 
 export default SimuladoForm;
