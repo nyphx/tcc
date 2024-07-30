@@ -2,10 +2,13 @@ import {
   db, 
   collection, 
   addDoc, 
+  getDoc,
   getDocs, 
   doc, 
   updateDoc, 
-  deleteDoc 
+  deleteDoc,
+  query,
+  where
 } from './../firebase/firebaseConfig';
 
 // Função para obter todas as disciplinas
@@ -65,4 +68,18 @@ export const getAssuntosByDisciplinaId = async (disciplinaId) => {
     console.error('Error fetching assuntos: ', error);
     throw new Error('Could not fetch assuntos');
   }
+};
+
+export const getDisciplinaDetalhes = async (id) => {
+  const disciplinaRef = doc(db, "disciplinas", id);
+  const disciplinaSnap = await getDoc(disciplinaRef);
+  return disciplinaSnap.data();
+};
+
+export const getAssuntosPorEstado = async (id, estado) => {
+  const disciplinaRef = doc(db, "disciplinas", id);
+  const assuntosRef = collection(disciplinaRef, "assunto");
+  const assuntosQuery = query(assuntosRef, where("estado", "==", estado));
+  const assuntosSnapshot = await getDocs(assuntosQuery);
+  return assuntosSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
 };

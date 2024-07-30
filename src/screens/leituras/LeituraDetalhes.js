@@ -57,7 +57,7 @@ export default LeituraDetalhes = ({ route, navigation }) => {
       <View>
         <View style={styles.header}>
           <Title>{leitura.livro}</Title>
-
+          
           <TouchableOpacity 
               style={styles.editButton}
               onPress={() => navigation.navigate(

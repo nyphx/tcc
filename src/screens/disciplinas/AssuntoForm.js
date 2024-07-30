@@ -1,7 +1,17 @@
 import { useState } from 'react'
 import { Text, View, TextInput, Pressable } from 'react-native';
+import { ButtonPrimary } from '../../components';
+
+import { 
+  db, 
+  collection, 
+  addDoc,
+  doc,
+} from "../../firebase/firebaseConfig";
 
 export default function App({ navigation, route }) {
+  const { id } = route.params
+
   const [nome, setNome] = useState('')
   const [dificuldade, setDificuldade] = useState('');
   const [estado, setEstado] = useState('')
@@ -17,6 +27,25 @@ export default function App({ navigation, route }) {
       { id: 1, value: 'Finalizado' },
       { id: 2, value: 'Futuro' },
   ]
+
+  const handleSubmit = async () => {
+    try {
+      const docRef = doc(db, "disciplinas", id);
+
+      await addDoc(
+        collection(docRef, 'assunto'), 
+        {
+          nome: nome,
+          dificuldade: dificuldade,
+          estado: estado
+        }
+      );
+
+      navigation.goBack();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
@@ -104,31 +133,9 @@ export default function App({ navigation, route }) {
         </View>
       </View>
 
-      <Pressable 
-        style={{
-          backgroundColor: '#007BFF',
-          padding: 15,
-          borderRadius: 5,
-          alignItems: 'center'
-        }}
-        onPress={() => {
-          navigation.navigate({
-            name: 'DisciplinaDetalhes',
-            params: { 
-              assunto: {
-                nome: nome,
-                dificuldade: dificuldade,
-                estado: estado
-              }
-            },
-            merge: true,
-          });
-        }}
-      >
-        <Text style={{ color: '#fff', fontSize: 16 }}>
-          Adicionar assunto
-        </Text>
-      </Pressable>
+      <ButtonPrimary handlePress={handleSubmit}>
+        Adicionar assunto
+      </ButtonPrimary>
     </View>
   );
 }

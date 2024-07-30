@@ -1,259 +1,182 @@
-import { useEffect, useState } from 'react'
-import { Text, View, Pressable } from 'react-native';
-import { 
-  db, 
-  collection, 
-  getDoc,
-  addDoc,
-  doc,
-  getDocs,
-  query,
-  where
-} from "../../firebase/firebaseConfig";
-import { AntDesign } from '@expo/vector-icons';
+import React, { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { getDisciplinaDetalhes, getAssuntosPorEstado } from './../../services/disciplinasService';
+import { StyleSheet, Text, View, Pressable, TouchableOpacity } from 'react-native';
+import { Container, Title, CountTitle, ButtonPrimary } from "./../../components";
+import { MaterialIcons } from '@expo/vector-icons';
 
-const Assunto = ({ navigation, assunto, disciplinaId }) => {
-  return (
-    <Pressable 
-      onPress={() => navigation.navigate(
-        'AssuntoAlterar', 
-        { 
-          assuntoId: assunto.id,
-          disciplinaId: disciplinaId,
-        }
-      )}
-    >
-      <Text>
-        {assunto.nome}
-      </Text>
-    </Pressable>
-  )
-}
+const Assunto = ({ navigation, assunto, disciplinaId }) => (
+  <Pressable 
+    style={styles.assuntosItem}
+    onPress={() => navigation.navigate(
+      'AssuntoAlterar', 
+      { 
+        assuntoId: assunto.id,
+        disciplinaId: disciplinaId,
+      }
+    )}
+  >
+    <Text style={styles.assuntosItemText}>
+      {assunto.nome}
+    </Text>
+  </Pressable>
+);
 
 const Estado = ({ children, estado }) => {
-  let background; 
-  let text;
-
-  if (estado === "Estudando") {
-    background = "#B5E08A"
-    text = "rgb(2 44 34)"
-  } else if (estado === "Parado") {
-    background = "#E09A8A"
-    text = "rgb(69 10 10)"
-  } else if (estado === "Finalizado") {
-    background = "#A2B5E6"
-    text = "rgb(8 47 73)"
-  } else {
-    background = "#ccc"
-    text = "rgb(30 41 59)"
-  }
-
-  return (
-    <Text style={{
-      textAlign: 'center',
-      backgroundColor: background,
-      padding: 10,
-      borderRadius: 6,
-      fontSize: 18,
-      fontWeight: "500",
-      color: text
-    }}>
-      { children }
-    </Text>
-  )
-}
-
-export default function App({ navigation, route }) {
-  console.log('reload')
-
-  const { id } = route.params
-
-  const [detalhes, setDetalhes] = useState({})
-  const [estudando, setEstudando] = useState([])
-  const [finalizado, setFinalizado] = useState([])
-  const [futuro, setFuturo] = useState([])
-
-  const quantidadeEstudando = estudando.length
-  const quantidadeFinalizado = finalizado.length
-  const quantidadeFuturo = futuro.length
-
-  useEffect(() => {
-    const home = navigation.addListener('focus', () => {
-      const disciplinaRef = doc(db, "disciplinas", id);
-      const assuntosRef = collection(disciplinaRef, "assunto");
-
-      const estudandoQuery = query(assuntosRef, where("estado", "==", "Estudando"));
-      const finalizadoQuery = query(assuntosRef, where("estado", "==", "Finalizado"));
-      const futuroQuery = query(assuntosRef, where("estado", "==", "Futuro"));
-
-      const getDisciplina = async () => {
-        const disciplinaSnap = await getDoc(disciplinaRef);
-        setDetalhes(disciplinaSnap.data())
-        
-        const estudandoSnapshot = await getDocs(estudandoQuery);
-        const finalizadoSnapshot = await getDocs(finalizadoQuery);
-        const futuroSnapshot = await getDocs(futuroQuery);
-        
-        setEstudando(estudandoSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        setFinalizado(finalizadoSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        setFuturo(futuroSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-      }
-  
-      getDisciplina(); 
-    });
-
-    return home;
-  }, [navigation]);
-
-  useEffect(() => {
-    const adicionarAssunto = async () => {
-      if (route.params?.assunto) {
-        const assunto = route.params?.assunto
-        const docRef = doc(db, "disciplinas", id);
-
-        await addDoc(collection(docRef, 'assunto'), {
-          nome: assunto.nome,
-          dificuldade: assunto.dificuldade,
-          estado: assunto.estado
-        });
-
-        navigation.navigate('DisciplinaDetalhes', { assuntos: undefined })
-      }
+  const getColor = (estado) => {
+    switch (estado) {
+      case "Estudando":
+        return { background: "#B5E08A", text: "rgb(2 44 34)" };
+      case "Parado":
+        return { background: "#E09A8A", text: "rgb(69 10 10)" };
+      case "Finalizado":
+        return { background: "#A2B5E6", text: "rgb(8 47 73)" };
+      default:
+        return { background: "#ccc", text: "rgb(30 41 59)" };
     }
+  };
 
-    adicionarAssunto()
-  }, [route.params?.assunto]);
+  const { background, text } = getColor(estado);
 
   return (
-    <View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Pressable
-          onPress={() => navigation.goBack()}
-        >
-          <AntDesign name="arrowleft" size={32} color="black" />
-        </Pressable>
+    <Text style={[styles.estado, { backgroundColor: background, color: text }]}>
+      {children}
+    </Text>
+  );
+};
 
-        <Pressable 
-          onPress={() => navigation.navigate('DisciplinaAlterar', { id: id })}
+const DisciplinaDetalhes = ({ navigation, route }) => {
+  const { id } = route.params || {}; // Verifique se o id é definido
+
+  const [detalhes, setDetalhes] = useState({});
+  const [estudando, setEstudando] = useState([]);
+  const [finalizado, setFinalizado] = useState([]);
+  const [futuro, setFuturo] = useState([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        try {
+          if (id) {
+            const detalhes = await getDisciplinaDetalhes(id);
+            setDetalhes(detalhes);
+
+            const [estudando, finalizado, futuro] = await Promise.all([
+              getAssuntosPorEstado(id, "Estudando"),
+              getAssuntosPorEstado(id, "Finalizado"),
+              getAssuntosPorEstado(id, "Futuro"),
+            ]);
+
+            setEstudando(estudando);
+            setFinalizado(finalizado);
+            setFuturo(futuro);
+          } else {
+            console.error('ID is undefined');
+          }
+        } catch (error) {
+          console.error("Erro ao obter dados:", error);
+        }
+      };
+
+      fetchData();
+    }, [id])
+  );
+
+  const renderAssuntos = (assuntos, title, bgColor, textColor) => (
+    <View>
+      <CountTitle count={assuntos.length} title={title} bgColor={bgColor} textColor={textColor} />
+      { 
+        assuntos.length !== 0 ?
+        assuntos.map(item => (
+          <Assunto 
+            key={item.id} 
+            navigation={navigation}
+            disciplinaId={id}
+            assunto={item}
+          />
+        )) :
+        <Text style={styles.estadoText}>
+          Não há disciplinas {title.toLowerCase()}.
+        </Text>
+      }
+    </View>
+  );
+
+  return (
+    <Container>
+      <View style={styles.flex}>
+        <Title>{detalhes.nome}</Title>
+        
+        <TouchableOpacity 
+          style={styles.editButton}
+          onPress={() => navigation.navigate(
+            'DisciplinaAlterar',
+            { id: detalhes.id }
+          )}
         >
-          <Text>
-            Alterar
-          </Text>
-        </Pressable>
+          <MaterialIcons name="edit" size={26} color="#505050" />
+        </TouchableOpacity>
       </View>
 
-      <View>
-        <Text>
-          {detalhes.nome}
-        </Text>
+      <Estado estado={detalhes.estado}>
+        {detalhes.estado}
+      </Estado>
 
-        <Estado estado={detalhes.estado}>
-          {detalhes.estado}
-        </Estado>
+      <View style={styles.flex}>
+        <Text style={{ fontSize: 22, fontWeight: '600' }}>
+          Assuntos
+        </Text>
+        <ButtonPrimary handlePress={() => navigation.navigate('AssuntoForm', { id: id })}>
+          Adicionar
+        </ButtonPrimary>
       </View>
 
       <View style={{ gap: 20 }}>
-        <View style={{ flexDirection: 'row', justifyContent: "space-between", alignItems: "center", marginBottom: -10 }}>
-          <Text>
-            Assuntos
-          </Text>
-
-          <Pressable 
-            onPress={() => navigation.navigate('AssuntoForm', { id: id })}
-          >
-            <Text>
-              Adicionar
-            </Text>
-          </Pressable>
-        </View>
-
-        <View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <View style={{ backgroundColor: "#B5E08A", padding: 5, borderRadius: 4 }}>
-              <Text style={{ color: "rgb(2 44 34)" }}>
-                {quantidadeEstudando}
-              </Text>
-            </View>
-            
-            <Text>
-              Estudando
-            </Text>
-          </View>
-          
-          { 
-            quantidadeEstudando !== 0 ?
-            estudando.map(item => 
-              <Assunto 
-                key={item.id} 
-                navigation={navigation}
-                disciplinaId={id}
-                assunto={item}
-              />
-            ) :
-            <Text>
-              Não há disciplinas sendo estudadas.
-            </Text>
-          }
-        </View>
-        
-        <View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <View style={{ backgroundColor: "#ccc", padding: 5, borderRadius: 4 }}>
-              <Text style={{ color: "rgb(8 47 73)" }}>
-                {quantidadeFuturo}
-              </Text>
-            </View>
-            
-            <Text>
-              Futuro
-            </Text>
-          </View>
-          
-          { 
-            quantidadeFuturo !== 0 ?
-            futuro.map(item => 
-              <Assunto 
-                key={item.id} 
-                navigation={navigation}
-                disciplinaId={id}
-                assunto={item}
-              />
-            ) :
-            <Text>
-              Não há disciplinas futuras.
-            </Text>
-          }
-        </View>
-
-        <View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <View style={{ backgroundColor: "#A2B5E6", padding: 5, borderRadius: 4 }}>
-              <Text style={{ color: "rgb(30 41 59)" }}>
-                {quantidadeFinalizado}
-              </Text>
-            </View>
-            
-            <Text>
-              Finalizado
-            </Text>
-          </View>
-          
-          { 
-            quantidadeFinalizado !== 0 ?
-            finalizado.map(item => 
-              <Assunto 
-                key={item.id} 
-                navigation={navigation}
-                disciplinaId={id}
-                assunto={item}
-              />
-            ) :
-            <Text>
-              Não há disciplinas finalizadas.
-            </Text>
-          }
-        </View>
+        {renderAssuntos(estudando, "Estudando", "#B5E08A", "rgb(2 44 34)")}
+        {renderAssuntos(futuro, "Futuro", "#ccc", "rgb(8 47 73)")}
+        {renderAssuntos(finalizado, "Finalizado", "#A2B5E6", "rgb(30 41 59)")}
       </View>
-    </View>
+    </Container>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  flex: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  assuntosItem: {
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    marginVertical: 8,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#f1f1f1'
+  },
+  assuntosItemText: {
+    fontSize: 18,
+  },
+  estado: {
+    textAlign: 'center',
+    backgroundColor: '#ccc',
+    padding: 10,
+    borderRadius: 6,
+    fontSize: 18,
+    fontWeight: "500"
+  },
+  estadoText: {
+    fontSize: 16,
+    color: '#505050',
+    textAlign: 'center',
+    marginTop: 10
+  }
+});
+
+export default DisciplinaDetalhes;

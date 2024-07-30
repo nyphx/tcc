@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import {
   Container,
   Title,
+  ButtonEdit
 } from '../../components';
 
 import {

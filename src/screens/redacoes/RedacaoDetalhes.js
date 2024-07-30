@@ -21,6 +21,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import {
   Container,
   ButtonPrimary,
+  ButtonEdit
 } from '../../components';
 
 import Info from './components/Info'
@@ -36,7 +37,7 @@ const Header = ({ redacao, navigation }) => {
         style={styles.editButton}
         onPress={() => navigation.navigate(
           'RedacaoAlterar',
-          { id: redacao?.id }
+          { id: redacao.id }
         )}
       >
         <MaterialIcons name="edit" size={26} color="#505050" />
