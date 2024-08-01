@@ -56,6 +56,17 @@ export const deleteRedacao = async (id) => {
   }
 };
 
+// Função para obter uma redação específica pelo ID
+export const getRedacaoById = async (id) => {
+  const redacaoRef = doc(db, 'redacoes', id);
+  const redacaoSnap = await getDoc(redacaoRef);
+  if (redacaoSnap.exists()) {
+    return redacaoSnap.data();
+  } else {
+    throw new Error('No such document!');
+  }
+};
+
 // Função para obter uma redação específica e suas competências
 export const getRedacaoWithCompetencias = async (id) => {
   try {

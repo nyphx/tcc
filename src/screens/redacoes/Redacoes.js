@@ -5,9 +5,7 @@ import { Container, Header, Title, RedirectButton } from '../../components';
 import Card from './components/Card'
 import { getRedacoes } from './../../services/redacoesService';
 
-const Redacao = ({ navigation }) => {
-  console.log("reload")
- 
+const Redacao = () => {
   const [redacoes, setRedacoes] = useState([])
 
   // Função assíncrona para buscar redações do serviço
@@ -48,8 +46,7 @@ const Redacao = ({ navigation }) => {
         redacoes.map(data => (
           <Card 
             redacao={data} 
-            key={data.id} 
-            onPress={{ navigation }} 
+            key={data.id}
           />
         ))
       }

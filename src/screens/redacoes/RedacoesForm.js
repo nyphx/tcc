@@ -1,15 +1,20 @@
-import { useState } from 'react'
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { addRedacao } from './../../services/redacoesService';
+import { useNavigation } from '@react-navigation/native';
+import { addRedacao } from '../../services/redacoesService';
 
 import {
   Container,
   Title,
   TextInputWithLabel,
   ButtonPrimary
-} from '../../components';
+} from '../../components'; 
 
-const RedacoesForm = ({ navigation }) => {
+const RedacoesForm = () => {
+  // Hook de navegação para manipular a navegação
+  const navigation = useNavigation();
+
+  // Estado inicial para armazenar os dados da redação
   const [redacao, setRedacao] = useState({
     tema: '',
     notaFinal: '',
@@ -17,6 +22,7 @@ const RedacoesForm = ({ navigation }) => {
     data: '',
   });
 
+  // Função para atualizar o estado da redação conforme o usuário edita os campos
   const handleInputRedacao = (name, value) => {
     setRedacao(prevState => ({
       ...prevState,
@@ -24,12 +30,13 @@ const RedacoesForm = ({ navigation }) => {
     }));
   };
 
+  // Função para submeter a nova redação
   const handleSubmit = async () => {
     try {
-      await addRedacao(redacao);
-      navigation.goBack();
+      await addRedacao(redacao); 
+      navigation.goBack(); 
     } catch (error) {
-      console.error(error);
+      console.error('Error adding redacao: ', error); 
     }
   };
 
@@ -37,7 +44,7 @@ const RedacoesForm = ({ navigation }) => {
     <Container>
       <Title>Adicionar redação</Title>
 
-      <View>
+      <View style={styles.form}>
         <TextInputWithLabel
           label="Tema da redação"
           placeholder="Ex: (FUVEST) Educação básica e formação profissional"
@@ -47,7 +54,7 @@ const RedacoesForm = ({ navigation }) => {
           keyboardType="default"
         />
 
-        <View style={{ flexDirection: 'row', gap: 20 }}>
+        <View style={styles.row}>
           <TextInputWithLabel
             label="Nota final"
             placeholder="Ex: 42"
@@ -84,21 +91,14 @@ const RedacoesForm = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  competenciaHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between', 
-    alignItems: 'center',
-  },
-  competenciaTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  separator: {
-    borderWidth: 0.5,
-    borderColor: '#ccc',
+  form: {
     marginBottom: 20,
-    marginTop: 10,
-  }
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 20,
+  },
 });
 
 export default RedacoesForm;

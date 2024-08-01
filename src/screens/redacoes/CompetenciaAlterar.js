@@ -17,8 +17,10 @@ import {
 } from '../../components';
 
 const CompetenciaAlterar = () => {
-  const navigation = useNavigation(); // Hook para navegação
-  const { idCompetencia, idRedacao } = useRoute().params; // Extrai os parâmetros da rota
+  // Hook para navegação
+  const navigation = useNavigation();
+  // Extrai os parâmetros da rota
+  const { idCompetencia, idRedacao } = useRoute().params;
 
   // Estado inicial para armazenar os dados da competência
   const [competencia, setCompetencia] = useState({

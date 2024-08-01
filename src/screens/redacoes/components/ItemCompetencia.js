@@ -11,7 +11,10 @@ const ItemCompetencia = ({ competencia, idRedacao }) => {
   return (
     <View>
       <View style={styles.header}>
-        <Text style={styles.title}>Competência {competencia.numeroCompetencia}</Text>
+        <Text style={styles.title}>
+          Competência {competencia.numeroCompetencia}
+        </Text>
+        
         <Pressable
           style={styles.editButton}
           onPress={() => navigation.navigate(

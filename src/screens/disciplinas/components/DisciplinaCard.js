@@ -75,18 +75,13 @@ const DisciplinaCard = React.memo(({ navigation, disciplina }) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 14,
+    paddingVertical: 16,
     paddingHorizontal: 20,
     marginVertical: 8,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 2,
+    backgroundColor: 'white',
     borderWidth: 1,
-    borderColor: '#f1f1f1'
+    borderColor: '#ccc',
+    borderRadius: 6,
   },
   header: {
     flexDirection: 'row',

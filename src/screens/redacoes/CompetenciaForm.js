@@ -11,8 +11,10 @@ import {
 } from '../../components';
 
 const CompetenciaForm = () => {
-  const navigation = useNavigation(); // Hook para navegação
-  const { id } = useRoute().params; // Extrai os parâmetros da rota
+  // Hook para navegação
+  const navigation = useNavigation();
+  // Extrai os parâmetros da rota
+  const { id } = useRoute().params;
 
   // Estado inicial para armazenar os dados da nova competência
   const [novaCompetencia, setNovaCompetencia] = useState({

@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
-import { db, doc, getDoc, updateDoc, deleteDoc } from "../../firebase/firebaseConfig";
 import { View } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { getRedacaoById, updateRedacao, deleteRedacao } from '../../services/redacoesService'; 
 
 import {
   Container,
@@ -8,12 +9,35 @@ import {
   TextInputWithLabel,
   ButtonPrimary,
   ButtonDelete
-} from '../../components';
+} from '../../components'; 
 
-const RedacaoAlterar = ({ navigation, route }) => {
-  const { id } = route.params
-  const [redacao, setRedacao] = useState({});
+const RedacaoAlterar = () => {
+  // Hook de navegação para manipular a navegação
+  const navigation = useNavigation(); 
+  // Obtém o ID da redação dos parâmetros da rota
+  const { id } = useRoute().params; 
 
+  const [redacao, setRedacao] = useState({}); 
+
+  // Função assíncrona para buscar uma redação específica pelo ID
+  const fetchData = useCallback(async () => {
+    try {
+      const redacaoData = await getRedacaoById(id); 
+      setRedacao(redacaoData); 
+    } catch (error) {
+      // Log do erro para depuração
+      console.error('Error fetching redacao: ', error);
+    }
+  }, [id]);
+
+  // Hook para buscar dados quando a tela ganha foco
+  useFocusEffect(
+    useCallback(() => {
+      fetchData(); // Chama a função de busca de dados
+    }, [fetchData])
+  );
+
+  // Manipula as mudanças de input e atualiza o estado da redação
   const handleInputRedacao = (name, value) => {
     setRedacao(prevState => ({
       ...prevState,
@@ -21,49 +45,25 @@ const RedacaoAlterar = ({ navigation, route }) => {
     }));
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const redacaoRef = doc(db, 'redacoes', id);
-        const redacaoSnap = await getDoc(redacaoRef);
-
-        setRedacao({...redacaoSnap.data()});
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    return navigation.addListener('focus', fetchData);
-  }, []);
-
-  const updateRedacao = async () => {
+  // Função para atualizar a redação
+  const handleUpdateRedacao = async () => {
     try {
-      const redacaoRef = doc(db, 'redacoes', id);
-      
-      await updateDoc(redacaoRef, {
-        "tema": redacao.tema,
-        "notaFinal": redacao.notaFinal,
-        "notaMaxima": redacao.notaMaxima,
-        "data": redacao.data
-      });
-      
-      navigation.goBack()
+      await updateRedacao(id, redacao); 
+      navigation.goBack(); 
+    } catch (error) {
+      console.error(error); 
+    }
+  };
+
+  // Função para deletar a redação
+  const handleDeleteRedacao = async () => {
+    try {
+      await deleteRedacao(id);
+      navigation.navigate('Redacoes');
     } catch (error) {
       console.error(error);
     }
   };
-
-  const deleteRedacao = async () => {
-    try {
-      const redacaoRef = doc(db, 'redacoes', id);
-      await deleteDoc(redacaoRef)
-      navigation.navigate('Redacoes')
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  console.log('reload')
 
   return (
     <Container>
@@ -108,11 +108,11 @@ const RedacaoAlterar = ({ navigation, route }) => {
         />
       </View>
 
-      <ButtonPrimary handlePress={updateRedacao}>
+      <ButtonPrimary handlePress={handleUpdateRedacao}>
         Alterar
       </ButtonPrimary>
 
-      <ButtonDelete handlePress={deleteRedacao}>
+      <ButtonDelete handlePress={handleDeleteRedacao}>
         Excluir
       </ButtonDelete>
     </Container>

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native'
 
-export default Info = ({ title, info, twoColumn=true }) => {
+export default Info = ({ title, info }) => {
   return (
     <View>
       <View style={styles.container}>

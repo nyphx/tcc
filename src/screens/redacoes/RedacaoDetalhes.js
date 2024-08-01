@@ -1,52 +1,56 @@
 import * as Progress from 'react-native-progress';
 import React, { useState, useCallback } from 'react';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
-import { getRedacaoWithCompetencias } from '../../services/redacoesService';
+import { getRedacaoWithCompetencias } from '../../services/redacoesService'; 
 import { Pressable, View, Text, StyleSheet } from 'react-native';
 import { Container, ButtonPrimary } from '../../components';
 import { MaterialIcons } from '@expo/vector-icons';
 import Info from './components/Info';
-import ItemCompetencia from './components/ItemCompetencia';
+import ItemCompetencia from './components/ItemCompetencia'; 
 
 const RedacaoDetalhes = () => {
+  // Hook de navegação
   const navigation = useNavigation();
+  // Obtém o ID da redação dos parâmetros da rota
   const { id } = useRoute().params;
 
-  const [redacao, setRedacao] = useState(null);
+  const [redacao, setRedacao] = useState(null); 
   const [competencias, setCompetencias] = useState([]);
 
+  // Função para buscar dados da redação e suas competências
   const fetchData = useCallback(async () => {
     try {
       const { redacao, competencias } = await getRedacaoWithCompetencias(id);
-      setRedacao(redacao);
-      setCompetencias(competencias);
+      setRedacao(redacao); 
+      setCompetencias(competencias); 
     } catch (error) {
-      console.error('Error fetching redacao with competencias: ', error);
+      console.error('Error fetching redacao with competencias: ', error); 
     }
   }, [id]);
 
+  // Usa efeito para buscar dados sempre que o componente ganhar foco
   useFocusEffect(
     useCallback(() => {
-      fetchData();
+      fetchData(); 
     }, [fetchData])
   );
 
   return (
     <Container>
-      <View style={styles.header}>
+      <View style={styles.header}> 
         <Text style={styles.headerTitle}>{redacao?.tema}</Text>
         <Pressable
           style={styles.editButton}
           onPress={() => navigation.navigate(
             'RedacaoAlterar',
-            { id: redacao.id }
+            { id: redacao.id } 
           )}
         >
-          <MaterialIcons name="edit" size={26} color="#505050" />
+          <MaterialIcons name="edit" size={26} color="#505050" /> 
         </Pressable>
       </View>
 
-      <View style={styles.infoWrapper}>
+      <View style={styles.infoWrapper}> 
         <View style={styles.notasContainer}>
           <Text style={styles.notaTitle}>Nota da redação</Text>
           {redacao &&
@@ -61,28 +65,32 @@ const RedacaoDetalhes = () => {
           }
         </View>
 
-        <Info title="Nota final" info={redacao?.notaFinal} />
-        <Info title="Nota máxima" info={redacao?.notaMaxima} />
-        <Info title="Data realizada" info={redacao?.data} />
+        <Info title="Nota final" info={redacao?.notaFinal} /> 
+        <Info title="Nota máxima" info={redacao?.notaMaxima} /> 
+        <Info title="Data realizada" info={redacao?.data} /> 
       </View>
 
-      <View>
-        <View style={[styles.competenciaHeader, styles.flex]}>
-          <Text style={styles.competenciaTitle}>Competências</Text>
+      <View> 
+        <View style={[styles.competenciaHeader, styles.flex]}> 
+          <Text style={styles.competenciaTitle}>Competências</Text> 
           <ButtonPrimary handlePress={() => navigation.navigate('CompetenciaForm', { id: id })}>
             Adicionar
           </ButtonPrimary>
         </View>
-
+        
+        {/* Mensagem se não houver competências */}
         {competencias.length === 0 &&
           <Text style={styles.noCompetenciaText}>
             Você ainda não adicionou nenhuma competência.
           </Text>
         }
 
-        {competencias.map((data, index) => (
+        {/* Mapeia competências para renderizar componentes */}
+        {competencias.map((data, index) => ( 
           <View key={data.id}>
+            {/* Separador entre competências */}
             {index !== 0 && <View style={styles.separator} />}
+            {/* Componente de competência */}
             <ItemCompetencia competencia={data} idRedacao={redacao.id} />
           </View>
         ))}
