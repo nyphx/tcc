@@ -1,3 +1,10 @@
+import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
+import { v4 as uuidv4 } from 'uuid';
+import { addSimulado } from './../../services/simuladosService';
+
 import {
   Container,
   Title,
@@ -5,14 +12,11 @@ import {
   ButtonPrimary
 } from '../../components';
 
-import { AntDesign } from '@expo/vector-icons';
-import { v4 as uuidv4 } from 'uuid';
-import React, { useState } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { addSimulado } from './../../services/simuladosService';
+const SimuladoForm = () => {
+  // Hook de navegação para manipular a navegação
+  const navigation = useNavigation();simulado
 
-const SimuladoForm = ({ navigation }) => {
-  // Estado para armazenar as informações principais do simulado
+  // Estado para armazenar as informações do simulado
   const [simulado, setSimulado] = useState({
     nome: '',
     fase: '',
@@ -80,11 +84,9 @@ const SimuladoForm = ({ navigation }) => {
 
   return (
     <Container>
-      {/* Título do formulário */}
       <Title>Adicionar simulado</Title>
   
       <View>
-        {/* Campo para o nome do simulado */}
         <TextInputWithLabel
           label="Nome"
           placeholder="Ex: UNESP 2018"
@@ -93,9 +95,7 @@ const SimuladoForm = ({ navigation }) => {
           keyboardType="default"
         />
   
-        {/* Container para os campos "Fase" e "Data Realizada", exibidos em linha */}
         <View style={{ flexDirection: 'row', gap: 20 }}>
-          {/* Campo para a fase do simulado */}
           <TextInputWithLabel
             label="Fase"
             placeholder="Ex: 1"
@@ -105,7 +105,6 @@ const SimuladoForm = ({ navigation }) => {
             twoColumn={true}
           />
   
-          {/* Campo para a data realizada do simulado */}
           <TextInputWithLabel
             label="Data Realizada"
             placeholder="Ex: 23/03/2023"
@@ -117,20 +116,16 @@ const SimuladoForm = ({ navigation }) => {
         </View>
       </View>
   
-      {/* Container para o título "Conteúdos" e o botão de adicionar */}
       <View style={[styles.flexSpaceBetween, { marginBottom: -20 }]}>
-        {/* Título para a seção de conteúdos */}
         <Text style={{ fontSize: 22, fontWeight: '600' }}>
           Conteúdos
         </Text>
   
-        {/* Botão para adicionar novos campos de conteúdo */}
         <ButtonPrimary handlePress={addConteudoField}>
           Adicionar
         </ButtonPrimary>
       </View>
   
-      {/* Mapeia os campos de conteúdo e renderiza cada um deles */}
       {conteudoFields.map((field, index) => (
         <View key={field.id}>
           {/* Adiciona uma linha separadora entre os campos, exceto no primeiro */}
@@ -142,14 +137,11 @@ const SimuladoForm = ({ navigation }) => {
               style={styles.removeButton}
               onPress={() => removeConteudoField(field.id)}
             >
-              {/* Ícone de remover */}
               <AntDesign name="delete" size={24} color="black" />
             </Pressable>
           </View>
   
-          {/* Container para os campos de conteúdo */}
           <View style={{ marginTop: -20, zIndex: 0 }}>
-            {/* Campo para o nome do conteúdo */}
             <TextInputWithLabel
               label="Nome"
               placeholder="Ex: Biologia"
@@ -158,9 +150,7 @@ const SimuladoForm = ({ navigation }) => {
               keyboardType="default"
             />
   
-            {/* Container para os campos "Questões acertadas" e "Questões totais", exibidos em linha */}
             <View style={{ flexDirection: 'row', gap: 20 }}>
-              {/* Campo para questões acertadas */}
               <TextInputWithLabel
                 label="Questões acertadas"
                 placeholder="Ex: 10"
@@ -170,7 +160,6 @@ const SimuladoForm = ({ navigation }) => {
                 twoColumn={true}
               />
   
-              {/* Campo para questões totais */}
               <TextInputWithLabel
                 label="Questões totais"
                 placeholder="Ex: 15"
@@ -184,7 +173,6 @@ const SimuladoForm = ({ navigation }) => {
         </View>
       ))}
   
-      {/* Botão para salvar o simulado */}
       <View style={{ marginTop: 20 }}>
         <ButtonPrimary handlePress={handleSubmit}>
           Salvar simulado

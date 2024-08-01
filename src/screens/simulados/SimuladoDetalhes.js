@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { getSimuladoById } from './../../services/simuladosService';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import * as Progress from 'react-native-progress';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -17,6 +17,7 @@ import {
   StyleSheet,
 } from 'react-native';
 
+// Componente que exibe informações sobre uma disciplina específica.
 const Disciplina = ({ disciplina, dados }) => {
   return (
     <View key={disciplina}>
@@ -56,6 +57,7 @@ const Disciplina = ({ disciplina, dados }) => {
   );
 };
 
+// Função para renderizar os conteúdos do simulado.
 const RenderConteudos = (simulado) => {
   const elementos = [];
   if (simulado.conteudos) {
@@ -75,10 +77,16 @@ const RenderConteudos = (simulado) => {
   return elementos;
 };
 
-const SimuladoDetalhes = ({ route, navigation }) => {
-  const { id } = route.params;
+const SimuladoDetalhes = () => {  
+  // Hook para navegação entre telas.
+  const navigation = useNavigation(); 
+  // Obtém o ID do simulado a partir dos parâmetros da rota.
+  const { id } = useRoute().params;
+
+  // Estado para armazenar os dados do simulado.
   const [simulado, setSimulado] = useState({});
 
+  // Função para buscar os dados do simulado usando o ID.
   const fetchData = useCallback(async () => {
     try {
       const simuladoData = await getSimuladoById(id);
@@ -88,12 +96,14 @@ const SimuladoDetalhes = ({ route, navigation }) => {
     }
   }, [id]);
 
+  // Hook para buscar dados quando o componente estiver em foco.
   useFocusEffect(
     useCallback(() => {
       fetchData();
     }, [fetchData])
   );
 
+  // Função para calcular o total de acertos e questões.
   const calcularAcertos = (conteudos) => {
     let acertadas = 0;
     let totais = 0;
@@ -111,10 +121,12 @@ const SimuladoDetalhes = ({ route, navigation }) => {
     return { acertadas, totais };
   };
 
+  // Obtém o total de acertos e questões dos conteúdos do simulado.
   const { acertadas, totais } = calcularAcertos(simulado.conteudos);
 
   return (
     <Container>
+      {/* Container para header */}
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <Title>{simulado?.nome}</Title>
@@ -133,8 +145,11 @@ const SimuladoDetalhes = ({ route, navigation }) => {
           <MaterialIcons name="edit" size={26} color="#505050" />
         </Pressable>
       </View>
-
+      
+      {/* Condicional para exibir a seção de desempenho 
+      somente se houver questões totais */}
       { totais > 0 && (
+        /* Container para a seção de desempenho */
         <View style={styles.notaContainer}>
           <Text style={styles.desempenhoTitle}>
             Desempenho
@@ -165,30 +180,36 @@ const SimuladoDetalhes = ({ route, navigation }) => {
           </View>
         </View>
       )} 
-    
+
+      {/* Container para exibir informações */}
       <View style={styles.infoContainer}>
+        {/* Exibe o número de acertos */}
         <Info 
           title="Acertos"
           info={`${acertadas} questões`}
         />
 
+        {/* Exibe o número total de questões */}
         <Info 
           title="Total"
           info={`${totais} questões`}
         />
 
+        {/* Exibe a data em que o simulado foi realizado */}
         <Info 
           title="Data realizada"
           info={simulado?.data}
         />
       </View>
 
+      {/* Seção de acertos por conteúdo */}
       <View>
         <Text style={styles.acertosTitulo}>
           Acertos por conteúdo
         </Text>
       </View>
       
+      {/* Renderiza os conteúdos do simulado com base na função RenderConteudos */}
       {RenderConteudos(simulado)}
     </Container>
   );

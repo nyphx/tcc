@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { getSimulados } from './../../services/simuladosService';
+import Card from './components/Card';
 
 import {
   Container,
@@ -9,7 +10,6 @@ import {
   RedirectButton
 } from '../../components';
 
-import Card from './components/Card';
 
 const Simulados = () => {
   // Estado para armazenar a lista de simulados
@@ -37,7 +37,7 @@ const Simulados = () => {
     <Container>
       <Header>
         <Title>Simulados</Title>
-        {/* Botão para navegar para o formulário de adição de simulados */}
+        
         <RedirectButton screen="SimuladosForm">
           Adicionar simulado
         </RedirectButton>

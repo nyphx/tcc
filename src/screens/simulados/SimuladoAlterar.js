@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useState, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { AntDesign } from '@expo/vector-icons';
 
@@ -17,10 +18,11 @@ import {
   ButtonPrimary
 } from '../../components';
 
-// Componente principal para editar um simulado
-const SimuladoForm = ({ navigation, route }) => {
-  // Obtém o ID do simulado a partir dos parâmetros da rota
-  const { id } = route.params;
+const SimuladoForm = () => {
+  // Hook de navegação para manipular a navegação
+  const navigation = useNavigation(); 
+  // Obtém o ID da redação dos parâmetros da rota
+  const { id } = useRoute().params; 
   
   // Estado para armazenar as informações do simulado
   const [simulado, setSimulado] = useState({});
@@ -80,7 +82,7 @@ const SimuladoForm = ({ navigation, route }) => {
   const handleUpdateSimulado = async () => {
     try {
       await updateSimuladoById(id, simulado, conteudoFields);
-      navigation.goBack(); // Volta para a tela anterior após a atualização
+      navigation.goBack();
     } catch (error) {
       console.error('Error updating simulado: ', error);
     }
@@ -90,7 +92,7 @@ const SimuladoForm = ({ navigation, route }) => {
   const handleDeleteSimulado = async () => {
     try {
       await deleteSimuladoById(id);
-      navigation.navigate('Simulados'); // Navega para a tela de simulados após a exclusão
+      navigation.navigate('Simulados');
     } catch (error) {
       console.error('Error deleting simulado: ', error);
     }
@@ -99,8 +101,9 @@ const SimuladoForm = ({ navigation, route }) => {
   return (
     <Container>
       <Title>Alterar simulado</Title>
+
+      {/* Container para os campos de informações do simulado*/}
       <View>
-        {/* Campo para editar o nome do simulado */}
         <TextInputWithLabel
           label="Nome"
           placeholder="Ex: UNESP 2018"
@@ -110,7 +113,6 @@ const SimuladoForm = ({ navigation, route }) => {
         />
 
         <View style={{ flexDirection: 'row', gap: 20 }}>
-          {/* Campo para editar a fase do simulado */}
           <TextInputWithLabel
             label="Fase"
             placeholder="Ex: 1"
@@ -120,7 +122,6 @@ const SimuladoForm = ({ navigation, route }) => {
             twoColumn={true}
           />
 
-          {/* Campo para editar a data do simulado */}
           <TextInputWithLabel
             label="Data Realizada"
             placeholder="Ex: 23/03/2023"
@@ -150,7 +151,6 @@ const SimuladoForm = ({ navigation, route }) => {
           {/* Borda para separar os campos de cada conteúdo*/}
           {index !== 0 && <View style={styles.separator} />}
 
-          {/* Botão para remover um campo de conteúdo */}
           <View style={styles.removeButtonContainer}>
             <Pressable 
               style={styles.removeButton}
@@ -161,7 +161,6 @@ const SimuladoForm = ({ navigation, route }) => {
           </View>
 
           <View style={{ marginTop: -20, zIndex: 0 }}>
-            {/* Campo para editar o nome do conteúdo */}
             <TextInputWithLabel
               label="Nome"
               placeholder="Ex: Biologia"
@@ -171,7 +170,6 @@ const SimuladoForm = ({ navigation, route }) => {
             />
 
             <View style={{ flexDirection: 'row', gap: 20 }}>
-              {/* Campo para editar a quantidade de questões acertadas */}
               <TextInputWithLabel
                 label="Questões acertadas"
                 placeholder="Ex: 10"
@@ -181,7 +179,6 @@ const SimuladoForm = ({ navigation, route }) => {
                 twoColumn={true}
               />
 
-              {/* Campo para editar a quantidade total de questões */}
               <TextInputWithLabel
                 label="Questões totais"
                 placeholder="Ex: 15"
@@ -195,13 +192,11 @@ const SimuladoForm = ({ navigation, route }) => {
         </View>
       ))}
 
-      <View style={{ marginTop: 20 }}>
-        {/* Botão para atualizar o simulado */}
+      <View style={{ marginTop: 16, gap: 16 }}>
         <ButtonPrimary handlePress={handleUpdateSimulado}>
           Alterar
         </ButtonPrimary>
 
-        {/* Botão para excluir o simulado */}
         <ButtonDelete handlePress={handleDeleteSimulado}>
           Excluir
         </ButtonDelete>
