@@ -7,10 +7,8 @@ import {
 
 import { AntDesign } from '@expo/vector-icons';
 import { v4 as uuidv4 } from 'uuid';
-
 import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-
 import { addSimulado } from './../../services/simuladosService';
 
 const SimuladoForm = ({ navigation }) => {
@@ -187,9 +185,11 @@ const SimuladoForm = ({ navigation }) => {
       ))}
   
       {/* Botão para salvar o simulado */}
-      <ButtonPrimary handlePress={handleSubmit}>
-        Salvar simulado
-      </ButtonPrimary>
+      <View style={{ marginTop: 20 }}>
+        <ButtonPrimary handlePress={handleSubmit}>
+          Salvar simulado
+        </ButtonPrimary>
+      </View>
     </Container>
   );  
 };

@@ -1,12 +1,7 @@
-import { useState } from 'react'
-import { db, collection, addDoc } from "../../firebase/firebaseConfig";
-
-import {
-  View,
-  StyleSheet,
-} from 'react-native';
-
-import { Feather } from '@expo/vector-icons';
+import React, { useState, useCallback } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { addCompetencia } from './../../services/redacoesService';
+import { View } from 'react-native';
 
 import {
   Container,
@@ -15,9 +10,11 @@ import {
   ButtonPrimary
 } from '../../components';
 
-const CompetenciaForm = ({ navigation, route }) => {
-  const { id } = route.params
+const CompetenciaForm = () => {
+  const navigation = useNavigation(); // Hook para navegação
+  const { id } = useRoute().params; // Extrai os parâmetros da rota
 
+  // Estado inicial para armazenar os dados da nova competência
   const [novaCompetencia, setNovaCompetencia] = useState({
     numeroCompetencia: '',
     notaFinal: '',
@@ -25,6 +22,7 @@ const CompetenciaForm = ({ navigation, route }) => {
     descricao: ''
   });
 
+  // Função para atualizar o estado da nova competência com novos valores
   const handleInputNovaCompetencia = (name, value) => {
     setNovaCompetencia(prevState => ({
       ...prevState,
@@ -32,20 +30,15 @@ const CompetenciaForm = ({ navigation, route }) => {
     }));
   };
 
-  const handleSubmit = async () => {
+  // Função para lidar com a submissão do formulário
+  const handleSubmit = useCallback(async () => {
     try {
-      const docRef = collection(db, "redacoes", id, "competencias")
-
-      await addDoc(
-        docRef, 
-        { ...novaCompetencia }
-      );
-      
-      navigation.goBack()
+      await addCompetencia(id, novaCompetencia);
+      navigation.goBack();
     } catch (error) {
-      console.error(error);
+      console.error('Error adding competencia: ', error);
     }
-  };
+  }, [id, novaCompetencia, navigation]);
 
   return (
     <Container>
@@ -67,7 +60,7 @@ const CompetenciaForm = ({ navigation, route }) => {
             value={novaCompetencia.notaFinal}
             onChangeText={text => handleInputNovaCompetencia('notaFinal', text)}
             keyboardType="numeric"
-            twoColumn={true}
+            twoColumn
           />
 
           <TextInputWithLabel
@@ -76,7 +69,7 @@ const CompetenciaForm = ({ navigation, route }) => {
             value={novaCompetencia.notaMaxima}
             onChangeText={text => handleInputNovaCompetencia('notaMaxima', text)}
             keyboardType="numeric"
-            twoColumn={true}
+            twoColumn
           />
         </View>
 
@@ -96,23 +89,5 @@ const CompetenciaForm = ({ navigation, route }) => {
     </Container>
   );
 };
-
-const styles = StyleSheet.create({
-  competenciaHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between', 
-    alignItems: 'center',
-  },
-  competenciaTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  separator: {
-    borderWidth: 0.5,
-    borderColor: '#ccc',
-    marginBottom: 20,
-    marginTop: 10,
-  }
-});
 
 export default CompetenciaForm;

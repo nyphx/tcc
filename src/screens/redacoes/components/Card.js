@@ -1,27 +1,34 @@
 import React from 'react';
 import { Text, View, Pressable, StyleSheet } from 'react-native';
 import { TextPrimary } from '../../../components';
+import { useNavigation } from '@react-navigation/native';
 
-const Card = ({ redacao, onPress }) => {
-  const { navigation } = onPress;
+// Componente Card para exibir informações da redação
+const Card = ({ redacao }) => {
+  // Hook para acessar a navegação
+  const navigation = useNavigation();
+
+  // Função para lidar com o clique no card e navegar para a tela de detalhes da redação
+  const handlePress = () => {
+    navigation.navigate('RedacaoDetalhes', { id: redacao.id });
+  };
 
   return (
+    // Componente Pressable que responde ao toque do usuário
     <Pressable
       style={styles.card}
-      onPress={() => navigation.navigate(
-        'RedacaoDetalhes', 
-        { id: redacao.id }
-      )}
+      onPress={handlePress}
     >
       <View>
+        {/* Exibe o tema da redação usando o componente TextPrimary */}
         <TextPrimary>{redacao.tema}</TextPrimary>
 
+        {/* Container para exibir a nota final e a nota máxima */}
         <View style={styles.notas}>
-          <Text style={{ fontSize: 24, fontWeight: '600' }}>
-            {redacao.notaFinal} 
+          <Text style={styles.notaFinal}>
+            {redacao.notaFinal}
           </Text>
-
-          <Text style={{ fontSize: 20 }}>
+          <Text style={styles.notaMaxima}>
             / {redacao.notaMaxima}
           </Text>
         </View>
@@ -48,7 +55,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 6,
     alignSelf: 'flex-start',
-    marginTop: 10
+    marginTop: 10,
+  },
+  notaFinal: {
+    fontSize: 24,
+    fontWeight: '600',
+  },
+  notaMaxima: {
+    fontSize: 20,
   },
 });
 

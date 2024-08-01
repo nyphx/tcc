@@ -1,16 +1,6 @@
 import { useState } from 'react'
-import { db, collection, addDoc } from "../../firebase/firebaseConfig";
-import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid'; 
-
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity
-} from 'react-native';
-
-import { Feather } from '@expo/vector-icons';
+import { View, StyleSheet } from 'react-native';
+import { addRedacao } from './../../services/redacoesService';
 
 import {
   Container,
@@ -36,13 +26,7 @@ const RedacoesForm = ({ navigation }) => {
 
   const handleSubmit = async () => {
     try {
-      const redacoesRef = collection(db, "redacoes")
-
-      await addDoc(
-        redacoesRef, 
-        { ...redacao }
-      );
-
+      await addRedacao(redacao);
       navigation.goBack();
     } catch (error) {
       console.error(error);

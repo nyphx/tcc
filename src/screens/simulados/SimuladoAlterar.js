@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { v4 as uuidv4 } from 'uuid';
@@ -195,11 +195,17 @@ const SimuladoForm = ({ navigation, route }) => {
         </View>
       ))}
 
-      {/* Botão para atualizar o simulado */}
-      <ButtonPrimary handlePress={handleUpdateSimulado}>Alterar</ButtonPrimary>
+      <View style={{ marginTop: 20 }}>
+        {/* Botão para atualizar o simulado */}
+        <ButtonPrimary handlePress={handleUpdateSimulado}>
+          Alterar
+        </ButtonPrimary>
 
-      {/* Botão para excluir o simulado */}
-      <ButtonDelete handlePress={handleDeleteSimulado}>Excluir</ButtonDelete>
+        {/* Botão para excluir o simulado */}
+        <ButtonDelete handlePress={handleDeleteSimulado}>
+          Excluir
+        </ButtonDelete>
+      </View>
     </Container>
   );
 };

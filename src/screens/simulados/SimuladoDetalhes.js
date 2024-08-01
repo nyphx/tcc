@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { getSimuladoById  } from './../../services/simuladosService';
+import { getSimuladoById } from './../../services/simuladosService';
 import { useFocusEffect } from '@react-navigation/native';
 import * as Progress from 'react-native-progress';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -11,7 +11,7 @@ import {
 } from '../../components';
 
 import {
-  TouchableOpacity,
+  Pressable,
   View,
   Text,
   StyleSheet,
@@ -24,8 +24,8 @@ const Disciplina = ({ disciplina, dados }) => {
         {disciplina}
       </Text>
 
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 20 }}>
-        <View style={{ flex: 1 }}>
+      <View style={styles.progressContainer}>
+        <View style={styles.progressBar}>
           <Progress.Bar 
             progress={dados.acertadas / dados.totais} 
             width={null}
@@ -36,12 +36,12 @@ const Disciplina = ({ disciplina, dados }) => {
           />
         </View>
 
-        <Text style={{ fontWeight: '700', fontSize: 20 }}>
+        <Text style={styles.progressPercentage}>
           {calculatePercentage(dados.totais, dados.acertadas)}%
         </Text>
       </View>
 
-      <View style={{ marginHorizontal: -20 }}>
+      <View style={styles.infoContainer}>
         <Info 
           title="Acertos"
           info={`${dados.acertadas} questões`}
@@ -76,7 +76,7 @@ const RenderConteudos = (simulado) => {
 };
 
 const SimuladoDetalhes = ({ route, navigation }) => {
-  const { id } = route.params
+  const { id } = route.params;
   const [simulado, setSimulado] = useState({});
 
   const fetchData = useCallback(async () => {
@@ -102,8 +102,8 @@ const SimuladoDetalhes = ({ route, navigation }) => {
       for (let disciplina in conteudos) {
         if (conteudos.hasOwnProperty(disciplina)) {
           let dados = conteudos[disciplina];
-          acertadas += Number(dados["acertadas"]);
-          totais += Number(dados["totais"]);
+          acertadas += Number(dados.acertadas);
+          totais += Number(dados.totais);
         }
       }
     }
@@ -112,8 +112,6 @@ const SimuladoDetalhes = ({ route, navigation }) => {
   };
 
   const { acertadas, totais } = calcularAcertos(simulado.conteudos);
-
-  console.log("reload")
 
   return (
     <Container>
@@ -125,7 +123,7 @@ const SimuladoDetalhes = ({ route, navigation }) => {
           </Text>
         </View>
 
-        <TouchableOpacity 
+        <Pressable 
           style={styles.editButton}
           onPress={() => navigation.navigate(
             'SimuladoAlterar',
@@ -133,7 +131,7 @@ const SimuladoDetalhes = ({ route, navigation }) => {
           )}
         >
           <MaterialIcons name="edit" size={26} color="#505050" />
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       { totais > 0 && (
@@ -150,44 +148,43 @@ const SimuladoDetalhes = ({ route, navigation }) => {
             borderWidth={0}
           />
 
-          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 14 , flexDirection: 'row'}}>
-            <Text style={{ fontSize: 18 }}>
+          <View style={styles.desempenhoInfoContainer}>
+            <Text style={styles.desempenhoText}>
               Você acertou
             </Text>
 
-            <View style={{ paddingHorizontal: 8 }}>
-              <Text style={{ fontWeight: '700', fontSize: 24 }}>
+            <View style={styles.desempenhoPercentageContainer}>
+              <Text style={styles.desempenhoPercentage}>
                 {calculatePercentage(totais, acertadas)}%
               </Text>
             </View>
 
-            <Text style={{ fontSize: 18 }}>
+            <Text style={styles.desempenhoText}>
               do simulado.
             </Text>
           </View>
         </View>
       )} 
     
-      <View style={{ marginHorizontal: -20 }}>
+      <View style={styles.infoContainer}>
         <Info 
           title="Acertos"
           info={`${acertadas} questões`}
-          />
+        />
 
         <Info 
           title="Total"
           info={`${totais} questões`}
-          />
+        />
 
         <Info 
           title="Data realizada"
           info={simulado?.data}
-          />
+        />
       </View>
 
-    
       <View>
-        <Text style={{ fontSize: 22, fontWeight: '600' }}>
+        <Text style={styles.acertosTitulo}>
           Acertos por conteúdo
         </Text>
       </View>
@@ -225,24 +222,62 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   notaContainer: {
-    backgroundColor: 'white', padding: 20, marginHorizontal: -20,
+    backgroundColor: 'white', 
+    padding: 20, 
+    marginHorizontal: -20,
     borderTopColor: "#ccc",
     borderTopWidth: 1,
-    marginBottom: -20
+    marginBottom: -20,
   },
   desempenhoTitle: {
     fontSize: 18,
     textTransform: 'uppercase',
     fontWeight: '600',
     textAlign: 'center',
-    marginBottom: 10
-  }, 
+    marginBottom: 10,
+  },
   conteudoTitulo: {
     fontSize: 20,
     textTransform: 'uppercase',
     fontWeight: '600',
-    marginBottom: 8
-  }
+    marginBottom: 8,
+  },
+  progressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    marginBottom: 20,
+  },
+  progressBar: {
+    flex: 1,
+  },
+  progressPercentage: {
+    fontWeight: '700',
+    fontSize: 20,
+  },
+  infoContainer: {
+    marginHorizontal: -20,
+  },
+  desempenhoInfoContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 14,
+    flexDirection: 'row',
+  },
+  desempenhoText: {
+    fontSize: 18,
+  },
+  desempenhoPercentageContainer: {
+    paddingHorizontal: 8,
+  },
+  desempenhoPercentage: {
+    fontWeight: '700',
+    fontSize: 24,
+  },
+  acertosTitulo: {
+    fontSize: 22,
+    fontWeight: '600',
+  },
 });
 
 export default SimuladoDetalhes;

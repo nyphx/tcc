@@ -1,6 +1,12 @@
-import { useState, useEffect } from 'react'
-import { db, doc, getDoc, updateDoc, deleteDoc } from "../../firebase/firebaseConfig";
+import React, { useState, useCallback } from 'react';
 import { View } from 'react-native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+
+import { 
+  getCompetencia, 
+  deleteCompetencia, 
+  updateCompetencia 
+} from './../../services/redacoesService';
 
 import {
   Container,
@@ -10,10 +16,19 @@ import {
   ButtonDelete
 } from '../../components';
 
-const CompetenciaAlterar = ({ navigation, route }) => {
-  const { redacaoId, data } = route.params
-  const [competencia, setCompetencia] = useState({});
+const CompetenciaAlterar = () => {
+  const navigation = useNavigation(); // Hook para navegação
+  const { idCompetencia, idRedacao } = useRoute().params; // Extrai os parâmetros da rota
 
+  // Estado inicial para armazenar os dados da competência
+  const [competencia, setCompetencia] = useState({
+    numeroCompetencia: '',
+    notaFinal: '',
+    notaMaxima: '',
+    descricao: ''
+  });
+
+  // Função para atualizar o estado da competência com novos valores
   const handleInputCompetencia = (name, value) => {
     setCompetencia(prevState => ({
       ...prevState,
@@ -21,48 +36,42 @@ const CompetenciaAlterar = ({ navigation, route }) => {
     }));
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const competenciaRef = doc(db, 'redacoes', redacaoId, 'competencias', data.id);
-        const competenciaSnap = await getDoc(competenciaRef);
-
-        setCompetencia({...competenciaSnap.data(), id: competenciaSnap.id });
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    return navigation.addListener('focus', fetchData);
-  }, []);
-
-  const updateCompetencia = async () => {
+  // Função assíncrona para buscar os dados da competência no Firestore
+  const fetchData = useCallback(async () => {
     try {
-      const competenciaRef = doc(db, 'redacoes', redacaoId, 'competencias', data.id);
-      
-      await updateDoc(competenciaRef, {
-        "descricao": competencia.descricao,
-        "notaFinal": competencia.notaFinal,
-        "notaMaxima": competencia.notaMaxima
-      });
-      
-      navigation.goBack()
+      const competenciaData = await getCompetencia(idRedacao, idCompetencia);
+      setCompetencia(competenciaData);
     } catch (error) {
-      console.error(error);
+      console.error('Error fetching competencia: ', error);
+    }
+  }, [idRedacao, idCompetencia]);
+
+  // Hook que chama fetchData sempre que a tela ganha foco
+  useFocusEffect(
+    useCallback(() => {
+      fetchData(); // Busca os dados da competência
+    }, [fetchData])
+  );
+
+  // Função para atualizar a competência no Firestore
+  const handleUpdateCompetencia = async () => {
+    try {
+      await updateCompetencia(idRedacao, idCompetencia, competencia);
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error updating competencia: ', error);
     }
   };
 
-  const deleteCompetencia = async () => {
+  // Função para deletar a competência no Firestore
+  const handleDeleteCompetencia = async () => {
     try {
-      const competenciaRef = doc(db, 'redacoes', redacaoId, 'competencias', data.id);
-      await deleteDoc(competenciaRef)
-      navigation.goBack()
+      await deleteCompetencia(idRedacao, idCompetencia);
+      navigation.goBack();
     } catch (error) {
-      console.error(error);
+      console.error('Error deleting competencia: ', error);
     }
-  }
-
-  console.log('reload')
+  };
 
   return (
     <Container>
@@ -84,7 +93,7 @@ const CompetenciaAlterar = ({ navigation, route }) => {
             value={competencia.notaFinal}
             onChangeText={text => handleInputCompetencia('notaFinal', text)}
             keyboardType="numeric"
-            twoColumn={true}
+            twoColumn
           />
 
           <TextInputWithLabel
@@ -93,7 +102,7 @@ const CompetenciaAlterar = ({ navigation, route }) => {
             value={competencia.notaMaxima}
             onChangeText={text => handleInputCompetencia('notaMaxima', text)}
             keyboardType="numeric"
-            twoColumn={true}
+            twoColumn
           />
         </View>
 
@@ -107,11 +116,11 @@ const CompetenciaAlterar = ({ navigation, route }) => {
         />
       </View>
 
-      <ButtonPrimary handlePress={updateCompetencia}>
+      <ButtonPrimary handlePress={handleUpdateCompetencia}>
         Alterar
       </ButtonPrimary>
 
-      <ButtonDelete handlePress={deleteCompetencia}>
+      <ButtonDelete handlePress={handleDeleteCompetencia}>
         Excluir
       </ButtonDelete>
     </Container>

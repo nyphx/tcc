@@ -1,36 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { collection, getDocs, db } from '../../firebase/firebaseConfig';
-
+import React, { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Text } from 'react-native';
-
-import {
-  Container,
-  Header,
-  Title,
-  RedirectButton
-} from '../../components';
-
+import { Container, Header, Title, RedirectButton } from '../../components';
 import Card from './components/Card'
+import { getRedacoes } from './../../services/redacoesService';
 
 const Redacao = ({ navigation }) => {
   console.log("reload")
  
   const [redacoes, setRedacoes] = useState([])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const docRef = collection(db, 'redacoes');
-        const docSnap = await getDocs(docRef);
+  // Função assíncrona para buscar redações do serviço
+  const fetchData = useCallback(async () => {
+    try {
+      const redacoesData = await getRedacoes();
+      setRedacoes(redacoesData);
+    } catch (error) {
+      // Log do erro para depuração
+      console.error('Error fetching redacoes: ', error);
+    }
+  }, []);
 
-        setRedacoes(docSnap.docs.map(doc => ({ ...doc.data(), id: doc.id })));
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    return navigation.addListener('focus', fetchData);
-  }, [navigation]);
+  // Hook para buscar dados quando a tela ganha foco
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [fetchData])
+  );
 
   return (
     <Container>

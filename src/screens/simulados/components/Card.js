@@ -15,7 +15,7 @@ const Card = ({ simulado }) => {
   return (
     <Pressable
       style={styles.card}
-      onPress={handlePress} // Chama handlePress ao clicar no card
+      onPress={handlePress}
     >
       <View>
         <TextPrimary>{simulado.nome}</TextPrimary>
