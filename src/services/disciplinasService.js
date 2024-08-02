@@ -92,7 +92,7 @@ export const getAssuntosPorEstado = async (id, estado) => {
 // Função para buscar um assunto específico
 export const getAssunto = async (disciplinaId, assuntoId) => {
   try {
-    const docRef = doc(db, 'disciplinas', disciplinaId, 'assuntos', assuntoId);
+    const docRef = doc(db, 'disciplinas', disciplinaId, 'assunto', assuntoId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -109,7 +109,7 @@ export const getAssunto = async (disciplinaId, assuntoId) => {
 // Função para adicionar um novo assunto a uma disciplina específica
 export const addAssunto = async (disciplinaId, novoAssunto) => {
   try {
-    const docRef = collection(db, 'disciplinas', disciplinaId, 'assuntos');
+    const docRef = collection(db, 'disciplinas', disciplinaId, 'assunto');
     const docRefResult = await addDoc(docRef, novoAssunto);
     return { ...novoAssunto, id: docRefResult.id };
   } catch (error) {
@@ -121,7 +121,7 @@ export const addAssunto = async (disciplinaId, novoAssunto) => {
 // Função para atualizar um assunto existente
 export const updateAssunto = async (disciplinaId, assuntoId, updatedAssunto) => {
   try {
-    const assuntoRef = doc(db, 'disciplinas', disciplinaId, 'assuntos', assuntoId);
+    const assuntoRef = doc(db, 'disciplinas', disciplinaId, 'assunto', assuntoId);
     await updateDoc(assuntoRef, updatedAssunto);
     return { ...updatedAssunto, id: assuntoId };
   } catch (error) {
@@ -133,7 +133,7 @@ export const updateAssunto = async (disciplinaId, assuntoId, updatedAssunto) => 
 // Função para excluir um assunto
 export const deleteAssunto = async (disciplinaId, assuntoId) => {
   try {
-    const assuntoRef = doc(db, 'disciplinas', disciplinaId, 'assuntos', assuntoId);
+    const assuntoRef = doc(db, 'disciplinas', disciplinaId, 'assunto', assuntoId);
     await deleteDoc(assuntoRef);
   } catch (error) {
     console.error('Error deleting assunto: ', error);

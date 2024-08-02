@@ -1,16 +1,21 @@
 import { useState } from 'react'
-import { Text, View, TextInput, Pressable } from 'react-native';
-import { ButtonPrimary } from '../../components';
+import { View } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { addAssunto } from './../../services/disciplinasService';
 
 import { 
-  db, 
-  collection, 
-  addDoc,
-  doc,
-} from "../../firebase/firebaseConfig";
+  RadioForm, 
+  Container, 
+  Title, 
+  TextInputWithLabel,
+  ButtonPrimary,
+} from './../../components'
 
-export default function App({ navigation, route }) {
-  const { id } = route.params
+const AssuntoForm = () => {
+  // Hook de navegação para manipular a navegação
+  const navigation = useNavigation(); 
+  // Obtém o ID da redação dos parâmetros da rota
+  const { id } = useRoute().params; 
 
   const [nome, setNome] = useState('')
   const [dificuldade, setDificuldade] = useState('');
@@ -30,17 +35,13 @@ export default function App({ navigation, route }) {
 
   const handleSubmit = async () => {
     try {
-      const docRef = doc(db, "disciplinas", id);
-
-      await addDoc(
-        collection(docRef, 'assunto'), 
-        {
-          nome: nome,
-          dificuldade: dificuldade,
-          estado: estado
-        }
-      );
-
+      const newAssunto = { 
+        nome: nome,
+        dificuldade: dificuldade,
+        estado: estado
+      }
+      
+      await addAssunto(id, newAssunto)
       navigation.goBack();
     } catch (error) {
       console.error(error);
@@ -48,94 +49,38 @@ export default function App({ navigation, route }) {
   };
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
+    <Container>
+      <Title>Adicionar assunto</Title>
+
       <View>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>
-          Adicionar assunto
-        </Text>
+        <TextInputWithLabel
+          label="Nome do assunto"
+          placeholder="Ex: Brasil colonial"
+          value={nome}
+          onChangeText={(text) => setNome(text)}
+          keyboardType="default"
+        />
 
-        <View style={{ marginBottom: 20 }}>
-          <Text style={{ fontSize: 16, marginBottom: 5 }}>
-            Nome do assunto
-          </Text>
-          <TextInput
-            style={{ borderWidth: 1, borderColor: '#ccc', padding: 10, borderRadius: 5 }}
-            placeholder="Ex: Biologia"
-            onChangeText={(text) => setNome(text)}
-            value={nome}
-          />
-        </View>
+        <RadioForm 
+          label="Dificuldade"
+          options={radioButtonsDificuldades}
+          selectedValue={dificuldade}
+          onValueChange={setDificuldade}
+        />
 
-        <View style={{ marginBottom: 20 }}>
-          <Text style={{ fontSize: 16, marginBottom: 5 }}>
-            Dificuldade
-          </Text>
-          {radioButtonsDificuldades.map((item) => {
-            return (
-              <Pressable 
-                onPress={() => setDificuldade(item.value)}
-                key={item.id}
-                style={{
-                  padding: 10,
-                  marginVertical: 5,
-                  borderRadius: 5,
-                  backgroundColor: item.value === dificuldade ? '#ddd' : '#fff',
-                  borderWidth: 1,
-                  borderColor: '#ccc'
-                }}
-              >
-                <Text 
-                  style={{
-                    color: item.value === dificuldade ? '#000' : '#888',
-                    fontSize: 16
-                  }}
-                >
-                  {item.value}
-                </Text>
-              </Pressable>
-            )
-          })}
-
-          <Text>User option: {dificuldade}</Text>
-        </View>
-
-        <View style={{ marginBottom: 20 }}>
-          <Text style={{ fontSize: 16, marginBottom: 5 }}>
-            Estado
-          </Text>
-          {radioButtonsEstados.map((item) => {
-            return (
-              <Pressable 
-                onPress={() => setEstado(item.value)}
-                key={item.id}
-                style={{
-                  padding: 10,
-                  marginVertical: 5,
-                  borderRadius: 5,
-                  backgroundColor: item.value === estado ? '#ddd' : '#fff',
-                  borderWidth: 1,
-                  borderColor: '#ccc'
-                }}
-              >
-                <Text 
-                  style={{
-                    color: item.value === estado ? '#000' : '#888',
-                    fontSize: 16
-                  }}
-                >
-                  {item.value}
-                </Text>
-              </Pressable>
-            )
-          })}
-
-          <Text>User option: {estado}</Text>
-        </View>
+        <RadioForm 
+          label="Estado"
+          options={radioButtonsEstados}
+          selectedValue={estado}
+          onValueChange={setEstado}
+        />
       </View>
 
       <ButtonPrimary handlePress={handleSubmit}>
         Adicionar assunto
       </ButtonPrimary>
-    </View>
+    </Container>
   );
 }
+
+export default AssuntoForm;

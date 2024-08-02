@@ -4,7 +4,7 @@ export default RadioForm = ({ label, options, selectedValue, onValueChange }) =>
   return (
     <View>
       <Text style={styles.label}>
-        Estado
+        {label}
       </Text>
 
       {options.map((item) => (

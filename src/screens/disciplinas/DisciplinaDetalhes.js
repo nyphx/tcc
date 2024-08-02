@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useFocusEffect,useNavigation, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { getAssuntosByDisciplinaId, getDisciplinaById } from './../../services/disciplinasService';
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { Container, Title, CountTitle, ButtonPrimary } from "./../../components";
@@ -14,7 +14,7 @@ const Assunto = ({ assunto, disciplinaId }) => {
       style={styles.assuntosItem}
       onPress={() => navigation.navigate(
         'AssuntoAlterar', 
-        { assuntoId: assunto.id, disciplinaId: disciplinaId, }
+        { data: assunto, disciplinaId: disciplinaId }
       )}
     >
       <Text style={styles.assuntosItemText}>

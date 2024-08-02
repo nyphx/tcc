@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { View } from 'react-native';
-import { db, collection, addDoc } from "../../firebase/firebaseConfig";
+import { useNavigation } from '@react-navigation/native';
+import { addDisciplina } from './../../services/disciplinasService';
 
 import {
   Container,
@@ -10,7 +11,10 @@ import {
   RadioForm
 } from '../../components';
 
-export default function App({ navigation }) {
+const DisciplinasForm = () => {
+  // Hook de navegação
+  const navigation = useNavigation();
+
   const [nome, setNome] = useState("")
   const [estado, setEstado] = useState("")
 
@@ -23,13 +27,12 @@ export default function App({ navigation }) {
 
   const handleSubmit = async () => {
     try {
-      const disciplinasRef = collection(db, "disciplinas")
+      const newDisciplina = { 
+        nome: nome, 
+        estado: estado 
+      }
 
-      await addDoc(
-        disciplinasRef, 
-        { nome: nome, estado: estado }
-      );
-
+      await addDisciplina(newDisciplina);
       navigation.goBack();
     } catch (error) {
       console.error(error);
@@ -52,6 +55,7 @@ export default function App({ navigation }) {
         />
 
         <RadioForm 
+          label="Estado"
           options={radioButtonsEstados}
           selectedValue={estado}
           onValueChange={setEstado}
@@ -64,3 +68,5 @@ export default function App({ navigation }) {
     </Container>
   );
 }
+
+export default DisciplinasForm;
