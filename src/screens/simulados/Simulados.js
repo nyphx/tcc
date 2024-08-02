@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { getSimulados } from './../../services/simuladosService';
+import { ActivityIndicator, StyleSheet, View, Text } from 'react-native'
 import Card from './components/Card';
 
 import {
@@ -10,19 +11,26 @@ import {
   RedirectButton
 } from '../../components';
 
-
 const Simulados = () => {
   // Estado para armazenar a lista de simulados
   const [simulados, setSimulados] = useState([]);
 
   // Função assíncrona para buscar simulados do serviço
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
     try {
       const simuladosData = await getSimulados();
       setSimulados(simuladosData);
     } catch (error) {
-      // Log do erro para depuração
-      console.error('Error fetching simulados: ', error);
+      console.error('Error fetching data:', error.message);
+      setError(true);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -32,6 +40,27 @@ const Simulados = () => {
       fetchData();
     }, [fetchData])
   );
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.centered, { gap: 8 }]}>
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+          Erro ao carregar os simulados
+        </Text>
+        <Text style={{ fontSize: 18 }}>
+          Por favor, tente novamente
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <Container>
@@ -53,5 +82,13 @@ const Simulados = () => {
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  centered: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  }
+})
 
 export default Simulados;

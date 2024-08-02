@@ -35,6 +35,7 @@ const Card = ({ leitura }) => {
 
 const styles = StyleSheet.create({
   card: {
+    marginVertical: 8,
     paddingVertical: 12,
     paddingHorizontal: 20,
     backgroundColor: 'white',

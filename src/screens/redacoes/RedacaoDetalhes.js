@@ -2,7 +2,7 @@ import * as Progress from 'react-native-progress';
 import React, { useState, useCallback } from 'react';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { getRedacaoWithCompetencias } from '../../services/redacoesService'; 
-import { Pressable, View, Text, StyleSheet } from 'react-native';
+import { Pressable, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Container, ButtonPrimary } from '../../components';
 import { MaterialIcons } from '@expo/vector-icons';
 import Info from './components/Info';
@@ -18,13 +18,22 @@ const RedacaoDetalhes = () => {
   const [competencias, setCompetencias] = useState([]);
 
   // Função para buscar dados da redação e suas competências
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
     try {
       const { redacao, competencias } = await getRedacaoWithCompetencias(id);
       setRedacao(redacao); 
       setCompetencias(competencias); 
     } catch (error) {
-      console.error('Error fetching redacao with competencias: ', error); 
+      console.error('Error fetching data:', error.message);
+      setError(true);
+    } finally {
+      setLoading(false);
     }
   }, [id]);
 
@@ -34,6 +43,27 @@ const RedacaoDetalhes = () => {
       fetchData(); 
     }, [fetchData])
   );
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.centered, { gap: 8 }]}>
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+          Erro ao carregar a redação
+        </Text>
+        <Text style={{ fontSize: 18 }}>
+          Por favor, tente novamente
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <Container>
@@ -154,6 +184,11 @@ const styles = StyleSheet.create({
   infoWrapper: {
     marginHorizontal: -20,
   },
+  centered: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  }
 });
 
 export default RedacaoDetalhes;

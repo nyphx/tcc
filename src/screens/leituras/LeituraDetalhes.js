@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { getLeituraById } from './../../services/leiturasService';
-import { Pressable, View,Text, StyleSheet } from 'react-native';
+import { Pressable, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import * as Progress from 'react-native-progress';
 import { Container, Title, calculatePercentage } from '../../components';
@@ -19,12 +19,21 @@ export default LeituraDetalhes = () => {
   const [leitura, setLeitura] = useState({});
   
   // Função para buscar dados da redação e suas competências
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
     try {
       const leituraData = await getLeituraById(id);
       setLeitura(leituraData)
     } catch (error) {
-      console.error('Error fetching leitura: ', error); 
+      console.error('Error fetching data:', error.message);
+      setError(true);
+    } finally {
+      setLoading(false);
     }
   }, [id]);
 
@@ -35,7 +44,26 @@ export default LeituraDetalhes = () => {
     }, [fetchData])
   );
 
-  console.log("reload")
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.centered, { gap: 8 }]}>
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+          Erro ao carregar a leitura
+        </Text>
+        <Text style={{ fontSize: 18 }}>
+          Por favor, tente novamente
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <Container>
@@ -200,4 +228,9 @@ const styles = StyleSheet.create({
   editButton: {
     padding: 6,
   },
+  centered: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  }
 });

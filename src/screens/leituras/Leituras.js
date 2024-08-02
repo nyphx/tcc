@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { getLeituras } from './../../services/leiturasService';
+import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
 
 import {
   Container,
@@ -23,7 +24,13 @@ const Leituras = () => {
   const { lendo, finalizado, parado, futuro } = leituras;
 
   // Função assíncrona para buscar leituras do serviço
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
     try {
       const leiturasData = await getLeituras();
       
@@ -35,8 +42,10 @@ const Leituras = () => {
         futuro: leiturasData.filter(leitura => leitura.estado === "Futuro")
       });
     } catch (error) {
-      // Log do erro para depuração
-      console.error('Error fetching leituras: ', error);
+      console.error('Error fetching data:', error.message);
+      setError(true);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -49,13 +58,14 @@ const Leituras = () => {
 
   // Função para renderizar um título e os cards de leitura correspondente
   const renderLeiturasSection = (title, leituras, bgColor, textColor, emptyMessage) => (
-    <>
+    <View>
       <CountTitle 
         title={title}
         count={leituras.length}
         bgColor={bgColor}
         textColor={textColor}
       />
+
       {leituras.length !== 0 ? 
         leituras.map(data => (
           <Card 
@@ -63,14 +73,37 @@ const Leituras = () => {
             key={data.id} 
           />
         )) : 
-        <TextPrimary>{emptyMessage}</TextPrimary>
+        <View style={{ marginTop: 8 }}>
+          <TextPrimary>{emptyMessage}</TextPrimary>
+        </View>
       }
-    </>
+    </View>
   );
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.centered, { gap: 8 }]}>
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+          Erro ao carregar as leituras
+        </Text>
+        <Text style={{ fontSize: 18 }}>
+          Por favor, tente novamente
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <Container>
-      <Header>
+      <View style={{ marginBottom: 8 }}>
         <CountTitle 
           title="Leituras Obrigatórias"
           count={lendo.length + finalizado.length + parado.length + futuro.length}
@@ -80,7 +113,7 @@ const Leituras = () => {
         <RedirectButton screen="LeiturasForm">
           Adicionar leitura
         </RedirectButton>
-      </Header>
+      </View>
 
       {renderLeiturasSection("Lendo", lendo, "#B5E08A", "rgb(2 44 34)", "Não há livro sendo lido.")}
       {renderLeiturasSection("Parado", parado, "#E09A8A", "rgb(69 10 10)", "Não há livro parado.")}
@@ -89,5 +122,13 @@ const Leituras = () => {
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  centered: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  }
+})
 
 export default Leituras;

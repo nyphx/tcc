@@ -15,9 +15,9 @@ import {
   View,
   Text,
   StyleSheet,
+  ActivityIndicator
 } from 'react-native';
 
-// Componente que exibe informações sobre uma disciplina específica.
 const Disciplina = ({ disciplina, dados }) => {
   return (
     <View key={disciplina}>
@@ -83,16 +83,24 @@ const SimuladoDetalhes = () => {
   // Obtém o ID do simulado a partir dos parâmetros da rota.
   const { id } = useRoute().params;
 
-  // Estado para armazenar os dados do simulado.
   const [simulado, setSimulado] = useState({});
 
   // Função para buscar os dados do simulado usando o ID.
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
     try {
       const simuladoData = await getSimuladoById(id);
       setSimulado(simuladoData);
     } catch (error) {
       console.error('Error fetching simulado: ', error);
+      setError(true);
+    } finally {
+      setLoading(false);
     }
   }, [id]);
 
@@ -123,6 +131,28 @@ const SimuladoDetalhes = () => {
 
   // Obtém o total de acertos e questões dos conteúdos do simulado.
   const { acertadas, totais } = calcularAcertos(simulado.conteudos);
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.centered, { gap: 8 }]}>
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+          Erro ao carregar o simulado
+        </Text>
+        <Text style={{ fontSize: 18 }}>
+          Por favor, tente novamente
+        </Text>
+      </View>
+    );
+  }
+
 
   return (
     <Container>
@@ -299,6 +329,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '600',
   },
+  centered: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  }
 });
 
 export default SimuladoDetalhes;

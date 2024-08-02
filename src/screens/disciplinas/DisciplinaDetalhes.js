@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { getAssuntosByDisciplinaId, getDisciplinaById } from './../../services/disciplinasService';
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Pressable, ActivityIndicator } from 'react-native';
 import { Container, Title, CountTitle, ButtonPrimary } from "./../../components";
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -64,7 +64,13 @@ const DisciplinaDetalhes = () => {
   const { estudando, finalizado, futuro } = assuntos;
 
   // Função para buscar dados da redação e seus assuntos
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
     try {
       const disciplinaData = await getDisciplinaById(id);
       setDisciplina(disciplinaData)
@@ -77,6 +83,9 @@ const DisciplinaDetalhes = () => {
       });
     } catch (error) {
       console.error('Error fetching data:', error.message);
+      setError(true);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -85,6 +94,27 @@ const DisciplinaDetalhes = () => {
       fetchData();
     }, [fetchData])
   );
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.centered, { gap: 8 }]}>
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+          Erro ao carregar a disciplina
+        </Text>
+        <Text style={{ fontSize: 18 }}>
+          Por favor, tente novamente
+        </Text>
+      </View>
+    );
+  }
 
   const renderAssuntos = (assuntos, title, bgColor, textColor) => (
     <View>
@@ -181,10 +211,14 @@ const styles = StyleSheet.create({
     fontWeight: "500"
   },
   estadoText: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#505050',
-    textAlign: 'center',
     marginTop: 10
+  },
+  centered: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center'
   }
 });
 

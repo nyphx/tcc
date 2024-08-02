@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Text, View, ActivityIndicator } from 'react-native';
+import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Container, RedirectButton, CountTitle } from '../../components';
 import DisciplinaCard from './components/DisciplinaCard';
@@ -43,13 +43,17 @@ const Disciplinas = () => {
     parado: [],
     futuro: []
   });
+
+  const { estudando, finalizado, parado, futuro } = disciplinas;
   
+  // Função para buscar dados da redação e seus assuntos
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
+
     try {
       const disciplinasData = await getDisciplinas();
       
@@ -61,33 +65,37 @@ const Disciplinas = () => {
       });
     } catch (error) {
       console.error('Error fetching data:', error.message);
-      setError('Erro ao carregar disciplinas. Por favor, tente novamente.');
+      setError(true);
     } finally {
       setLoading(false);
     }
   }, []);
 
+  // Hook para buscar dados quando a tela ganha foco
   useFocusEffect(
     React.useCallback(() => {
       fetchData();
     }, [fetchData])
   );
 
-  const { estudando, finalizado, parado, futuro } = disciplinas;
-
   if (loading) {
     return (
-      <Container>
+      <View style={styles.centered}>
         <ActivityIndicator size="large" color="#0000ff" />
-      </Container>
+      </View>
     );
   }
 
   if (error) {
     return (
-      <Container>
-        <Text>{error}</Text>
-      </Container>
+      <View style={[styles.centered, { gap: 8 }]}>
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+          Erro ao carregar as disciplinas
+        </Text>
+        <Text style={{ fontSize: 18 }}>
+          Por favor, tente novamente
+        </Text>
+      </View>
     );
   }
 
@@ -140,5 +148,13 @@ const Disciplinas = () => {
     </Container>
   );
 }
+
+const styles = StyleSheet.create({
+  centered: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  }
+})
 
 export default Disciplinas;

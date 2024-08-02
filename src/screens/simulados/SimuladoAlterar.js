@@ -97,7 +97,7 @@ const SimuladoForm = () => {
       console.error('Error deleting simulado: ', error);
     }
   };
-
+  
   return (
     <Container>
       <Title>Alterar simulado</Title>
