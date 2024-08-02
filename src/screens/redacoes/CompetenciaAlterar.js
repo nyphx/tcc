@@ -1,12 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
-import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
-
-import { 
-  getCompetencia, 
-  deleteCompetencia, 
-  updateCompetencia 
-} from './../../services/redacoesService';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { deleteCompetencia, updateCompetencia } from './../../services/redacoesService';
 
 import {
   Container,
@@ -20,15 +15,10 @@ const CompetenciaAlterar = () => {
   // Hook para navegação
   const navigation = useNavigation();
   // Extrai os parâmetros da rota
-  const { idCompetencia, idRedacao } = useRoute().params;
+  const { data, idRedacao } = useRoute().params;
 
   // Estado inicial para armazenar os dados da competência
-  const [competencia, setCompetencia] = useState({
-    numeroCompetencia: '',
-    notaFinal: '',
-    notaMaxima: '',
-    descricao: ''
-  });
+  const [competencia, setCompetencia] = useState(data);
 
   // Função para atualizar o estado da competência com novos valores
   const handleInputCompetencia = (name, value) => {
@@ -38,27 +28,10 @@ const CompetenciaAlterar = () => {
     }));
   };
 
-  // Função assíncrona para buscar os dados da competência no Firestore
-  const fetchData = useCallback(async () => {
-    try {
-      const competenciaData = await getCompetencia(idRedacao, idCompetencia);
-      setCompetencia(competenciaData);
-    } catch (error) {
-      console.error('Error fetching competencia: ', error);
-    }
-  }, [idRedacao, idCompetencia]);
-
-  // Hook que chama fetchData sempre que a tela ganha foco
-  useFocusEffect(
-    useCallback(() => {
-      fetchData(); // Busca os dados da competência
-    }, [fetchData])
-  );
-
   // Função para atualizar a competência no Firestore
   const handleUpdateCompetencia = async () => {
     try {
-      await updateCompetencia(idRedacao, idCompetencia, competencia);
+      await updateCompetencia(idRedacao, data.id, competencia);
       navigation.goBack();
     } catch (error) {
       console.error('Error updating competencia: ', error);
@@ -68,7 +41,7 @@ const CompetenciaAlterar = () => {
   // Função para deletar a competência no Firestore
   const handleDeleteCompetencia = async () => {
     try {
-      await deleteCompetencia(idRedacao, idCompetencia);
+      await deleteCompetencia(idRedacao, data.id);
       navigation.goBack();
     } catch (error) {
       console.error('Error deleting competencia: ', error);

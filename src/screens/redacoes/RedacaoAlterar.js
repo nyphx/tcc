@@ -1,7 +1,7 @@
 import { View } from 'react-native';
-import React, { useState, useCallback } from 'react';
-import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
-import { getRedacaoById, updateRedacao, deleteRedacao } from '../../services/redacoesService'; 
+import React, { useState } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { updateRedacao, deleteRedacao } from '../../services/redacoesService'; 
 
 import {
   Container,
@@ -15,27 +15,10 @@ const RedacaoAlterar = () => {
   // Hook de navegação para manipular a navegação
   const navigation = useNavigation(); 
   // Obtém o ID da redação dos parâmetros da rota
-  const { id } = useRoute().params; 
+  const { data } = useRoute().params; 
 
-  const [redacao, setRedacao] = useState({}); 
-
-  // Função assíncrona para buscar uma redação específica pelo ID
-  const fetchData = useCallback(async () => {
-    try {
-      const redacaoData = await getRedacaoById(id); 
-      setRedacao(redacaoData); 
-    } catch (error) {
-      // Log do erro para depuração
-      console.error('Error fetching redacao: ', error);
-    }
-  }, [id]);
-
-  // Hook para buscar dados quando a tela ganha foco
-  useFocusEffect(
-    useCallback(() => {
-      fetchData(); // Chama a função de busca de dados
-    }, [fetchData])
-  );
+  // state
+  const [redacao, setRedacao] = useState(data); 
 
   // Manipula as mudanças de input e atualiza o estado da redação
   const handleInputRedacao = (name, value) => {
@@ -48,7 +31,7 @@ const RedacaoAlterar = () => {
   // Função para atualizar a redação
   const handleUpdateRedacao = async () => {
     try {
-      await updateRedacao(id, redacao); 
+      await updateRedacao(data.id, redacao); 
       navigation.goBack(); 
     } catch (error) {
       console.error(error); 
@@ -58,7 +41,7 @@ const RedacaoAlterar = () => {
   // Função para deletar a redação
   const handleDeleteRedacao = async () => {
     try {
-      await deleteRedacao(id);
+      await deleteRedacao(data.id);
       navigation.navigate('Redacoes');
     } catch (error) {
       console.error(error);

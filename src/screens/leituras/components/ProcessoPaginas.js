@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Modal } from 'react-native'
-import { db, doc, updateDoc } from "../../../firebase/firebaseConfig";
-
+import { View, Text, Pressable, StyleSheet, TextInput, Modal } from 'react-native'
+import { updateLeitura } from './../../../services/leiturasService'; 
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 
 import {
@@ -35,15 +34,12 @@ export default ProcessoPaginas = ({ leitura, atual, total }) => {
 
   const handleSubmit = async () => {
     try {
-      const docRef = doc(db, "leituras", leitura.id)
-      await updateDoc(
-        docRef,
-        { 
-          ...leitura, 
-          atualPaginas: atualPaginas 
-        }
-      );
-      
+      const newLeitura = { 
+        ...leitura, 
+        atualPaginas: atualPaginas 
+      }
+
+      await updateLeitura(leitura.id, newLeitura);
       setModalVisible(!modalVisible)
     } catch (error) {
       console.error(error);
@@ -52,12 +48,12 @@ export default ProcessoPaginas = ({ leitura, atual, total }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <TouchableOpacity 
+      <Pressable 
         style={styles.editButton}
         onPress={() => setModalVisible(!modalVisible)}
         >
         <MaterialIcons name="edit" size={26} color="#505050" />
-      </TouchableOpacity>
+      </Pressable>
       
       <Modal
         animationType="none"
@@ -72,14 +68,14 @@ export default ProcessoPaginas = ({ leitura, atual, total }) => {
               </Text>
             <View style={styles.countForm}>
 
-              <TouchableOpacity
+              <Pressable
                 style={styles.buttonControl}
                 onPress={diminuirValor}
               >
                 <Text>
                   <Entypo name="minus" size={20} color="white" />
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
 
               <TextInput 
                 style={styles.input}
@@ -88,14 +84,14 @@ export default ProcessoPaginas = ({ leitura, atual, total }) => {
                 keyboardType="numeric"
               />
 
-              <TouchableOpacity
+              <Pressable
                 style={styles.buttonControl}
                 onPress={aumentarValor}
               >
                 <Text>
                   <Entypo name="plus" size={20} color="white" />
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           
             <ButtonPrimary 

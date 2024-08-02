@@ -43,7 +43,7 @@ const RedacaoDetalhes = () => {
           style={styles.editButton}
           onPress={() => navigation.navigate(
             'RedacaoAlterar',
-            { id: redacao.id } 
+            { data: redacao } 
           )}
         >
           <MaterialIcons name="edit" size={26} color="#505050" /> 

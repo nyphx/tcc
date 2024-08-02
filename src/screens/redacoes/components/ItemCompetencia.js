@@ -19,7 +19,7 @@ const ItemCompetencia = ({ competencia, idRedacao }) => {
           style={styles.editButton}
           onPress={() => navigation.navigate(
             'CompetenciaAlterar',
-            { idCompetencia: competencia.id, idRedacao: idRedacao }
+            { data: competencia, idRedacao: idRedacao }
           )}
         >
           <MaterialIcons name="edit" size={24} color="#505050" />

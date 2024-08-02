@@ -1,17 +1,11 @@
 import { useState } from 'react'
-import { View, Text, Pressable, StyleSheet, TextInput, Modal, TouchableOpacity } from 'react-native'
-import { db, doc, updateDoc } from "../../../firebase/firebaseConfig";
-
+import { View, Text, Pressable, StyleSheet, TextInput, Modal } from 'react-native'
+import { updateLeitura } from './../../../services/leiturasService'; 
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
-
-import {
-  ButtonCancel,
-  ButtonPrimary
-} from '../../../components';
+import { ButtonCancel, ButtonPrimary } from '../../../components';
 
 export default ProcessoCapitulos = ({ leitura, atual, total }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  
   const [atualCapitulos, setAtualCapitulos] = useState(atual)
 
   const aumentarValor = () => {
@@ -36,15 +30,12 @@ export default ProcessoCapitulos = ({ leitura, atual, total }) => {
 
   const handleSubmit = async () => {
     try {
-      const docRef = doc(db, "leituras", leitura.id)
-      await updateDoc(
-        docRef,
-        { 
-          ...leitura, 
-          atualCapitulos: atualCapitulos 
-        }
-      );
-      
+      const newLeitura = { 
+        ...leitura, 
+        atualCapitulos: atualCapitulos 
+      }
+
+      await updateLeitura(leitura.id, newLeitura);
       setModalVisible(!modalVisible)
     } catch (error) {
       console.error(error);
@@ -53,12 +44,12 @@ export default ProcessoCapitulos = ({ leitura, atual, total }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <TouchableOpacity 
+      <Pressable 
         style={styles.editButton}
         onPress={() => setModalVisible(!modalVisible)}
         >
         <MaterialIcons name="edit" size={26} color="#505050" />
-      </TouchableOpacity>
+      </Pressable>
 
       <Modal
         animationType="none"
@@ -73,14 +64,14 @@ export default ProcessoCapitulos = ({ leitura, atual, total }) => {
               </Text>
             <View style={styles.countForm}>
 
-              <TouchableOpacity
+              <Pressable
                 style={styles.buttonControl}
                 onPress={diminuirValor}
               >
                 <Text>
                   <Entypo name="minus" size={20} color="white" />
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
 
               <TextInput 
                 style={styles.input}
@@ -89,14 +80,14 @@ export default ProcessoCapitulos = ({ leitura, atual, total }) => {
                 keyboardType="numeric"
               />
 
-              <TouchableOpacity
+              <Pressable
                 style={styles.buttonControl}
                 onPress={aumentarValor}
               >
                 <Text>
                   <Entypo name="plus" size={20} color="white" />
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
             <ButtonPrimary 

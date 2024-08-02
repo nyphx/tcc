@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { View, Text, Pressable, StyleSheet, TouchableOpacity, Modal } from 'react-native';
-import { db, doc, updateDoc, deleteDoc } from "../../firebase/firebaseConfig";
+import { View, Text, Pressable, StyleSheet, Modal } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { updateLeitura, deleteLeitura } from '../../services/leiturasService'; 
 
 import {
   Container,
@@ -10,8 +11,12 @@ import {
   ButtonDelete
 } from '../../components';
 
-export default function LeiturasAlterar({ route, navigation }) {
-  const { data } = route.params;
+const LeiturasAlterar = () => {
+  // Hook de navegação para manipular a navegação
+  const navigation = useNavigation(); 
+  // Obtém o ID da redação dos parâmetros da rota
+  const { data } = useRoute().params; 
+
   const [leitura, setLeitura] = useState(data);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -29,10 +34,9 @@ export default function LeiturasAlterar({ route, navigation }) {
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleUpdate = async () => {
     try {
-      const docRef = doc(db, "leituras", data.id);
-      await updateDoc(docRef, leitura);
+      await updateLeitura(data.id, leitura);
       navigation.goBack();
     } catch (error) {
       console.error(error);
@@ -41,8 +45,7 @@ export default function LeiturasAlterar({ route, navigation }) {
 
   const handleDelete = async () => {
     try {
-      const docRef = doc(db, "leituras", data.id);
-      await deleteDoc(docRef);
+      await deleteLeitura(data.id, leitura);
       navigation.navigate('Leituras');
     } catch (error) {
       console.error(error);
@@ -147,13 +150,11 @@ export default function LeiturasAlterar({ route, navigation }) {
               </Pressable>
             )
           })}
-
-          <Text> User option: {leitura.estado}</Text>
         </View>
       </View>
 
       <View style={{ gap: 10, marginTop: 4 }}>
-        <ButtonPrimary handlePress={handleSubmit}>
+        <ButtonPrimary handlePress={handleUpdate}>
           Alterar leitura
         </ButtonPrimary>
 
@@ -177,18 +178,18 @@ export default function LeiturasAlterar({ route, navigation }) {
               <Text style={styles.modalText}>Esta ação é irreversível.</Text>
             </View>
             <View style={{ flexDirection: 'row', marginTop: 26 }}>
-              <TouchableOpacity
+              <Pressable
                 style={[styles.modalButton, { backgroundColor: 'rgb(220 38 38)', flex: 1 }]}
                 onPress={confirmDelete}
               >
                 <Text style={styles.modalButtonText}>Confirmar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
+              </Pressable>
+              <Pressable
                 style={[styles.modalButton, { backgroundColor: '#e1e1e1', flex: 1 }]}
                 onPress={() => setModalVisible(false)}
               >
                 <Text style={[styles.modalButtonText, { color: "#505050" }]}>Cancelar</Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         </View>
@@ -262,3 +263,5 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
 });
+
+export default LeiturasAlterar

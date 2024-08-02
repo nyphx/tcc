@@ -1,10 +1,12 @@
 import React from 'react';
-import { Text, View, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import { TextPrimary } from '../../../components';
 
-const Card = ({ leitura, onPress }) => {
-  const { navigation } = onPress;
+const Card = ({ leitura }) => {
+  // Hook de navegação para manipular a navegação
+  const navigation = useNavigation(); 
 
   return (
     <Pressable
@@ -18,9 +20,11 @@ const Card = ({ leitura, onPress }) => {
         <TextPrimary>
           {leitura.livro}
         </TextPrimary>
+
         <TextPrimary>
           {leitura.autor}
         </TextPrimary>
+        
         <TextPrimary>
           {leitura.vestibular}
         </TextPrimary>

@@ -7,8 +7,6 @@ import {
   doc, 
   updateDoc, 
   deleteDoc,
-  query,
-  where
 } from './../firebase/firebaseConfig';
 
 import { v4 as uuidv4 } from 'uuid';

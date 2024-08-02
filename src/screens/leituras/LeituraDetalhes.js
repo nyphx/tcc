@@ -1,56 +1,41 @@
-import { useState, useEffect } from 'react'
-
-import {
-  TouchableOpacity,
-  View,
-  Text,
-  StyleSheet,
-  ScrollView
-} from 'react-native';
-
-import {
-  db,
-  onSnapshot,
-  doc,
-} from "../../firebase/firebaseConfig";
-
+import React, { useState, useCallback } from 'react';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { getLeituraById } from './../../services/leiturasService';
+import { Pressable, View,Text, StyleSheet } from 'react-native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import * as Progress from 'react-native-progress';
-
-import {
-  Container,
-  Title,
-} from '../../components';
-
+import { Container, Title, calculatePercentage } from '../../components';
 import Estado from './components/Estado'
 import Info from './components/Info'
 import ProcessoPaginas from './components/ProcessoPaginas'
 import ProcessoCapitulos from './components/ProcessoCapitulos'
 
-export default LeituraDetalhes = ({ route, navigation }) => {
-  const { id } = route.params
+export default LeituraDetalhes = () => {
+  // Hook de navegação
+  const navigation = useNavigation();
+  // Obtém o ID da redação dos parâmetros da rota
+  const { id } = useRoute().params;
+
   const [leitura, setLeitura] = useState({});
   
-  useEffect(() => {
-    const docRef = doc(db, 'leituras', id);
-
-    const unsubscribe = onSnapshot(docRef, (docSnap) => {
-      setLeitura({ id: docSnap.id, ...docSnap.data() });
-    }, (error) => {
-      console.error(error);
-    });
-
-    return () => unsubscribe();
+  // Função para buscar dados da redação e suas competências
+  const fetchData = useCallback(async () => {
+    try {
+      const leituraData = await getLeituraById(id);
+      setLeitura(leituraData)
+    } catch (error) {
+      console.error('Error fetching leitura: ', error); 
+    }
   }, [id]);
 
-  console.log("reload")
+  // Usa efeito para buscar dados sempre que o componente ganhar foco
+  useFocusEffect(
+    useCallback(() => {
+      fetchData(); 
+    }, [fetchData])
+  );
 
-  function calcularPorcentagem(paginasLidas, paginasTotais) {
-    if (paginasTotais === 0) {
-        return 0;
-    }
-    return (paginasLidas / paginasTotais) * 100;
-  }
+  console.log("reload")
 
   return (
     <Container>
@@ -58,7 +43,7 @@ export default LeituraDetalhes = ({ route, navigation }) => {
         <View style={styles.header}>
           <Title>{leitura.livro}</Title>
           
-          <TouchableOpacity 
+          <Pressable 
               style={styles.editButton}
               onPress={() => navigation.navigate(
                 'LeituraAlterar',
@@ -66,7 +51,7 @@ export default LeituraDetalhes = ({ route, navigation }) => {
               )}
               >
               <MaterialIcons name="edit" size={26} color="#505050" />
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         <Estado estado={leitura.estado} />
@@ -131,7 +116,7 @@ export default LeituraDetalhes = ({ route, navigation }) => {
                 </View>
 
                 <Text style={{ fontSize: 18, fontWeight: '600', marginLeft: 20 }}>
-                  {calcularPorcentagem(leitura.atualPaginas, leitura.totalPaginas).toFixed(0)}%
+                  {calculatePercentage(leitura.totalPaginas, leitura.atualPaginas)}%
                 </Text>
               </View>
 
@@ -181,7 +166,7 @@ export default LeituraDetalhes = ({ route, navigation }) => {
                 </View>
 
                 <Text style={{ fontSize: 18, fontWeight: '600', marginLeft: 20 }}>
-                  {calcularPorcentagem(leitura.atualCapitulos, leitura.totalCapitulos).toFixed(0)}%
+                  {calculatePercentage(leitura.totalCapitulos, leitura.atualCapitulos)}%
                 </Text>
               </View>
 
