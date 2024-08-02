@@ -1,23 +1,17 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import { Text, View, TextInput, Pressable } from 'react-native';
-import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
-
-import { 
-  deleteDisciplina,
-  updateDisciplina,
-  getDisciplinaDetalhes 
-} from './../../services/disciplinasService';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { updateDisciplina, deleteDisciplina } from './../../services/disciplinasService';
 
 const DisciplinaAlterar = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
-  const { id } = route.params;
-  
-  console.log(id)
-  const [nome, setNome] = useState('')
-  const [estado, setEstado] = useState("")
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // Hook de navegação para manipular a navegação
+  const navigation = useNavigation(); 
+  // Obtém o ID da redação dos parâmetros da rota
+  const { data } = useRoute().params; 
+  console.log(data)
+
+  const [nome, setNome] = useState(data.nome)
+  const [estado, setEstado] = useState(data.estado)
 
   const radioButtonsEstados = [
     { id: 0, value: 'Estudando' },
@@ -26,52 +20,30 @@ const DisciplinaAlterar = () => {
     { id: 3, value: 'Futuro' },
   ]
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      console.log('Fetching data...');
-      const disciplinaDetalhes = await getDisciplinaDetalhes(id);
-      setNome(disciplinaDetalhes.nome);
-      setEstado(disciplinaDetalhes.estado);
-    } catch (err) {
-      console.error('Error fetching disciplina details:', err.message);
-      setError('Erro ao carregar detalhes da disciplina. Por favor, tente novamente.');
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchData().catch(err => {
-        // Tratar erro se necessário
-        console.error('Error in fetchData:', err.message);
-      });
-    }, [fetchData])
-  );
-
-
-  // Exclui a disciplina do banco de dados
-  const handleDeleteDisciplina = async () => {
-    try {
-      await deleteDisciplina(id);
-      navigation.navigate('Disciplinas');
-    } catch (error) {
-      console.error('Error deleting disciplina: ', error);
-    }
-  };
-
   // Atualiza a disciplina
   const handleUpdateDisciplina = async () => {
     try {
-      await updateDisciplina(id, { nome, estado });
+      const newDisciplina = {
+        nome: nome,
+        estado: estado 
+      }
+
+      await updateDisciplina(data.id, newDisciplina);
       navigation.goBack();
     } catch (error) {
       console.error('Error updating disciplina: ', error);
     }
   };
 
+  // Exclui a disciplina do banco de dados
+  const handleDeleteDisciplina = async () => {
+    try {
+      await deleteDisciplina(data.id);
+      navigation.navigate('Disciplinas');
+    } catch (error) {
+      console.error('Error deleting disciplina: ', error);
+    }
+  };
 
   return (
     <View style={{ flex: 1, padding: 20 }}>

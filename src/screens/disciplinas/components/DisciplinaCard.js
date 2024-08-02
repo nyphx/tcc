@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { Text, View, Pressable, StyleSheet } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { calculatePercentage } from '../../../components';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getAssuntosByDisciplinaId } from '../../../services/disciplinasService';
 
-const DisciplinaCard = React.memo(({ navigation, disciplina }) => {
+const DisciplinaCard = React.memo(({ disciplina }) => {
+  // Hook de navegação para manipular a navegação
+  const navigation = useNavigation(); 
+
   const [assuntosTotais, setAssuntosTotais] = useState(0);
   const [assuntosCompletos, setAssuntosCompletos] = useState(0);
 

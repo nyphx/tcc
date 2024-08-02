@@ -5,26 +5,45 @@ import { Container, RedirectButton, CountTitle } from '../../components';
 import DisciplinaCard from './components/DisciplinaCard';
 import { getDisciplinas } from './../../services/disciplinasService';
 
-const DisciplinaSection = ({ title, count, bgColor, textColor, disciplinas, navigation }) => (
-  <View>
-    <CountTitle count={count} title={title} bgColor={bgColor} textColor={textColor} />
-    {count > 0 ? (
-      disciplinas.map(disciplina => (
-        <DisciplinaCard key={disciplina.id} navigation={navigation} disciplina={disciplina} />
-      ))
-    ) : (
-      <Text>Não há disciplinas {title.toLowerCase()}.</Text>
-    )}
-  </View>
-);
+const DisciplinaSection = ({ 
+  title, 
+  count, 
+  bgColor, 
+  textColor, 
+  disciplinas
+ }) => {
+  
+  return (
+    <View>
+      <CountTitle 
+        count={count} 
+        title={title} 
+        bgColor={bgColor} 
+        textColor={textColor} 
+      />
 
-const Disciplinas = ({ navigation }) => {
+      {count > 0 ? (
+        disciplinas.map(disciplina => (
+          <DisciplinaCard 
+            key={disciplina.id} 
+            disciplina={disciplina} 
+          />
+        ))
+      ) : (
+        <Text>Não há disciplinas {title.toLowerCase()}.</Text>
+      )}
+  </View>
+  )
+}
+  
+const Disciplinas = () => {
   const [disciplinas, setDisciplinas] = useState({
     estudando: [],
     finalizado: [],
     parado: [],
     futuro: []
   });
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -32,7 +51,6 @@ const Disciplinas = ({ navigation }) => {
     setLoading(true);
     setError(null);
     try {
-      console.log('Fetching data...');
       const disciplinasData = await getDisciplinas();
       
       setDisciplinas({
@@ -83,7 +101,9 @@ const Disciplinas = ({ navigation }) => {
           textColor="rgb(29 78 216)"
         />
         
-        <RedirectButton screen="DisciplinasForm">Adicionar disciplina</RedirectButton>
+        <RedirectButton screen="DisciplinasForm">
+          Adicionar disciplina
+        </RedirectButton>
       </View>
 
       <DisciplinaSection 
@@ -92,7 +112,6 @@ const Disciplinas = ({ navigation }) => {
         bgColor="#B5E08A" 
         textColor="rgb(2 44 34)" 
         disciplinas={estudando} 
-        navigation={navigation} 
       />
 
       <DisciplinaSection 
@@ -101,7 +120,6 @@ const Disciplinas = ({ navigation }) => {
         bgColor="#E09A8A" 
         textColor="rgb(69 10 10)" 
         disciplinas={parado} 
-        navigation={navigation} 
       />
 
       <DisciplinaSection 
@@ -110,7 +128,6 @@ const Disciplinas = ({ navigation }) => {
         bgColor="#ccc" 
         textColor="rgb(8 47 73)" 
         disciplinas={futuro} 
-        navigation={navigation} 
       />
 
       <DisciplinaSection 
@@ -119,7 +136,6 @@ const Disciplinas = ({ navigation }) => {
         bgColor="#A2B5E6" 
         textColor="rgb(30 41 59)" 
         disciplinas={finalizado} 
-        navigation={navigation} 
       />
     </Container>
   );

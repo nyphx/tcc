@@ -58,6 +58,17 @@ export const deleteDisciplina = async (id) => {
   }
 };
 
+// Função para obter uma disciplina específica pelo ID
+export const getDisciplinaById = async (id) => {
+  const disciplinaRef = doc(db, 'disciplinas', id);
+  const disciplinaSnap = await getDoc(disciplinaRef);
+  if (disciplinaSnap.exists()) {
+    return disciplinaSnap.data();
+  } else {
+    throw new Error('No such document!');
+  }
+};
+
 // Função para obter todos os assuntos de uma disciplina específica
 export const getAssuntosByDisciplinaId = async (disciplinaId) => {
   try {
@@ -70,16 +81,62 @@ export const getAssuntosByDisciplinaId = async (disciplinaId) => {
   }
 };
 
-export const getDisciplinaDetalhes = async (id) => {
-  const disciplinaRef = doc(db, "disciplinas", id);
-  const disciplinaSnap = await getDoc(disciplinaRef);
-  return disciplinaSnap.data();
-};
-
 export const getAssuntosPorEstado = async (id, estado) => {
   const disciplinaRef = doc(db, "disciplinas", id);
   const assuntosRef = collection(disciplinaRef, "assunto");
   const assuntosQuery = query(assuntosRef, where("estado", "==", estado));
   const assuntosSnapshot = await getDocs(assuntosQuery);
   return assuntosSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+};
+
+// Função para buscar um assunto específico
+export const getAssunto = async (disciplinaId, assuntoId) => {
+  try {
+    const docRef = doc(db, 'disciplinas', disciplinaId, 'assuntos', assuntoId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return { ...docSnap.data(), id: assuntoId };
+    } else {
+      throw new Error('Assunto not found');
+    }
+  } catch (error) {
+    console.error('Error getting assunto: ', error);
+    throw new Error('Could not get assunto');
+  }
+};
+
+// Função para adicionar um novo assunto a uma disciplina específica
+export const addAssunto = async (disciplinaId, novoAssunto) => {
+  try {
+    const docRef = collection(db, 'disciplinas', disciplinaId, 'assuntos');
+    const docRefResult = await addDoc(docRef, novoAssunto);
+    return { ...novoAssunto, id: docRefResult.id };
+  } catch (error) {
+    console.error('Error adding assunto: ', error);
+    throw new Error('Could not add assunto');
+  }
+};
+
+// Função para atualizar um assunto existente
+export const updateAssunto = async (disciplinaId, assuntoId, updatedAssunto) => {
+  try {
+    const assuntoRef = doc(db, 'disciplinas', disciplinaId, 'assuntos', assuntoId);
+    await updateDoc(assuntoRef, updatedAssunto);
+    return { ...updatedAssunto, id: assuntoId };
+  } catch (error) {
+    console.error('Error updating assunto: ', error);
+    throw new Error('Could not update assunto');
+  }
+};
+
+// Função para excluir um assunto
+export const deleteAssunto = async (disciplinaId, assuntoId) => {
+  try {
+    const assuntoRef = doc(db, 'disciplinas', disciplinaId, 'assuntos', assuntoId);
+    await deleteDoc(assuntoRef);
+  } catch (error) {
+    console.error('Error deleting assunto: ', error);
+    throw new Error('Could not delete assunto');
+  }
 };

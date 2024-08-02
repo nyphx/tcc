@@ -1,26 +1,28 @@
 import React, { useState, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
-import { getDisciplinaDetalhes, getAssuntosPorEstado } from './../../services/disciplinasService';
-import { StyleSheet, Text, View, Pressable, TouchableOpacity } from 'react-native';
+import { useFocusEffect,useNavigation, useRoute } from '@react-navigation/native';
+import { getAssuntosByDisciplinaId, getDisciplinaById } from './../../services/disciplinasService';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { Container, Title, CountTitle, ButtonPrimary } from "./../../components";
 import { MaterialIcons } from '@expo/vector-icons';
 
-const Assunto = ({ navigation, assunto, disciplinaId }) => (
-  <Pressable 
-    style={styles.assuntosItem}
-    onPress={() => navigation.navigate(
-      'AssuntoAlterar', 
-      { 
-        assuntoId: assunto.id,
-        disciplinaId: disciplinaId,
-      }
-    )}
-  >
-    <Text style={styles.assuntosItemText}>
-      {assunto.nome}
-    </Text>
-  </Pressable>
-);
+const Assunto = ({ assunto, disciplinaId }) => {
+  // Hook de navegação
+  const navigation = useNavigation();
+  
+  return (
+    <Pressable 
+      style={styles.assuntosItem}
+      onPress={() => navigation.navigate(
+        'AssuntoAlterar', 
+        { assuntoId: assunto.id, disciplinaId: disciplinaId, }
+      )}
+    >
+      <Text style={styles.assuntosItemText}>
+        {assunto.nome}
+      </Text>
+    </Pressable>
+  )
+}
 
 const Estado = ({ children, estado }) => {
   const getColor = (estado) => {
@@ -45,58 +47,65 @@ const Estado = ({ children, estado }) => {
   );
 };
 
-const DisciplinaDetalhes = ({ navigation, route }) => {
-  const { id } = route.params || {}; // Verifique se o id é definido
+const DisciplinaDetalhes = () => {
+  // Hook de navegação
+  const navigation = useNavigation();
+  // Obtém o ID da redação dos parâmetros da rota
+  const { id } = useRoute().params;
 
-  const [detalhes, setDetalhes] = useState({});
-  const [estudando, setEstudando] = useState([]);
-  const [finalizado, setFinalizado] = useState([]);
-  const [futuro, setFuturo] = useState([]);
+  const [disciplina, setDisciplina] = useState({})
+
+  const [assuntos, setAssuntos] = useState({
+    estudando: [],
+    finalizado: [],
+    futuro: []
+  });
+
+  const { estudando, finalizado, futuro } = assuntos;
+
+  // Função para buscar dados da redação e seus assuntos
+  const fetchData = useCallback(async () => {
+    try {
+      const disciplinaData = await getDisciplinaById(id);
+      setDisciplina(disciplinaData)
+      
+      const assuntosData = await getAssuntosByDisciplinaId(id);
+      setAssuntos({
+        estudando: assuntosData.filter(assunto => assunto.estado === "Estudando"),
+        finalizado: assuntosData.filter(assunto => assunto.estado === "Finalizado"),
+        futuro: assuntosData.filter(assunto => assunto.estado === "Futuro")
+      });
+    } catch (error) {
+      console.error('Error fetching data:', error.message);
+    }
+  }, []);
 
   useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        try {
-          if (id) {
-            const detalhes = await getDisciplinaDetalhes(id);
-            setDetalhes(detalhes);
-
-            const [estudando, finalizado, futuro] = await Promise.all([
-              getAssuntosPorEstado(id, "Estudando"),
-              getAssuntosPorEstado(id, "Finalizado"),
-              getAssuntosPorEstado(id, "Futuro"),
-            ]);
-
-            setEstudando(estudando);
-            setFinalizado(finalizado);
-            setFuturo(futuro);
-          } else {
-            console.error('ID is undefined');
-          }
-        } catch (error) {
-          console.error("Erro ao obter dados:", error);
-        }
-      };
-
+    React.useCallback(() => {
       fetchData();
-    }, [id])
+    }, [fetchData])
   );
 
   const renderAssuntos = (assuntos, title, bgColor, textColor) => (
     <View>
-      <CountTitle count={assuntos.length} title={title} bgColor={bgColor} textColor={textColor} />
+      <CountTitle 
+        count={assuntos.length} 
+        title={title} 
+        bgColor={bgColor} 
+        textColor={textColor} 
+      />
+
       { 
         assuntos.length !== 0 ?
         assuntos.map(item => (
           <Assunto 
             key={item.id} 
-            navigation={navigation}
             disciplinaId={id}
             assunto={item}
           />
         )) :
         <Text style={styles.estadoText}>
-          Não há disciplinas {title.toLowerCase()}.
+          Não há assuntos {title.toLowerCase()}.
         </Text>
       }
     </View>
@@ -105,21 +114,21 @@ const DisciplinaDetalhes = ({ navigation, route }) => {
   return (
     <Container>
       <View style={styles.flex}>
-        <Title>{detalhes.nome}</Title>
+        <Title>{disciplina.nome}</Title>
         
-        <TouchableOpacity 
+        <Pressable 
           style={styles.editButton}
           onPress={() => navigation.navigate(
             'DisciplinaAlterar',
-            { id: detalhes.id }
+            { data: disciplina }
           )}
         >
           <MaterialIcons name="edit" size={26} color="#505050" />
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
-      <Estado estado={detalhes.estado}>
-        {detalhes.estado}
+      <Estado estado={disciplina.estado}>
+        {disciplina.estado}
       </Estado>
 
       <View style={styles.flex}>
