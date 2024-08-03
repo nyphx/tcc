@@ -18,6 +18,8 @@ import {
   ActivityIndicator
 } from 'react-native';
 
+import Info from './components/Info'
+
 const Disciplina = ({ disciplina, dados }) => {
   return (
     <View key={disciplina}>
