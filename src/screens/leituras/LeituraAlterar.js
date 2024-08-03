@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { View, Text, Pressable, StyleSheet, Modal } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { updateLeitura, deleteLeitura } from '../../services/leiturasService'; 
 
@@ -8,13 +8,12 @@ import {
   Title,
   TextInputWithLabel,
   ButtonPrimary,
-  ButtonDelete
+  ButtonDelete,
+  ConfirmDeleteModal
 } from '../../components';
 
 const LeiturasAlterar = () => {
-  // Hook de navegação para manipular a navegação
   const navigation = useNavigation(); 
-  // Obtém o ID da redação dos parâmetros da rota
   const { data } = useRoute().params; 
 
   const [leitura, setLeitura] = useState(data);
@@ -50,11 +49,6 @@ const LeiturasAlterar = () => {
     } catch (error) {
       console.error(error);
     }
-  };
-
-  const confirmDelete = () => {
-    handleDelete();
-    setModalVisible(false);
   };
 
   return (
@@ -163,37 +157,13 @@ const LeiturasAlterar = () => {
         </ButtonDelete>
       </View>
 
-      <Modal
-        animationType="none"
-        transparent={true}
+      <ConfirmDeleteModal
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={[styles.modalContent, { alignItems: 'center' }]}>
-            <Text style={styles.modalTitle}>Deletar leitura</Text>
-
-            <View style={{ width: '70%' }}>
-              <Text style={styles.modalText}>Você tem certeza que deseja excluir esta leitura?</Text>
-              <Text style={styles.modalText}>Esta ação é irreversível.</Text>
-            </View>
-            <View style={{ flexDirection: 'row', marginTop: 26 }}>
-              <Pressable
-                style={[styles.modalButton, { backgroundColor: 'rgb(220 38 38)', flex: 1 }]}
-                onPress={confirmDelete}
-              >
-                <Text style={styles.modalButtonText}>Confirmar</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.modalButton, { backgroundColor: '#e1e1e1', flex: 1 }]}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={[styles.modalButtonText, { color: "#505050" }]}>Cancelar</Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setModalVisible(false)}
+        onConfirm={handleDelete}
+        title="leitura"
+        message="esta leitura"
+      />
     </Container>
   );
 }
@@ -230,38 +200,6 @@ const styles = StyleSheet.create({
   radioUnselectedLabel: {
     color: 'rgb(100 116 139)'
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    width: '80%',
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 10
-  },
-  modalButton: {
-    padding: 10,
-    borderRadius: 5,
-    margin: 5,
-    alignItems: 'center',
-  },
-  modalButtonText: {
-    color: 'white',
-    fontSize: 16
-  },
 });
 
-export default LeiturasAlterar
+export default LeiturasAlterar;

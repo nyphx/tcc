@@ -8,7 +8,8 @@ import {
   Title,
   TextInputWithLabel,
   ButtonPrimary,
-  ButtonDelete
+  ButtonDelete,
+  ConfirmDeleteModal
 } from '../../components'; 
 
 const RedacaoAlterar = () => {
@@ -19,6 +20,7 @@ const RedacaoAlterar = () => {
 
   // state
   const [redacao, setRedacao] = useState(data); 
+  const [modalVisible, setModalVisible] = useState(false);
 
   // Manipula as mudanças de input e atualiza o estado da redação
   const handleInputRedacao = (name, value) => {
@@ -95,9 +97,17 @@ const RedacaoAlterar = () => {
         Alterar
       </ButtonPrimary>
 
-      <ButtonDelete handlePress={handleDeleteRedacao}>
+      <ButtonDelete handlePress={() => setModalVisible(true)}>
         Excluir
       </ButtonDelete>
+
+      <ConfirmDeleteModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onConfirm={handleDeleteRedacao}
+        title="redação"
+        message="esta redação"
+      />
     </Container>
   );
 };

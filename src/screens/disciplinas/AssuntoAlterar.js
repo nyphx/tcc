@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Text, View, TextInput, Pressable, Button } from 'react-native';
+import { useState } from 'react';
+import { View } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { updateAssunto, deleteAssunto } from './../../services/disciplinasService';
 
@@ -9,29 +9,30 @@ import {
   Title, 
   TextInputWithLabel,
   ButtonPrimary,
-} from './../../components'
+  ButtonDelete,
+  ConfirmDeleteModal
+} from './../../components';
 
 const AssuntoAlterar = () => {
-  // Hook de navegação para manipular a navegação
   const navigation = useNavigation(); 
-  // Obtém o ID da redação dos parâmetros da rota
   const { data, disciplinaId } = useRoute().params; 
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const [nome, setNome] = useState(data.nome)
-  const [dificuldade, setDificuldade] = useState(data.dificuldade)
-  const [estado, setEstado] = useState(data.estado)
+  const [nome, setNome] = useState(data.nome);
+  const [dificuldade, setDificuldade] = useState(data.dificuldade);
+  const [estado, setEstado] = useState(data.estado);
 
   const radioButtonsDificuldades = [
     { id: 0, value: 'Fácil' },
     { id: 1, value: 'Médio' },
     { id: 2, value: 'Difícil' },
-  ]
+  ];
 
   const radioButtonsEstados = [
     { id: 0, value: 'Estudando' },
     { id: 1, value: 'Finalizado' },
     { id: 2, value: 'Futuro' },
-  ]
+  ];
 
   const handleUpdateAssunto = async () => {
     try {
@@ -39,7 +40,7 @@ const AssuntoAlterar = () => {
         nome: nome,
         dificuldade: dificuldade,
         estado: estado 
-      }
+      };
 
       await updateAssunto(disciplinaId, data.id, newAssunto);
       navigation.goBack();
@@ -51,7 +52,7 @@ const AssuntoAlterar = () => {
   const handleDeleteAssunto = async () => {
     try {
       await deleteAssunto(disciplinaId, data.id);
-      navigation.goBack()
+      navigation.goBack();
     } catch (error) {
       console.error('Error deleting disciplina: ', error);
     }
@@ -86,16 +87,24 @@ const AssuntoAlterar = () => {
       </View>
 
       <View style={{ gap: 10 }}>
-        <ButtonPrimary hanhlePress={handleUpdateAssunto}>
+        <ButtonPrimary handlePress={handleUpdateAssunto}>
           Alterar assunto
         </ButtonPrimary>
 
-        <ButtonDelete hanhlePress={handleDeleteAssunto}>
+        <ButtonDelete handlePress={() => setModalVisible(true)}>
           Excluir assunto
         </ButtonDelete>
       </View>
+
+      <ConfirmDeleteModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onConfirm={handleDeleteAssunto}
+        title="assunto"
+        message="este assunto"
+      />
     </Container>
   );
 }
 
-export default AssuntoAlterar
+export default AssuntoAlterar;

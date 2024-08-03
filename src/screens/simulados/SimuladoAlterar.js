@@ -15,7 +15,8 @@ import {
   Container,
   TextInputWithLabel,
   Title,
-  ButtonPrimary
+  ButtonPrimary,
+  ConfirmDeleteModal
 } from '../../components';
 
 const SimuladoForm = () => {
@@ -24,8 +25,9 @@ const SimuladoForm = () => {
   // Obtém o ID da redação dos parâmetros da rota
   const { id } = useRoute().params; 
   
-  // Estado para armazenar as informações do simulado
+  // states
   const [simulado, setSimulado] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
 
   // Estado para armazenar os campos de conteúdo do simulado
   const [conteudoFields, setConteudoFields] = useState([
@@ -197,10 +199,18 @@ const SimuladoForm = () => {
           Alterar
         </ButtonPrimary>
 
-        <ButtonDelete handlePress={handleDeleteSimulado}>
+        <ButtonDelete handlePress={() => setModalVisible(true)}>
           Excluir
         </ButtonDelete>
       </View>
+
+      <ConfirmDeleteModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onConfirm={handleDeleteSimulado}
+        title="simulado"
+        message="este simulado"
+      />
     </Container>
   );
 };

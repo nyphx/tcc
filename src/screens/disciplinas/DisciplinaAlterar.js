@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { updateDisciplina, deleteDisciplina } from './../../services/disciplinasService';
@@ -9,32 +9,31 @@ import {
   Title, 
   TextInputWithLabel,
   ButtonPrimary,
-  ButtonDelete
-} from './../../components'
+  ButtonDelete,
+  ConfirmDeleteModal
+} from './../../components';
 
 const DisciplinaAlterar = () => {
-  // Hook de navegação para manipular a navegação
   const navigation = useNavigation(); 
-  // Obtém o ID da redação dos parâmetros da rota
   const { data } = useRoute().params; 
 
-  const [nome, setNome] = useState(data.nome)
-  const [estado, setEstado] = useState(data.estado)
+  const [nome, setNome] = useState(data.nome);
+  const [estado, setEstado] = useState(data.estado);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const radioButtonsEstados = [
     { id: 0, value: 'Estudando' },
     { id: 1, value: 'Parado' },
     { id: 2, value: 'Finalizado' },
     { id: 3, value: 'Futuro' },
-  ]
+  ];
 
-  // Atualiza a disciplina
   const handleUpdateDisciplina = async () => {
     try {
       const newDisciplina = {
         nome: nome,
         estado: estado 
-      }
+      };
 
       await updateDisciplina(data.id, newDisciplina);
       navigation.goBack();
@@ -43,7 +42,6 @@ const DisciplinaAlterar = () => {
     }
   };
 
-  // Exclui a disciplina do banco de dados
   const handleDeleteDisciplina = async () => {
     try {
       await deleteDisciplina(data.id);
@@ -79,12 +77,20 @@ const DisciplinaAlterar = () => {
           Alterar disciplina
         </ButtonPrimary>
 
-        <ButtonDelete handlePress={handleDeleteDisciplina}>
+        <ButtonDelete handlePress={() => setModalVisible(true)}>
           Excluir disciplina
         </ButtonDelete>
       </View>
+
+      <ConfirmDeleteModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onConfirm={handleDeleteDisciplina}
+        title="disciplina"
+        message="esta disciplina"
+      />
     </Container>
   );
 }
 
-export default DisciplinaAlterar
+export default DisciplinaAlterar;

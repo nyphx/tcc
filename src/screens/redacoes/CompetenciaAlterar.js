@@ -8,7 +8,8 @@ import {
   Title,
   TextInputWithLabel,
   ButtonPrimary,
-  ButtonDelete
+  ButtonDelete,
+  ConfirmDeleteModal
 } from '../../components';
 
 const CompetenciaAlterar = () => {
@@ -17,8 +18,9 @@ const CompetenciaAlterar = () => {
   // Extrai os parâmetros da rota
   const { data, idRedacao } = useRoute().params;
 
-  // Estado inicial para armazenar os dados da competência
+  // states
   const [competencia, setCompetencia] = useState(data);
+  const [modalVisible, setModalVisible] = useState(false);
 
   // Função para atualizar o estado da competência com novos valores
   const handleInputCompetencia = (name, value) => {
@@ -95,9 +97,17 @@ const CompetenciaAlterar = () => {
         Alterar
       </ButtonPrimary>
 
-      <ButtonDelete handlePress={handleDeleteCompetencia}>
+      <ButtonDelete handlePress={() => setModalVisible(true)}>
         Excluir
       </ButtonDelete>
+
+      <ConfirmDeleteModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onConfirm={handleDeleteCompetencia}
+        title="competência"
+        message="esta competência"
+      />
     </Container>
   );
 };

@@ -58,12 +58,13 @@ export const deleteDisciplina = async (id) => {
   }
 };
 
+
 // Função para obter uma disciplina específica pelo ID
 export const getDisciplinaById = async (id) => {
   const disciplinaRef = doc(db, 'disciplinas', id);
   const disciplinaSnap = await getDoc(disciplinaRef);
   if (disciplinaSnap.exists()) {
-    return disciplinaSnap.data();
+    return { ...disciplinaSnap.data(), id: disciplinaSnap.id };
   } else {
     throw new Error('No such document!');
   }
