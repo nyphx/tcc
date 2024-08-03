@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { addRedacao } from '../../services/redacoesService';
 
@@ -8,13 +8,11 @@ import {
   Title,
   TextInputWithLabel,
   ButtonPrimary
-} from '../../components'; 
+} from '../../components';
 
 const RedacoesForm = () => {
-  // Hook de navegação para manipular a navegação
   const navigation = useNavigation();
 
-  // Estado inicial para armazenar os dados da redação
   const [redacao, setRedacao] = useState({
     tema: '',
     notaFinal: '',
@@ -22,7 +20,8 @@ const RedacoesForm = () => {
     data: '',
   });
 
-  // Função para atualizar o estado da redação conforme o usuário edita os campos
+  const [errors, setErrors] = useState({});
+
   const handleInputRedacao = (name, value) => {
     setRedacao(prevState => ({
       ...prevState,
@@ -30,13 +29,50 @@ const RedacoesForm = () => {
     }));
   };
 
-  // Função para submeter a nova redação
+  const validate = () => {
+    let valid = true;
+    let errors = {};
+
+    if (!redacao.tema) {
+      errors.tema = 'Tema da redação é obrigatório';
+      valid = false;
+    }
+
+    if (!redacao.notaFinal) {
+      errors.notaFinal = 'Nota final é obrigatória';
+      valid = false;
+    } else if (isNaN(redacao.notaFinal)) {
+      errors.notaFinal = 'Nota final deve ser um número';
+      valid = false;
+    }
+
+    if (!redacao.notaMaxima) {
+      errors.notaMaxima = 'Nota máxima é obrigatória';
+      valid = false;
+    } else if (isNaN(redacao.notaMaxima)) {
+      errors.notaMaxima = 'Nota máxima deve ser um número';
+      valid = false;
+    }
+
+    if (!redacao.data) {
+      errors.data = 'Data realizada é obrigatória';
+      valid = false;
+    }
+
+    setErrors(errors);
+    return valid;
+  };
+
   const handleSubmit = async () => {
+    if (!validate()) {
+      return;
+    }
+
     try {
-      await addRedacao(redacao); 
-      navigation.goBack(); 
+      await addRedacao(redacao);
+      navigation.goBack();
     } catch (error) {
-      console.error('Error adding redacao: ', error); 
+      console.error('Error adding redacao: ', error);
     }
   };
 
@@ -52,6 +88,7 @@ const RedacoesForm = () => {
           value={redacao.tema}
           onChangeText={text => handleInputRedacao('tema', text)}
           keyboardType="default"
+          errorMessage={errors.tema}
         />
 
         <View style={styles.row}>
@@ -62,6 +99,7 @@ const RedacoesForm = () => {
             onChangeText={text => handleInputRedacao('notaFinal', text)}
             keyboardType="numeric"
             twoColumn={true}
+            errorMessage={errors.notaFinal}
           />
 
           <TextInputWithLabel
@@ -71,6 +109,7 @@ const RedacoesForm = () => {
             onChangeText={text => handleInputRedacao('notaMaxima', text)}
             keyboardType="numeric"
             twoColumn={true}
+            errorMessage={errors.notaMaxima}
           />
         </View>
 
@@ -80,6 +119,7 @@ const RedacoesForm = () => {
           value={redacao.data}
           onChangeText={text => handleInputRedacao('data', text)}
           keyboardType="default"
+          errorMessage={errors.data}
         />
       </View>
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { addLeitura } from './../../services/leiturasService';
@@ -11,10 +11,8 @@ import {
 } from '../../components';
 
 const LeiturasForm = () => {
-  // Hook de navegação para manipular a navegação
   const navigation = useNavigation(); 
 
-  // Estado para armazenar os detalhes da leitura
   const [leitura, setLeitura] = useState({
     livro: '',
     autor: '',
@@ -25,8 +23,17 @@ const LeiturasForm = () => {
     vestibular: '',
     estado: '',
   });
+  const [errors, setErrors] = useState({
+    livro: '',
+    autor: '',
+    totalPaginas: '',
+    totalCapitulos: '',
+    dataInicio: '',
+    dataTerminio: '',
+    vestibular: '',
+    estado: '',
+  });
 
-  // Dados dos botões de rádio para os estados da leitura
   const radioButtons = [
     { id: 0, value: 'Lendo' },
     { id: 1, value: 'Parado' },
@@ -34,7 +41,6 @@ const LeiturasForm = () => {
     { id: 3, value: 'Futuro' },
   ];
 
-  // Função para atualizar o estado da leitura quando um campo é modificado
   const handleInputChange = (name, value) => {
     setLeitura(prevState => ({
       ...prevState,
@@ -42,8 +48,68 @@ const LeiturasForm = () => {
     }));
   };
 
-  // Função para submeter a nova leitura
+  const validate = () => {
+    let valid = true;
+    let errors = {
+      livro: '',
+      autor: '',
+      totalPaginas: '',
+      totalCapitulos: '',
+      dataInicio: '',
+      dataTerminio: '',
+      vestibular: '',
+      estado: '',
+    };
+
+    if (!leitura.livro) {
+      errors.livro = 'Nome do livro é obrigatório';
+      valid = false;
+    }
+
+    if (!leitura.autor) {
+      errors.autor = 'Nome do autor é obrigatório';
+      valid = false;
+    }
+
+    if (!leitura.vestibular) {
+      errors.vestibular = 'Vestibular é obrigatório';
+      valid = false;
+    }
+
+    if (!leitura.dataInicio) {
+      errors.dataInicio = 'Data de início é obrigatória';
+      valid = false;
+    }
+
+    if (!leitura.dataTerminio) {
+      errors.dataTerminio = 'Data de término é obrigatória';
+      valid = false;
+    }
+
+    if (!leitura.totalPaginas) {
+      errors.totalPaginas = 'Total de páginas é obrigatório';
+      valid = false;
+    }
+
+    if (!leitura.totalCapitulos) {
+      errors.totalCapitulos = 'Total de capítulos é obrigatório';
+      valid = false;
+    }
+
+    if (!leitura.estado) {
+      errors.estado = 'Estado é obrigatório';
+      valid = false;
+    }
+
+    setErrors(errors);
+    return valid;
+  };
+
   const handleSubmit = async () => {
+    if (!validate()) {
+      return;
+    }
+
     try {
       const newLeitura = {
         ...leitura,
@@ -69,6 +135,7 @@ const LeiturasForm = () => {
           value={leitura.livro}
           onChangeText={text => handleInputChange('livro', text)}
           keyboardType="default"
+          errorMessage={errors.livro}
         />
 
         <TextInputWithLabel
@@ -77,6 +144,7 @@ const LeiturasForm = () => {
           value={leitura.autor}
           onChangeText={text => handleInputChange('autor', text)}
           keyboardType="default"
+          errorMessage={errors.autor}
         />
 
         <TextInputWithLabel
@@ -85,6 +153,7 @@ const LeiturasForm = () => {
           value={leitura.vestibular}
           onChangeText={text => handleInputChange('vestibular', text)}
           keyboardType="default"
+          errorMessage={errors.vestibular}
         />
 
         <View style={styles.row}>
@@ -95,15 +164,17 @@ const LeiturasForm = () => {
             onChangeText={text => handleInputChange('dataInicio', text)}
             keyboardType="default"
             twoColumn={true}
+            errorMessage={errors.dataInicio}
           />
 
           <TextInputWithLabel
-            label="Data do términio"
+            label="Data do término"
             placeholder="Ex: 03/04/2023"
             value={leitura.dataTerminio}
             onChangeText={text => handleInputChange('dataTerminio', text)}
             keyboardType="default"
             twoColumn={true}
+            errorMessage={errors.dataTerminio}
           />
         </View>
 
@@ -115,6 +186,7 @@ const LeiturasForm = () => {
             onChangeText={text => handleInputChange('totalPaginas', text)}
             keyboardType="numeric"
             twoColumn={true}
+            errorMessage={errors.totalPaginas}
           />
 
           <TextInputWithLabel
@@ -124,6 +196,7 @@ const LeiturasForm = () => {
             onChangeText={text => handleInputChange('totalCapitulos', text)}
             keyboardType="numeric"
             twoColumn={true}
+            errorMessage={errors.totalCapitulos}
           />
         </View>
 
@@ -151,6 +224,8 @@ const LeiturasForm = () => {
               </Text>
             </Pressable>
           ))}
+
+          {errors.estado ? <Text style={styles.errorText}>{errors.estado}</Text> : null}
         </View>
       </View>
 
@@ -199,6 +274,12 @@ const styles = StyleSheet.create({
   },
   itemContainerForm: {
     marginVertical: 20,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+    fontWeight: '600',
+    marginTop: 4,
   },
 });
 

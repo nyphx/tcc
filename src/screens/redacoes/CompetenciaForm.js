@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { addCompetencia } from './../../services/redacoesService';
-import { View } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 import {
   Container,
@@ -11,12 +11,9 @@ import {
 } from '../../components';
 
 const CompetenciaForm = () => {
-  // Hook para navegação
   const navigation = useNavigation();
-  // Extrai os parâmetros da rota
   const { id } = useRoute().params;
 
-  // Estado inicial para armazenar os dados da nova competência
   const [novaCompetencia, setNovaCompetencia] = useState({
     numeroCompetencia: '',
     notaFinal: '',
@@ -24,7 +21,8 @@ const CompetenciaForm = () => {
     descricao: ''
   });
 
-  // Função para atualizar o estado da nova competência com novos valores
+  const [errors, setErrors] = useState({});
+
   const handleInputNovaCompetencia = (name, value) => {
     setNovaCompetencia(prevState => ({
       ...prevState,
@@ -32,8 +30,48 @@ const CompetenciaForm = () => {
     }));
   };
 
-  // Função para lidar com a submissão do formulário
+  const validate = () => {
+    let valid = true;
+    let errors = {};
+
+    if (!novaCompetencia.numeroCompetencia) {
+      errors.numeroCompetencia = 'Número da competência é obrigatório';
+      valid = false;
+    } else if (isNaN(novaCompetencia.numeroCompetencia)) {
+      errors.numeroCompetencia = 'Número da competência deve ser um número';
+      valid = false;
+    }
+
+    if (!novaCompetencia.notaFinal) {
+      errors.notaFinal = 'Nota final é obrigatória';
+      valid = false;
+    } else if (isNaN(novaCompetencia.notaFinal)) {
+      errors.notaFinal = 'Nota final deve ser um número';
+      valid = false;
+    }
+
+    if (!novaCompetencia.notaMaxima) {
+      errors.notaMaxima = 'Nota máxima é obrigatória';
+      valid = false;
+    } else if (isNaN(novaCompetencia.notaMaxima)) {
+      errors.notaMaxima = 'Nota máxima deve ser um número';
+      valid = false;
+    }
+
+    if (!novaCompetencia.descricao) {
+      errors.descricao = 'Descrição é obrigatória';
+      valid = false;
+    }
+
+    setErrors(errors);
+    return valid;
+  };
+
   const handleSubmit = useCallback(async () => {
+    if (!validate()) {
+      return;
+    }
+
     try {
       await addCompetencia(id, novaCompetencia);
       navigation.goBack();
@@ -53,9 +91,10 @@ const CompetenciaForm = () => {
           value={novaCompetencia.numeroCompetencia}
           onChangeText={text => handleInputNovaCompetencia('numeroCompetencia', text)}
           keyboardType="numeric"
+          errorMessage={errors.numeroCompetencia}
         />
 
-        <View style={{ flexDirection: 'row', gap: 20 }}>
+        <View style={styles.row}>
           <TextInputWithLabel
             label="Nota final"
             placeholder="Ex: 2"
@@ -63,6 +102,7 @@ const CompetenciaForm = () => {
             onChangeText={text => handleInputNovaCompetencia('notaFinal', text)}
             keyboardType="numeric"
             twoColumn
+            errorMessage={errors.notaFinal}
           />
 
           <TextInputWithLabel
@@ -72,6 +112,7 @@ const CompetenciaForm = () => {
             onChangeText={text => handleInputNovaCompetencia('notaMaxima', text)}
             keyboardType="numeric"
             twoColumn
+            errorMessage={errors.notaMaxima}
           />
         </View>
 
@@ -82,6 +123,7 @@ const CompetenciaForm = () => {
           onChangeText={text => handleInputNovaCompetencia('descricao', text)}
           keyboardType="default"
           numberOfLines={3}
+          errorMessage={errors.descricao}
         />
       </View>
 
@@ -91,5 +133,12 @@ const CompetenciaForm = () => {
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    gap: 20,
+  },
+});
 
 export default CompetenciaForm;

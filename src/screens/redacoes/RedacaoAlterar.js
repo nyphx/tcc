@@ -1,5 +1,5 @@
-import { View } from 'react-native';
 import React, { useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { updateRedacao, deleteRedacao } from '../../services/redacoesService'; 
 
@@ -13,16 +13,13 @@ import {
 } from '../../components'; 
 
 const RedacaoAlterar = () => {
-  // Hook de navegação para manipular a navegação
   const navigation = useNavigation(); 
-  // Obtém o ID da redação dos parâmetros da rota
   const { data } = useRoute().params; 
 
-  // state
-  const [redacao, setRedacao] = useState(data); 
+  const [redacao, setRedacao] = useState(data);
   const [modalVisible, setModalVisible] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  // Manipula as mudanças de input e atualiza o estado da redação
   const handleInputRedacao = (name, value) => {
     setRedacao(prevState => ({
       ...prevState,
@@ -30,8 +27,45 @@ const RedacaoAlterar = () => {
     }));
   };
 
-  // Função para atualizar a redação
+  const validate = () => {
+    let valid = true;
+    let errors = {};
+
+    if (!redacao.tema) {
+      errors.tema = 'Tema da redação é obrigatório';
+      valid = false;
+    }
+
+    if (!redacao.notaFinal) {
+      errors.notaFinal = 'Nota final é obrigatória';
+      valid = false;
+    } else if (isNaN(redacao.notaFinal)) {
+      errors.notaFinal = 'Nota final deve ser um número';
+      valid = false;
+    }
+
+    if (!redacao.notaMaxima) {
+      errors.notaMaxima = 'Nota máxima é obrigatória';
+      valid = false;
+    } else if (isNaN(redacao.notaMaxima)) {
+      errors.notaMaxima = 'Nota máxima deve ser um número';
+      valid = false;
+    }
+
+    if (!redacao.data) {
+      errors.data = 'Data realizada é obrigatória';
+      valid = false;
+    }
+
+    setErrors(errors);
+    return valid;
+  };
+
   const handleUpdateRedacao = async () => {
+    if (!validate()) {
+      return;
+    }
+
     try {
       await updateRedacao(data.id, redacao); 
       navigation.goBack(); 
@@ -40,7 +74,6 @@ const RedacaoAlterar = () => {
     }
   };
 
-  // Função para deletar a redação
   const handleDeleteRedacao = async () => {
     try {
       await deleteRedacao(data.id);
@@ -52,7 +85,7 @@ const RedacaoAlterar = () => {
 
   return (
     <Container>
-      <Title>Alterar competência</Title>
+      <Title>Alterar redação</Title>
 
       <View>
         <TextInputWithLabel
@@ -62,9 +95,10 @@ const RedacaoAlterar = () => {
           value={redacao.tema}
           onChangeText={text => handleInputRedacao('tema', text)}
           keyboardType="default"
+          errorMessage={errors.tema}
         />
 
-        <View style={{ flexDirection: 'row', gap: 20 }}>
+        <View style={styles.row}>
           <TextInputWithLabel
             label="Nota final"
             placeholder="Ex: 42"
@@ -72,6 +106,7 @@ const RedacaoAlterar = () => {
             onChangeText={text => handleInputRedacao('notaFinal', text)}
             keyboardType="numeric"
             twoColumn={true}
+            errorMessage={errors.notaFinal}
           />
 
           <TextInputWithLabel
@@ -81,6 +116,7 @@ const RedacaoAlterar = () => {
             onChangeText={text => handleInputRedacao('notaMaxima', text)}
             keyboardType="numeric"
             twoColumn={true}
+            errorMessage={errors.notaMaxima}
           />
         </View>
 
@@ -90,6 +126,7 @@ const RedacaoAlterar = () => {
           value={redacao.data}
           onChangeText={text => handleInputRedacao('data', text)}
           keyboardType="default"
+          errorMessage={errors.data}
         />
       </View>
 
@@ -111,5 +148,13 @@ const RedacaoAlterar = () => {
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 20,
+  },
+});
 
 export default RedacaoAlterar;

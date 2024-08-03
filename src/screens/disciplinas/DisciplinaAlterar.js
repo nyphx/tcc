@@ -20,6 +20,7 @@ const DisciplinaAlterar = () => {
   const [nome, setNome] = useState(data.nome);
   const [estado, setEstado] = useState(data.estado);
   const [modalVisible, setModalVisible] = useState(false);
+  const [errors, setErrors] = useState({ nome: '', estado: '' });
 
   const radioButtonsEstados = [
     { id: 0, value: 'Estudando' },
@@ -27,8 +28,30 @@ const DisciplinaAlterar = () => {
     { id: 2, value: 'Finalizado' },
     { id: 3, value: 'Futuro' },
   ];
+  
+  const validate = () => {
+    let valid = true;
+    let errors = { nome: '', estado: '' };
+
+    if (!nome) {
+      errors.nome = 'Nome é obrigatório';
+      valid = false;
+    }
+
+    if (!estado) {
+      errors.estado = 'Estado é obrigatório';
+      valid = false;
+    }
+
+    setErrors(errors);
+    return valid;
+  };
 
   const handleUpdateDisciplina = async () => {
+    if (!validate()) {
+      return;
+    }
+
     try {
       const newDisciplina = {
         nome: nome,
@@ -62,6 +85,7 @@ const DisciplinaAlterar = () => {
           value={nome}
           onChangeText={(text) => setNome(text)}
           keyboardType="default"
+          errorMessage={errors.nome}
         />
 
         <RadioForm 
@@ -69,6 +93,7 @@ const DisciplinaAlterar = () => {
           options={radioButtonsEstados}
           selectedValue={estado}
           onValueChange={setEstado}
+          errorMessage={errors.estado}
         />
       </View>
 

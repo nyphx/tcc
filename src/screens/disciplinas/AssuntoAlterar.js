@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { updateAssunto, deleteAssunto } from './../../services/disciplinasService';
@@ -21,6 +21,7 @@ const AssuntoAlterar = () => {
   const [nome, setNome] = useState(data.nome);
   const [dificuldade, setDificuldade] = useState(data.dificuldade);
   const [estado, setEstado] = useState(data.estado);
+  const [errors, setErrors] = useState({ nome: '', dificuldade: '', estado: '' });
 
   const radioButtonsDificuldades = [
     { id: 0, value: 'Fácil' },
@@ -34,7 +35,34 @@ const AssuntoAlterar = () => {
     { id: 2, value: 'Futuro' },
   ];
 
+  const validate = () => {
+    let valid = true;
+    let errors = { nome: '', dificuldade: '', estado: '' };
+
+    if (!nome) {
+      errors.nome = 'Nome é obrigatório';
+      valid = false;
+    }
+
+    if (!dificuldade) {
+      errors.dificuldade = 'Dificuldade é obrigatória';
+      valid = false;
+    }
+
+    if (!estado) {
+      errors.estado = 'Estado é obrigatório';
+      valid = false;
+    }
+
+    setErrors(errors);
+    return valid;
+  };
+
   const handleUpdateAssunto = async () => {
+    if (!validate()) {
+      return;
+    }
+
     try {
       const newAssunto = {
         nome: nome,
@@ -45,7 +73,7 @@ const AssuntoAlterar = () => {
       await updateAssunto(disciplinaId, data.id, newAssunto);
       navigation.goBack();
     } catch (error) {
-      console.error('Error updating disciplina: ', error);
+      console.error('Error updating assunto: ', error);
     }
   };
 
@@ -54,7 +82,7 @@ const AssuntoAlterar = () => {
       await deleteAssunto(disciplinaId, data.id);
       navigation.goBack();
     } catch (error) {
-      console.error('Error deleting disciplina: ', error);
+      console.error('Error deleting assunto: ', error);
     }
   };
 
@@ -69,6 +97,7 @@ const AssuntoAlterar = () => {
           value={nome}
           onChangeText={(text) => setNome(text)}
           keyboardType="default"
+          errorMessage={errors.nome}
         />
 
         <RadioForm 
@@ -76,6 +105,7 @@ const AssuntoAlterar = () => {
           options={radioButtonsDificuldades}
           selectedValue={dificuldade}
           onValueChange={setDificuldade}
+          errorMessage={errors.dificuldade}
         />
 
         <RadioForm 
@@ -83,6 +113,7 @@ const AssuntoAlterar = () => {
           options={radioButtonsEstados}
           selectedValue={estado}
           onValueChange={setEstado}
+          errorMessage={errors.estado}
         />
       </View>
 

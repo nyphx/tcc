@@ -16,25 +16,21 @@ import {
   TextInputWithLabel,
   Title,
   ButtonPrimary,
+  ButtonDelete,
   ConfirmDeleteModal
 } from '../../components';
 
 const SimuladoForm = () => {
-  // Hook de navegação para manipular a navegação
   const navigation = useNavigation(); 
-  // Obtém o ID da redação dos parâmetros da rota
   const { id } = useRoute().params; 
   
-  // states
   const [simulado, setSimulado] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
-
-  // Estado para armazenar os campos de conteúdo do simulado
   const [conteudoFields, setConteudoFields] = useState([
     { id: uuidv4(), nome: '', acertadas: '', totais: '' }
   ]);
+  const [errors, setErrors] = useState({});
 
-  // Função para buscar os dados do simulado e seus conteúdos
   const fetchData = useCallback(async () => {
     try {
       const { simulado, conteudos } = await getSimuladoWithConteudos(id);
@@ -45,31 +41,24 @@ const SimuladoForm = () => {
     }
   }, [id]);
 
-  // Hook que chama a função fetchData quando a tela ganha o foco
   useFocusEffect(
     useCallback(() => {
       fetchData();
     }, [fetchData])
   );
 
-  // Função para adicionar um novo campo de conteúdo
   const addConteudoField = () => {
     setConteudoFields([...conteudoFields, { id: uuidv4(), nome: '', acertadas: '', totais: '' }]);
   };
 
-  // Função para remover um campo de conteúdo com base no seu ID
   const removeConteudoField = id => {
     setConteudoFields(conteudoFields.filter(field => field.id !== id));
   };
 
-  // Função para atualizar o estado do simulado
-  // com base no campo e valor fornecidos
   const handleSimuladoChange = (name, value) => {
     setSimulado({ ...simulado, [name]: value });
   };
 
-  // Função para atualizar o estado dos camposde
-  // conteúdo com base no ID do campo, nome e valor
   const handleConteudoChange = (id, name, value) => {
     const newFields = conteudoFields.map(field => {
       if (field.id === id) {
@@ -80,8 +69,57 @@ const SimuladoForm = () => {
     setConteudoFields(newFields);
   };
 
-  // Função para atualizar o simulado no backend
+  const validate = () => {
+    let valid = true;
+    let errors = {};
+
+    if (!simulado.nome) {
+      errors.nome = 'Nome é obrigatório';
+      valid = false;
+    }
+
+    if (!simulado.fase) {
+      errors.fase = 'Fase é obrigatória';
+      valid = false;
+    }
+
+    if (!simulado.data) {
+      errors.data = 'Data é obrigatória';
+      valid = false;
+    }
+
+    conteudoFields.forEach(field => {
+      if (!field.nome) {
+        errors[`${field.id}-nome`] = 'Nome do conteúdo é obrigatório';
+        valid = false;
+      }
+
+      if (!field.acertadas) {
+        errors[`${field.id}-acertadas`] = 'Questões acertadas são obrigatórias';
+        valid = false;
+      } else if (isNaN(field.acertadas)) {
+        errors[`${field.id}-acertadas`] = 'Questões acertadas devem ser um número';
+        valid = false;
+      }
+
+      if (!field.totais) {
+        errors[`${field.id}-totais`] = 'Questões totais são obrigatórias';
+        valid = false;
+      } else if (isNaN(field.totais)) {
+        errors[`${field.id}-totais`] = 'Questões totais devem ser um número';
+        valid = false;
+      }
+    });
+
+    setErrors(errors);
+    return valid;
+  };
+
   const handleUpdateSimulado = async () => {
+    if (!validate()) {
+      return;
+    }
+
     try {
       await updateSimuladoById(id, simulado, conteudoFields);
       navigation.goBack();
@@ -90,7 +128,6 @@ const SimuladoForm = () => {
     }
   };
 
-  // Função para excluir o simulado do backend
   const handleDeleteSimulado = async () => {
     try {
       await deleteSimuladoById(id);
@@ -99,12 +136,11 @@ const SimuladoForm = () => {
       console.error('Error deleting simulado: ', error);
     }
   };
-  
+
   return (
     <Container>
       <Title>Alterar simulado</Title>
 
-      {/* Container para os campos de informações do simulado*/}
       <View>
         <TextInputWithLabel
           label="Nome"
@@ -112,6 +148,7 @@ const SimuladoForm = () => {
           value={simulado.nome}
           onChangeText={text => handleSimuladoChange('nome', text)}
           keyboardType="default"
+          errorMessage={errors.nome}
         />
 
         <View style={{ flexDirection: 'row', gap: 20 }}>
@@ -122,6 +159,7 @@ const SimuladoForm = () => {
             onChangeText={text => handleSimuladoChange('fase', text)}
             keyboardType="default"
             twoColumn={true}
+            errorMessage={errors.fase}
           />
 
           <TextInputWithLabel
@@ -131,26 +169,23 @@ const SimuladoForm = () => {
             onChangeText={text => handleSimuladoChange('data', text)}
             keyboardType="default"
             twoColumn={true}
+            errorMessage={errors.data}
           />
         </View>
       </View>
 
-      {/* Header para adicionar um novo campo de conteúdo */}
       <View style={[styles.flexSpaceBetween, { marginBottom: -20 }]}>
         <Text style={{ fontSize: 22, fontWeight: '600' }}>
           Conteúdos
         </Text>
 
-        {/* Botão para adicionar um novo campo de conteúdo */}
         <ButtonPrimary handlePress={addConteudoField}>
           Adicionar
         </ButtonPrimary>
       </View>
 
-      {/* Renderiza os campos de conteúdo */}
       {conteudoFields.map((field, index) => (
         <View key={field.id}>
-          {/* Borda para separar os campos de cada conteúdo*/}
           {index !== 0 && <View style={styles.separator} />}
 
           <View style={styles.removeButtonContainer}>
@@ -169,6 +204,7 @@ const SimuladoForm = () => {
               value={field.nome}
               onChangeText={text => handleConteudoChange(field.id, 'nome', text)}
               keyboardType="default"
+              errorMessage={errors[`${field.id}-nome`]}
             />
 
             <View style={{ flexDirection: 'row', gap: 20 }}>
@@ -179,6 +215,7 @@ const SimuladoForm = () => {
                 onChangeText={text => handleConteudoChange(field.id, 'acertadas', text)}
                 keyboardType="numeric"
                 twoColumn={true}
+                errorMessage={errors[`${field.id}-acertadas`]}
               />
 
               <TextInputWithLabel
@@ -188,6 +225,7 @@ const SimuladoForm = () => {
                 onChangeText={text => handleConteudoChange(field.id, 'totais', text)}
                 keyboardType="numeric"
                 twoColumn={true}
+                errorMessage={errors[`${field.id}-totais`]}
               />
             </View>
           </View>
@@ -216,7 +254,7 @@ const SimuladoForm = () => {
 };
 
 const styles = StyleSheet.create({
-  flexSpaceBetween:{
+  flexSpaceBetween: {
     flexDirection: 'row',
     alignItems: 'center', 
     justifyContent: 'space-between'
@@ -230,6 +268,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     zIndex: 9999,
     marginTop: 22,
+  },
+  removeButton: {
+    padding: 10,
   },
 });
 

@@ -17,6 +17,7 @@ const LeiturasAlterar = () => {
   const { data } = useRoute().params; 
 
   const [leitura, setLeitura] = useState(data);
+  const [errors, setErrors] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
 
   const radioButtons = [
@@ -33,7 +34,59 @@ const LeiturasAlterar = () => {
     }));
   };
 
+  const validate = () => {
+    let valid = true;
+    let errors = {};
+
+    if (!leitura.livro) {
+      errors.livro = 'Nome do livro é obrigatório';
+      valid = false;
+    }
+
+    if (!leitura.autor) {
+      errors.autor = 'Nome do autor é obrigatório';
+      valid = false;
+    }
+
+    if (!leitura.vestibular) {
+      errors.vestibular = 'Vestibular é obrigatório';
+      valid = false;
+    }
+
+    if (!leitura.dataInicio) {
+      errors.dataInicio = 'Data de início é obrigatória';
+      valid = false;
+    }
+
+    if (!leitura.dataTerminio) {
+      errors.dataTerminio = 'Data de término é obrigatória';
+      valid = false;
+    }
+
+    if (!leitura.totalPaginas) {
+      errors.totalPaginas = 'Total de páginas é obrigatório';
+      valid = false;
+    }
+
+    if (!leitura.totalCapitulos) {
+      errors.totalCapitulos = 'Total de capítulos é obrigatório';
+      valid = false;
+    }
+
+    if (!leitura.estado) {
+      errors.estado = 'Estado é obrigatório';
+      valid = false;
+    }
+
+    setErrors(errors);
+    return valid;
+  };
+
   const handleUpdate = async () => {
+    if (!validate()) {
+      return;
+    }
+
     try {
       await updateLeitura(data.id, leitura);
       navigation.goBack();
@@ -44,7 +97,7 @@ const LeiturasAlterar = () => {
 
   const handleDelete = async () => {
     try {
-      await deleteLeitura(data.id, leitura);
+      await deleteLeitura(data.id);
       navigation.navigate('Leituras');
     } catch (error) {
       console.error(error);
@@ -62,6 +115,7 @@ const LeiturasAlterar = () => {
           value={leitura.livro}
           onChangeText={text => handleInputChange('livro', text)}
           keyboardType="default"
+          errorMessage={errors.livro}
         />
 
         <TextInputWithLabel
@@ -70,6 +124,7 @@ const LeiturasAlterar = () => {
           value={leitura.autor}
           onChangeText={text => handleInputChange('autor', text)}
           keyboardType="default"
+          errorMessage={errors.autor}
         />
 
         <TextInputWithLabel
@@ -78,9 +133,10 @@ const LeiturasAlterar = () => {
           value={leitura.vestibular}
           onChangeText={text => handleInputChange('vestibular', text)}
           keyboardType="default"
+          errorMessage={errors.vestibular}
         />
 
-        <View style={{ flexDirection: 'row', gap: 20 }}>
+        <View style={styles.row}>
           <TextInputWithLabel
             label="Data do início"
             placeholder="Ex: 20/03/2023"
@@ -88,6 +144,7 @@ const LeiturasAlterar = () => {
             onChangeText={text => handleInputChange('dataInicio', text)}
             keyboardType="default"
             twoColumn={true}
+            errorMessage={errors.dataInicio}
           />
 
           <TextInputWithLabel
@@ -97,10 +154,11 @@ const LeiturasAlterar = () => {
             onChangeText={text => handleInputChange('dataTerminio', text)}
             keyboardType="default"
             twoColumn={true}
+            errorMessage={errors.dataTerminio}
           />
         </View>
 
-        <View style={{ flexDirection: 'row', gap: 20 }}>
+        <View style={styles.row}>
           <TextInputWithLabel
             label="Total de páginas"
             placeholder="Ex: 350"
@@ -108,6 +166,7 @@ const LeiturasAlterar = () => {
             onChangeText={text => handleInputChange('totalPaginas', text)}
             keyboardType="numeric"
             twoColumn={true}
+            errorMessage={errors.totalPaginas}
           />
 
           <TextInputWithLabel
@@ -117,37 +176,38 @@ const LeiturasAlterar = () => {
             onChangeText={text => handleInputChange('totalCapitulos', text)}
             keyboardType="numeric"
             twoColumn={true}
+            errorMessage={errors.totalCapitulos}
           />
         </View>
 
         <View style={styles.itemContainerForm}>
           <Text style={styles.label}>Estado</Text>
 
-          {radioButtons.map((item) => {
-            return (
-              <Pressable 
-                onPress={() => setLeitura({ ...leitura, estado: item.value })}
-                key={item.id}
+          {radioButtons.map((item) => (
+            <Pressable 
+              onPress={() => setLeitura({ ...leitura, estado: item.value })}
+              key={item.id}
+              style={[
+                styles.radioButtons,
+                item.value === leitura.estado ? styles.radioSelected : styles.radioUnselected,
+              ]}
+            >
+              <Text 
                 style={[
-                  styles.radioButtons,
-                  item.value === leitura.estado ? styles.radioSelected : styles.radioUnselected,
+                  styles.radioLabels,
+                  item.value === leitura.estado ? styles.radioSelectedLabel : styles.radioUnselectedLabel
                 ]}
               >
-                <Text 
-                  style={[
-                    styles.radioLabels,
-                    item.value === leitura.estado ? styles.radioSelectedLabel : styles.radioUnselectedLabel
-                  ]}
-                >
-                  {item.value}
-                </Text>
-              </Pressable>
-            )
-          })}
+                {item.value}
+              </Text>
+            </Pressable>
+          ))}
+
+          {errors.estado ? <Text style={styles.errorText}>{errors.estado}</Text> : null}
         </View>
       </View>
 
-      <View style={{ gap: 10, marginTop: 4 }}>
+      <View style={styles.buttonContainer}>
         <ButtonPrimary handlePress={handleUpdate}>
           Alterar leitura
         </ButtonPrimary>
@@ -169,10 +229,14 @@ const LeiturasAlterar = () => {
 }
 
 const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    gap: 20,
+  },
   label: {
     fontSize: 18,
     marginBottom: 8,
-    fontWeight: "500"
+    fontWeight: "500",
   },
   radioButtons: {
     padding: 8,
@@ -182,12 +246,12 @@ const styles = StyleSheet.create({
   radioLabels: {
     textAlign: 'center',
     fontWeight: '600',
-    fontSize: 16
+    fontSize: 16,
   },
   radioSelected: {
     backgroundColor: 'rgb(219 234 254)',
     borderWidth: 2,
-    borderColor: 'rgb(37 99 235)'
+    borderColor: 'rgb(37 99 235)',
   },
   radioUnselected: {
     backgroundColor: 'white',
@@ -195,10 +259,23 @@ const styles = StyleSheet.create({
     borderColor: 'rgb(203 213 225)',
   },
   radioSelectedLabel: {
-    color: 'rgb(37 99 235)'
+    color: 'rgb(37 99 235)',
   },
   radioUnselectedLabel: {
-    color: 'rgb(100 116 139)'
+    color: 'rgb(100 116 139)',
+  },
+  itemContainerForm: {
+    marginVertical: 20,
+  },
+  buttonContainer: {
+    gap: 10,
+    marginTop: 4,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+    fontWeight: '600',
+    marginTop: 4,
   },
 });
 

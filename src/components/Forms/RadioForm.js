@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 
-export default RadioForm = ({ label, options, selectedValue, onValueChange }) => {
+const RadioForm = ({ label, options, selectedValue, onValueChange, errorMessage }) => {
   return (
-    <View>
+    <View style={{ marginBottom: 14 }}>
       <Text style={styles.label}>
         {label}
       </Text>
@@ -13,19 +13,28 @@ export default RadioForm = ({ label, options, selectedValue, onValueChange }) =>
           onPress={() => onValueChange(item.value)}
           style={[
             styles.buttons,
-            item.value === selectedValue ? styles.selected : styles.unselected,
+            item.value === selectedValue
+              ? styles.selected
+              : [styles.unselected, errorMessage && styles.errorBorder],
           ]}
         >
           <Text 
             style={[
               styles.radioLabels,
               item.value === selectedValue ? styles.selectedLabel : styles.unselectedLabel,
+              errorMessage && item.value !== selectedValue && styles.errorText,
             ]}
           >
             {item.value}
           </Text>
         </Pressable>
       ))}
+
+      {errorMessage ? (
+        <Text style={styles.errorText}>
+          {errorMessage}
+        </Text>
+      ) : null}
     </View>
   );
 };
@@ -36,8 +45,8 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 18,
-    marginBottom: 10,
     fontWeight: "500",
+    marginBottom: 10,
   },
   input: {
     fontSize: 16,
@@ -55,7 +64,7 @@ const styles = StyleSheet.create({
   },
   radioLabels: {
     textAlign: 'center',
-    fontWeight: 600,
+    fontWeight: '600',
     fontSize: 16,
   },
   selected: {
@@ -74,4 +83,20 @@ const styles = StyleSheet.create({
   unselectedLabel: {
     color: 'rgb(100 116 139)',
   },
+  errorText: {
+    color: 'red', 
+    fontSize: 16,
+    fontWeight: 'bold'
+  },
+  errorBorder: {
+    borderColor: 'red',
+  },
+  row: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center',
+    marginBottom: 10
+  }
 });
+
+export default RadioForm;

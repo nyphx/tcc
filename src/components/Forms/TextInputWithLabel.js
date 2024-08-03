@@ -5,17 +5,18 @@ import {
   StyleSheet
 } from 'react-native';
 
-export default TextInputWithLabel = ({ 
+const TextInputWithLabel = ({ 
   label, 
   placeholder,
   value, 
   onChangeText, 
   keyboardType,
   numberOfLines,
-  twoColumn=false,
+  twoColumn = false,
+  errorMessage,
 }) => {
   return (
-    <View style={[{ marginBottom: 14}, twoColumn && { flex: 1 } ]}>
+    <View style={[{ marginBottom: 14 }, twoColumn && { flex: 1 }]}>
       <Text style={styles.label}>
         {label}
       </Text>
@@ -23,16 +24,21 @@ export default TextInputWithLabel = ({
       <TextInput
         multiline
         numberOfLines={numberOfLines}
-        style={styles.input}
+        style={[styles.input, errorMessage && styles.inputError]}
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
         keyboardType={keyboardType}
       />
+
+      {errorMessage ? (
+        <Text style={styles.errorText}>
+          {errorMessage}
+        </Text>
+      ) : null}
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   label: {
@@ -50,5 +56,16 @@ const styles = StyleSheet.create({
     paddingBottom: 6,
     paddingHorizontal: 16,
     backgroundColor: 'white',
-  }
-})
+  },
+  inputError: {
+    borderColor: 'red',
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: '600'
+  },
+});
+
+export default TextInputWithLabel;
