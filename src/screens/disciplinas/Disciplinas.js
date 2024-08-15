@@ -30,7 +30,9 @@ const DisciplinaSection = ({
           />
         ))
       ) : (
-        <Text>Não há disciplinas {title.toLowerCase()}.</Text>
+        <Text style={{ fontSize: 18, marginTop: 10, marginBottom: 20 }}>
+          Não há disciplinas.
+        </Text>
       )}
   </View>
   )

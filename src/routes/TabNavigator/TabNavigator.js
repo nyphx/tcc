@@ -2,11 +2,10 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Entypo } from '@expo/vector-icons';
 
-// Lazy loading dos navegadores de pilha
-const NavDisciplinas = React.lazy(() => import('./../StackNavigators/DisciplinasStack'));
-const NavSimulados = React.lazy(() => import('./../StackNavigators/SimuladosStack'));
-const NavRedacoes = React.lazy(() => import('./../StackNavigators/RedacoesStack'));
-const NavLeituras = React.lazy(() => import('./../StackNavigators/LeiturasStack'));
+import NavDisciplinas from './../StackNavigators/DisciplinasStack';
+import NavSimulados from './../StackNavigators/SimuladosStack';
+import NavRedacoes from './../StackNavigators/RedacoesStack';
+import NavLeituras from './../StackNavigators/LeiturasStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -21,24 +20,23 @@ const getTabBarIcon = (route) => {
 };
 
 const TabNavigator = () => (
-  <React.Suspense fallback={<></>}>
-    <Tab.Navigator
-      initialRouteName="NavDisciplinas"
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarStyle: { height: 70, paddingBottom: 12, paddingTop: 12 },
-        tabBarLabelStyle: { fontSize: 12, fontWeight: '500' },
-        tabBarIcon: getTabBarIcon(route),
-        tabBarActiveTintColor: 'rgb(59 130 246)',
-        tabBarInactiveTintColor: 'gray'
-      })}
-    >
-      <Tab.Screen name="NavDisciplinas" component={NavDisciplinas} options={{ title: 'Disciplinas' }} />
-      <Tab.Screen name="NavSimulados" component={NavSimulados} options={{ title: 'Simulados' }} />
-      <Tab.Screen name="NavRedacoes" component={NavRedacoes} options={{ title: 'Redações' }} />
-      <Tab.Screen name="NavLeituras" component={NavLeituras} options={{ title: 'Leituras' }} />
-    </Tab.Navigator>
-  </React.Suspense>
+  <Tab.Navigator
+    initialRouteName="NavSimulados"
+    screenOptions={({ route }) => ({
+      headerShown: false,
+      tabBarStyle: { height: 70, paddingBottom: 12, paddingTop: 12 },
+      tabBarLabelStyle: { fontSize: 12, fontWeight: '500' },
+      tabBarIcon: getTabBarIcon(route),
+      tabBarActiveTintColor: 'rgb(59 130 246)',
+      tabBarInactiveTintColor: 'gray'
+    })}
+  >
+    <Tab.Screen name="NavDisciplinas" component={NavDisciplinas} options={{ title: 'Disciplinas' }} />
+    <Tab.Screen name="NavSimulados" component={NavSimulados} options={{ title: 'Simulados' }} />
+    <Tab.Screen name="NavRedacoes" component={NavRedacoes} options={{ title: 'Redações' }} />
+    <Tab.Screen name="NavLeituras" component={NavLeituras} options={{ title: 'Leituras' }} />
+  </Tab.Navigator>
 );
+
 
 export default TabNavigator;

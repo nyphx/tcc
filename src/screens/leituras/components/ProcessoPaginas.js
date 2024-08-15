@@ -8,7 +8,7 @@ import {
   ButtonPrimary
 } from '../../../components';
 
-export default ProcessoPaginas = ({ leitura, atual, total }) => {
+export default ProcessoPaginas = ({ leitura, atual, total,onPaginasChange }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [atualPaginas, setAtualPaginas] = useState(atual)
 
@@ -40,6 +40,7 @@ export default ProcessoPaginas = ({ leitura, atual, total }) => {
       }
 
       await updateLeitura(leitura.id, newLeitura);
+      onPaginasChange(atualPaginas);
       setModalVisible(!modalVisible)
     } catch (error) {
       console.error(error);

@@ -65,6 +65,20 @@ export default LeituraDetalhes = () => {
     );
   }
 
+  const handlePaginasChange = (novoValor) => {
+    setLeitura(prevLeitura => ({
+      ...prevLeitura,
+      atualPaginas: novoValor,
+    }));
+  };
+
+  const handleCapitulosChange = (novoValor) => {
+    setLeitura(prevLeitura => ({
+      ...prevLeitura,
+      atualCapitulos: novoValor,
+    }));
+  };
+
   return (
     <Container>
       <View>
@@ -127,6 +141,7 @@ export default LeituraDetalhes = () => {
                     leitura={leitura}
                     atual={leitura.atualPaginas}
                     total={leitura.totalPaginas}
+                    onPaginasChange={handlePaginasChange}
                   />
                 </View>
               </View>
@@ -177,6 +192,7 @@ export default LeituraDetalhes = () => {
                     leitura={leitura}
                     atual={leitura.atualCapitulos}
                     total={leitura.totalCapitulos}
+                    onCapitulosChange={handleCapitulosChange}
                   />
                 </View>
               </View>

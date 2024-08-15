@@ -4,7 +4,7 @@ import { updateLeitura } from './../../../services/leiturasService';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import { ButtonCancel, ButtonPrimary } from '../../../components';
 
-export default ProcessoCapitulos = ({ leitura, atual, total }) => {
+export default ProcessoCapitulos = ({ leitura, atual, total, onCapitulosChange }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [atualCapitulos, setAtualCapitulos] = useState(atual)
 
@@ -36,6 +36,7 @@ export default ProcessoCapitulos = ({ leitura, atual, total }) => {
       }
 
       await updateLeitura(leitura.id, newLeitura);
+      onCapitulosChange(atualCapitulos);
       setModalVisible(!modalVisible)
     } catch (error) {
       console.error(error);

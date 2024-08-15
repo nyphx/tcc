@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "tentativa-de-novo",
-    "slug": "tentativa-de-novo",
+    "name": "tcc",
+    "slug": "tcc",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,9 +15,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cath.tcc",
+      "buildNumber": "1.0.0"
     },
     "android": {
+      "package": "com.cath.tcc",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -25,6 +29,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ad1f73de-0ab7-4e6d-9acf-5479a3f8657a"
+      }
     }
   }
 }
