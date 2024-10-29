@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
-import { Container, Header, Title, RedirectButton } from '../../components';
+import { Container, Header, Title, RedirectButton, CountTitle } from '../../components';
 import Card from './components/Card'
 import { getRedacoes } from './../../services/redacoesService';
 
@@ -58,7 +58,12 @@ const Redacao = () => {
   return (
     <Container>
       <Header>
-        <Title>Redações</Title>
+      <CountTitle 
+          count={redacoes.length}
+          title="Redações"
+          bgColor="rgb(191 219 254)"
+          textColor="rgb(29 78 216)"
+        />
 
         <RedirectButton screen="RedacoesForm">
           Adicionar redação

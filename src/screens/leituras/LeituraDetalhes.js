@@ -4,7 +4,7 @@ import { getLeituraById } from './../../services/leiturasService';
 import { Pressable, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import * as Progress from 'react-native-progress';
-import { Container, Title, calculatePercentage } from '../../components';
+import { Container, Title, calculatePercentage, corFundoEstado } from '../../components';
 import Estado from './components/Estado'
 import Info from './components/Info'
 import ProcessoPaginas from './components/ProcessoPaginas'
@@ -102,21 +102,25 @@ export default LeituraDetalhes = () => {
       <View style={{ marginHorizontal: -20, marginBottom: 10 }}>
         <Info 
           title="Autor"
+          iconName="user"
           info={leitura.autor}
-          />
+        />
 
         <Info 
           title="Vestibular"
+          iconName="filetext1"
           info={leitura.vestibular}
-          />
+        />
         
         <Info 
           title="Início"
+          iconName="calendar"
           info={leitura.dataInicio}
-          />
+        />
 
         <Info 
           title="Termínio"
+          iconName="calendar"
           info={leitura.dataTerminio}
         />
       </View>

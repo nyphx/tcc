@@ -21,7 +21,7 @@ const getTabBarIcon = (route) => {
 
 const TabNavigator = () => (
   <Tab.Navigator
-    initialRouteName="NavSimulados"
+    initialRouteName="NavDisciplinas"
     screenOptions={({ route }) => ({
       headerShown: false,
       tabBarStyle: { height: 70, paddingBottom: 12, paddingTop: 12 },

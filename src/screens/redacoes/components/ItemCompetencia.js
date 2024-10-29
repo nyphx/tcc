@@ -2,6 +2,7 @@ import * as Progress from 'react-native-progress';
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Pressable, View, Text, StyleSheet } from 'react-native';
+import { corFundoNota } from '../../../components';
 import { MaterialIcons } from '@expo/vector-icons';
 import Info from './Info';
 
@@ -30,15 +31,15 @@ const ItemCompetencia = ({ competencia, idRedacao }) => {
         progress={Number(competencia.notaFinal) / Number(competencia.notaMaxima)}
         width={null}
         height={24}
-        color='rgba(88, 94, 255, 1)'
+        color={corFundoNota(competencia.notaFinal, competencia.notaMaxima)}
         unfilledColor='rgba(217, 217, 217, 1)'
         borderWidth={0}
       />
 
       <View style={styles.infoContainer}>
-        <Info title="Nota tirada" info={competencia.notaFinal} />
-        <Info title="Nota máxima" info={competencia.notaMaxima} />
-        <Info title="Descrição" info={competencia.descricao} twoColumn={false} />
+        <Info iconName="filetext1" title="Nota tirada" info={competencia.notaFinal} />
+        <Info iconName="filetext1" title="Nota máxima" info={competencia.notaMaxima} />
+        <Info iconName="edit" title="Descrição" info={competencia.descricao} />
       </View>
     </View>
   );

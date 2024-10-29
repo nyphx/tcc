@@ -1,8 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native'
+import AntDesign from '@expo/vector-icons/AntDesign';
 
-export default Info = ({ title, info, center=false }) => {
+export default Info = ({ title, info, center=false, iconName }) => {
   return (
     <View style={styles.container}>
+      { iconName &&
+        <AntDesign name={iconName} size={24} color="black" />
+      }
+
       <Text style={styles.title}>
         {title}
       </Text>
@@ -27,10 +32,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    width: 130,
+    width: 120,
     color: 'rgb(107 114 128)',
     fontWeight: '700',
-    marginRight: 20,
+    marginRight: 10,
+    marginLeft: 8,
     textTransform: 'uppercase'
   },
   data: {

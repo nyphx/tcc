@@ -8,7 +8,8 @@ import {
   Container,
   Header,
   Title,
-  RedirectButton
+  RedirectButton,
+  CountTitle
 } from '../../components';
 
 const Simulados = () => {
@@ -65,7 +66,12 @@ const Simulados = () => {
   return (
     <Container>
       <Header>
-        <Title>Simulados</Title>
+        <CountTitle 
+          count={simulados.length}
+          title="Simulados"
+          bgColor="rgb(191 219 254)"
+          textColor="rgb(29 78 216)"
+        />
         
         <RedirectButton screen="SimuladosForm">
           Adicionar simulado

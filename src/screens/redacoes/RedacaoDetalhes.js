@@ -3,7 +3,7 @@ import React, { useState, useCallback } from 'react';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { getRedacaoWithCompetencias } from '../../services/redacoesService'; 
 import { Pressable, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { Container, ButtonPrimary } from '../../components';
+import { Container, ButtonPrimary, corFundoNota } from '../../components';
 import { MaterialIcons } from '@expo/vector-icons';
 import Info from './components/Info';
 import ItemCompetencia from './components/ItemCompetencia'; 
@@ -88,16 +88,16 @@ const RedacaoDetalhes = () => {
               progress={Number(redacao.notaFinal) / Number(redacao.notaMaxima)}
               width={null}
               height={24}
-              color='rgba(88, 94, 255, 1)'
+              color={corFundoNota(redacao.notaFinal, redacao.notaMaxima)}
               unfilledColor='rgba(217, 217, 217, 1)'
               borderWidth={0}
             />
           }
         </View>
-
-        <Info title="Nota final" info={redacao?.notaFinal} /> 
-        <Info title="Nota máxima" info={redacao?.notaMaxima} /> 
-        <Info title="Data realizada" info={redacao?.data} /> 
+        
+        <Info iconName="filetext1" title="Nota final" info={redacao?.notaFinal} />
+        <Info iconName="filetext1" title="Nota máxima" info={redacao?.notaMaxima} /> 
+        <Info iconName="calendar" title="Data realizada" info={redacao?.data} /> 
       </View>
 
       <View> 

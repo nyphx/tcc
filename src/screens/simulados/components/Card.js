@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { TextPrimary } from '../../../components';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Entypo from '@expo/vector-icons/Entypo';
 
 const Card = ({ simulado }) => {
   // Hook para acessar a navegação
@@ -18,8 +20,14 @@ const Card = ({ simulado }) => {
       onPress={handlePress}
     >
       <View>
-        <TextPrimary>{simulado.nome}</TextPrimary>
-        <TextPrimary>{`${simulado.fase}ª fase / dia`}</TextPrimary>
+        <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center', marginBottom: 6}}>
+          <MaterialCommunityIcons name="file-multiple-outline" size={22} color="black" />
+          <Text style={{ fontSize: 20, fontWeight: '600' }}>
+            {simulado.nome}
+          </Text>
+        </View>
+
+          <TextPrimary>{`${simulado.fase}ª fase / dia`}</TextPrimary>
       </View>
     </Pressable>
   );
