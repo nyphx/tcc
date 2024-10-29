@@ -85,11 +85,11 @@ const DisciplinasForm = () => {
           onValueChange={setEstado}
           errorMessage={errors.estado}
         />
-      </View>
       
-      <ButtonPrimary handlePress={handleSubmit}>
-        Adicionar disciplina
-      </ButtonPrimary>
+        <ButtonPrimary handlePress={handleSubmit}>
+          Adicionar disciplina
+        </ButtonPrimary>
+      </View>
     </Container>
   );
 }

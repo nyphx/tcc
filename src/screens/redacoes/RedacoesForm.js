@@ -131,9 +131,6 @@ const RedacoesForm = () => {
 };
 
 const styles = StyleSheet.create({
-  form: {
-    marginBottom: 20,
-  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',

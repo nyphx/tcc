@@ -28,7 +28,8 @@ const TabNavigator = () => (
       tabBarLabelStyle: { fontSize: 12, fontWeight: '500' },
       tabBarIcon: getTabBarIcon(route),
       tabBarActiveTintColor: 'rgb(59 130 246)',
-      tabBarInactiveTintColor: 'gray'
+      tabBarInactiveTintColor: 'gray',
+      tabBarHideOnKeyboard: true,
     })}
   >
     <Tab.Screen name="NavDisciplinas" component={NavDisciplinas} options={{ title: 'Disciplinas' }} />

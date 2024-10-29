@@ -130,13 +130,15 @@ const RedacaoAlterar = () => {
         />
       </View>
 
-      <ButtonPrimary handlePress={handleUpdateRedacao}>
-        Alterar
-      </ButtonPrimary>
+      <View style={{ gap: 10 }}>
+        <ButtonPrimary handlePress={handleUpdateRedacao}>
+          Alterar
+        </ButtonPrimary>
 
-      <ButtonDelete handlePress={() => setModalVisible(true)}>
-        Excluir
-      </ButtonDelete>
+        <ButtonDelete handlePress={() => setModalVisible(true)}>
+          Excluir
+        </ButtonDelete>
+      </View>
 
       <ConfirmDeleteModal
         visible={modalVisible}

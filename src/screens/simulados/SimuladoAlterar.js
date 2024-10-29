@@ -232,7 +232,7 @@ const SimuladoForm = () => {
         </View>
       ))}
 
-      <View style={{ marginTop: 16, gap: 16 }}>
+      <View style={{ gap: 10 }}>
         <ButtonPrimary handlePress={handleUpdateSimulado}>
           Alterar
         </ButtonPrimary>

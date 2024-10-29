@@ -115,17 +115,18 @@ const AssuntoAlterar = () => {
           onValueChange={setEstado}
           errorMessage={errors.estado}
         />
+
+        <View style={{ gap: 10 }}>
+          <ButtonPrimary handlePress={handleUpdateAssunto}>
+            Alterar assunto
+          </ButtonPrimary>
+
+          <ButtonDelete handlePress={() => setModalVisible(true)}>
+            Excluir assunto
+          </ButtonDelete>
+        </View>
       </View>
 
-      <View style={{ gap: 10 }}>
-        <ButtonPrimary handlePress={handleUpdateAssunto}>
-          Alterar assunto
-        </ButtonPrimary>
-
-        <ButtonDelete handlePress={() => setModalVisible(true)}>
-          Excluir assunto
-        </ButtonDelete>
-      </View>
 
       <ConfirmDeleteModal
         visible={modalVisible}

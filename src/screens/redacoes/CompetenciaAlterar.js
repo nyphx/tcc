@@ -133,13 +133,15 @@ const CompetenciaAlterar = () => {
         />
       </View>
 
-      <ButtonPrimary handlePress={handleUpdateCompetencia}>
-        Alterar
-      </ButtonPrimary>
+      <View style={{ gap: 10 }}>
+        <ButtonPrimary handlePress={handleUpdateCompetencia}>
+          Alterar
+        </ButtonPrimary>
 
-      <ButtonDelete handlePress={() => setModalVisible(true)}>
-        Excluir
-      </ButtonDelete>
+        <ButtonDelete handlePress={() => setModalVisible(true)}>
+          Excluir
+        </ButtonDelete>
+      </View>
 
       <ConfirmDeleteModal
         visible={modalVisible}

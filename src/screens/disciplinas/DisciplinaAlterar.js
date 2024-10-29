@@ -95,16 +95,16 @@ const DisciplinaAlterar = () => {
           onValueChange={setEstado}
           errorMessage={errors.estado}
         />
-      </View>
 
-      <View style={{ gap: 10 }}>
-        <ButtonPrimary handlePress={handleUpdateDisciplina}>
-          Alterar disciplina
-        </ButtonPrimary>
+        <View style={{ gap: 10 }}>
+          <ButtonPrimary handlePress={handleUpdateDisciplina}>
+            Alterar disciplina
+          </ButtonPrimary>
 
-        <ButtonDelete handlePress={() => setModalVisible(true)}>
-          Excluir disciplina
-        </ButtonDelete>
+          <ButtonDelete handlePress={() => setModalVisible(true)}>
+            Excluir disciplina
+          </ButtonDelete>
+        </View>
       </View>
 
       <ConfirmDeleteModal

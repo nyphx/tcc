@@ -103,11 +103,11 @@ const AssuntoForm = () => {
           onValueChange={setEstado}
           errorMessage={errors.estado}
         />
-      </View>
 
-      <ButtonPrimary handlePress={handleSubmit}>
-        Adicionar assunto
-      </ButtonPrimary>
+        <ButtonPrimary handlePress={handleSubmit}>
+          Adicionar assunto
+        </ButtonPrimary>
+      </View>
     </Container>
   );
 }

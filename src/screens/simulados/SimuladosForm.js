@@ -220,11 +220,9 @@ const SimuladoForm = () => {
         </View>
       ))}
 
-      <View style={{ marginTop: 20 }}>
-        <ButtonPrimary handlePress={handleSubmit}>
+      <ButtonPrimary handlePress={handleSubmit}>
           Salvar simulado
-        </ButtonPrimary>
-      </View>
+      </ButtonPrimary>
     </Container>
   );
 };
