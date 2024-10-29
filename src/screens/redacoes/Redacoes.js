@@ -57,8 +57,8 @@ const Redacao = () => {
 
   return (
     <Container>
-      <Header>
-      <CountTitle 
+      <View>
+        <CountTitle 
           count={redacoes.length}
           title="Redações"
           bgColor="rgb(191 219 254)"
@@ -68,7 +68,7 @@ const Redacao = () => {
         <RedirectButton screen="RedacoesForm">
           Adicionar redação
         </RedirectButton>
-      </Header>
+      </View>
 
       { redacoes.length === 0 &&
         <Text style={{ fontSize: 16, marginTop: 16 }}>

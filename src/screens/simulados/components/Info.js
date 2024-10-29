@@ -38,12 +38,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    width: 100,
+    width: 150,
     color: 'rgb(107 114 128)',
     fontWeight: 'bold',
-    marginRight: 20
+    marginRight: 20,
+    textTransform: 'uppercase'
   },
   data: {
     fontSize: 16,
+    textAlign: 'center'
   }
 })

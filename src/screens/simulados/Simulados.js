@@ -65,18 +65,18 @@ const Simulados = () => {
 
   return (
     <Container>
-      <Header>
+      <View>
         <CountTitle 
           count={simulados.length}
           title="Simulados"
           bgColor="rgb(191 219 254)"
           textColor="rgb(29 78 216)"
-        />
+          />
         
         <RedirectButton screen="SimuladosForm">
           Adicionar simulado
         </RedirectButton>
-      </Header>
+      </View>
 
       {/* Renderiza a lista de simulados usando o componente Card */}
       {simulados.map(data => (

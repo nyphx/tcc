@@ -5,7 +5,6 @@ import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
 
 import {
   Container,
-  Header,
   RedirectButton,
   CountTitle,
   TextPrimary

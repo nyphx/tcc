@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { TextPrimary } from '../../../components';
 
 const Card = ({ leitura }) => {
@@ -16,24 +16,37 @@ const Card = ({ leitura }) => {
         { id: leitura.id }
       )}
     >
-      <View>
-        <TextPrimary>
-          {leitura.livro}
-        </TextPrimary>
+      <View style={{ gap: 6 }}>
+        <View style={styles.flex}>
+          <AntDesign name="user" size={24} color="black" />
+          <TextPrimary>
+            {leitura.livro}
+          </TextPrimary>
+        </View>
 
-        <TextPrimary>
-          {leitura.autor}
-        </TextPrimary>
+        <View style={styles.flex}>
+          <AntDesign name="book" size={24} color="black" />
+          <TextPrimary>
+            {leitura.autor}
+          </TextPrimary>
+        </View>
         
-        <TextPrimary>
-          {leitura.vestibular}
-        </TextPrimary>
+        <View style={styles.flex}>
+          <AntDesign name="filetext1" size={24} color="black" />
+          <TextPrimary>
+            {leitura.vestibular}
+          </TextPrimary>
+        </View>
       </View>
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
+  flex: {
+    flexDirection: 'row',
+    gap: 6
+  },
   card: {
     marginVertical: 8,
     paddingVertical: 12,

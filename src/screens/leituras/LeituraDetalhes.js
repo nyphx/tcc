@@ -4,7 +4,7 @@ import { getLeituraById } from './../../services/leiturasService';
 import { Pressable, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import * as Progress from 'react-native-progress';
-import { Container, Title, calculatePercentage, corFundoEstado } from '../../components';
+import { Container, Title, calculatePercentage } from '../../components';
 import Estado from './components/Estado'
 import Info from './components/Info'
 import ProcessoPaginas from './components/ProcessoPaginas'

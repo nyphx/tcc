@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    width: 120,
+    width: 135,
     color: 'rgb(107 114 128)',
     fontWeight: '700',
     marginRight: 10,

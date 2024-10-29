@@ -272,9 +272,6 @@ const styles = StyleSheet.create({
   radioUnselectedLabel: {
     color: 'rgb(100 116 139)',
   },
-  itemContainerForm: {
-    marginVertical: 20,
-  },
   errorText: {
     color: 'red',
     fontSize: 16,

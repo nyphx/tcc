@@ -1,6 +1,5 @@
 import React from 'react';
 import { Text, View, Pressable, StyleSheet } from 'react-native';
-import { corFundoNota } from '../../../components';
 import { useNavigation } from '@react-navigation/native';
 
 // Componente Card para exibir informações da redação
@@ -28,10 +27,7 @@ const Card = ({ redacao }) => {
         </View>
 
         {/* Container para exibir a nota final e a nota máxima */}
-        <View style={[
-          styles.notas, 
-          { backgroundColor: corFundoNota(redacao.notaFinal, redacao.notaMaxima)}]
-        }>
+        <View style={styles.notas}>
           <Text style={styles.notaFinal}>
             {redacao.notaFinal}
           </Text>
@@ -54,6 +50,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   notas: {
+    backgroundColor: 'rgb(226 232 240)',
     flexDirection: 'column',
     alignItems: 'center',
     gap: 6,
