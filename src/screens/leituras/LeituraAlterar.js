@@ -14,7 +14,7 @@ import {
 
 const LeiturasAlterar = () => {
   const navigation = useNavigation(); 
-  const { data } = useRoute().params; 
+  const { data, id } = useRoute().params; 
 
   const [leitura, setLeitura] = useState(data);
   const [errors, setErrors] = useState({});
@@ -88,7 +88,7 @@ const LeiturasAlterar = () => {
     }
 
     try {
-      await updateLeitura(data.id, leitura);
+      await updateLeitura(id, leitura);
       navigation.goBack();
     } catch (error) {
       console.error(error);
@@ -97,7 +97,7 @@ const LeiturasAlterar = () => {
 
   const handleDelete = async () => {
     try {
-      await deleteLeitura(data.id);
+      await deleteLeitura(id);
       navigation.navigate('Leituras');
     } catch (error) {
       console.error(error);

@@ -89,7 +89,7 @@ export default LeituraDetalhes = () => {
               style={styles.editButton}
               onPress={() => navigation.navigate(
                 'LeituraAlterar',
-                { data: leitura }
+                { data: leitura, id: id }
               )}
               >
               <MaterialIcons name="edit" size={26} color="#505050" />
@@ -125,7 +125,7 @@ export default LeituraDetalhes = () => {
         />
       </View>
 
-      { leitura.id && ( // verifica se o id da leitura está definido
+      { id && ( // verifica se o id da leitura está definido
         <View>
             <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 20 }}>
               Processo de leitura
@@ -142,6 +142,7 @@ export default LeituraDetalhes = () => {
 
                 <View>
                   <ProcessoPaginas
+                    id={id}
                     leitura={leitura}
                     atual={leitura.atualPaginas}
                     total={leitura.totalPaginas}
@@ -193,6 +194,7 @@ export default LeituraDetalhes = () => {
 
                 <View>
                   <ProcessoCapitulos
+                    id={id}
                     leitura={leitura}
                     atual={leitura.atualCapitulos}
                     total={leitura.totalCapitulos}
