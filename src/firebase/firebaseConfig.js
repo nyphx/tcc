@@ -19,13 +19,13 @@ import {
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCeX8475vJ2bH15poHCdrszhVY1EuJy0eg",
-  authDomain: "projeto-tcc-26b77.firebaseapp.com",
-  databaseURL: "https://projeto-tcc-26b77-default-rtdb.firebaseio.com",
-  projectId: "projeto-tcc-26b77",
-  storageBucket: "projeto-tcc-26b77.appspot.com",
-  messagingSenderId: "796988753366",
-  appId: "1:796988753366:web:a6ccd0f99aab39345a5077"
+  apiKey: " ",
+  authDomain: " ",
+  databaseURL: " ",
+  projectId: " ",
+  storageBucket: " ",
+  messagingSenderId: " ",
+  appId: " "
 };
 
 // Initialize Firebase
